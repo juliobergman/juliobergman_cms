@@ -40,7 +40,8 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
 /* harmony import */ var _js_views_guest_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../js/views/guest.vue */ "./resources/js/views/guest.vue");
- // Main Pages
+ // Plugins
+// Main Pages
 
 
 var app = new vue__WEBPACK_IMPORTED_MODULE_1__.default({
