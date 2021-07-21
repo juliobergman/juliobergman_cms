@@ -18,6 +18,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   components: {},
   data: function data() {
@@ -49,7 +50,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var app = new vue__WEBPACK_IMPORTED_MODULE_2__.default({
   router: _router__WEBPACK_IMPORTED_MODULE_0__.default,
-  vuetify: Vuetify,
+  // vuetify: Vuetify,
   components: {
     GuestContainer: _js_views_guest_vue__WEBPACK_IMPORTED_MODULE_1__.default
   },
@@ -176,7 +177,10 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [_vm._v("\n    " + _vm._s(_vm.message) + "\n")])
+  return _c("div", [
+    _c("h1", [_vm._v("asdjasdkjasdjk")]),
+    _vm._v("\n    " + _vm._s(_vm.message) + "\n")
+  ])
 }
 var staticRenderFns = []
 render._withStripped = true

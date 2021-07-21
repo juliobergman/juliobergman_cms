@@ -9,7 +9,7 @@ import GuestContainer from "../js/views/guest.vue";
 
 const app = new Vue({
     router,
-    vuetify: Vuetify,
+    // vuetify: Vuetify,
     components: { GuestContainer },
     el: "#app"
 });
