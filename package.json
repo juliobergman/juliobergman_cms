@@ -12,11 +12,12 @@
     "devDependencies": {
         "axios": "^0.21",
         "case-sensitive-paths-webpack-plugin": "^2.4.0",
+        "deepmerge": "^4.2.2",
         "laravel-mix": "^6.0.25",
         "lodash": "^4.17.19",
         "postcss": "^8.1.14",
         "resolve-url-loader": "^4.0.0",
-        "sass": "^1.35.2",
+        "sass": "^1.32.13",
         "sass-loader": "^12.1.0",
         "vue-loader": "^15.9.7",
         "vue-template-compiler": "^2.6.14",
@@ -24,6 +25,8 @@
     },
     "dependencies": {
         "vue": "^2.6.14",
-        "vue-router": "^3.5.2"
+        "vue-router": "^3.5.2",
+        "vuetify": "^2.5.7",
+        "vuetify-loader": "^1.7.2"
     }
 }
