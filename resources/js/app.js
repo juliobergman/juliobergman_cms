@@ -1,15 +1,30 @@
+window._ = require("lodash");
+window.axios = require("axios");
+window.axios.defaults.headers.common["Accept"] = "application/json";
+window.axios.defaults.headers.common["X-CSRF-TOKEN"] = document.querySelector(
+    'meta[name="csrf-token"]'
+)["content"];
+
 import Vue from "vue";
 import router from "./router";
 
 // Plugins
 import vuetify from "../plugins/vuetify";
+import VueMobileDetection from "vue-mobile-detection";
+Vue.use(VueMobileDetection);
+// Event BUS
+export const bus = new Vue();
 
-// Main Pages
-import GuestContainer from "../js/views/guest.vue";
+// Guest
+import GuestContainer from "./components/guest/container";
+// Auth
+import ViewLogin from "./components/auth/login";
+// App
+import AppContainer from "./components/app/container";
 
 const app = new Vue({
     router,
     vuetify,
-    components: { GuestContainer },
+    components: { GuestContainer, ViewLogin, AppContainer },
     el: "#app"
 });

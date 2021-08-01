@@ -1,6 +1,6 @@
 <template>
     <v-main>
-        <h1>Guest</h1>
+        <h1>Contacts</h1>
     </v-main>
 </template>
 
