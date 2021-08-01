@@ -2,8 +2,8 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 
 // Website Routes
-import WebHome from "../components/guest/home/container";
-import WebContact from "../components/guest/contact/container";
+import WebHome from "../components/web/home/container";
+import WebContact from "../components/web/contact/container";
 // App
 import AppDashboard from "../components/app/dashboard/container";
 import AppMedia from "../components/app/media/container";

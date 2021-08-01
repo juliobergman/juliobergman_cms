@@ -16,7 +16,7 @@ Vue.use(VueMobileDetection);
 export const bus = new Vue();
 
 // Guest
-import GuestContainer from "./components/guest/container";
+import GuestContainer from "./components/web/container";
 // Auth
 import ViewLogin from "./components/auth/login";
 // App
