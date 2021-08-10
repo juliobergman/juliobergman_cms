@@ -1,15 +1,20 @@
 <template>
-    <v-app id="inspire">
+    <v-app>
+        <nav-drawer></nav-drawer>
         <app-bar></app-bar>
-        <router-view :key="$route.path"></router-view>
+        <v-main>
+            <!--  -->
+        </v-main>
     </v-app>
 </template>
 
 <script>
-import appBar from "./ui/appBar";
+import AppBar from "./ui/appBar";
+import NavDrawer from "./ui/navDrawer.vue";
 export default {
     components: {
-        appBar
+        AppBar,
+        NavDrawer
     },
     data: () => ({}),
     methods: {},
