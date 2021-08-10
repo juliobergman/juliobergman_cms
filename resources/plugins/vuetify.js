@@ -3,6 +3,14 @@ import Vuetify from "vuetify/lib";
 
 Vue.use(Vuetify);
 
-const opts = {};
+const opts = {
+    theme: {
+        dark: false,
+        themes: {
+            light: {},
+            dark: {}
+        }
+    }
+};
 
 export default new Vuetify(opts);

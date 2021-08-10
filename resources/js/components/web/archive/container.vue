@@ -1,13 +1,12 @@
 <template>
     <v-main>
-        <projects></projects>
+        <h1>Archive</h1>
     </v-main>
 </template>
 
 <script>
-import Projects from "./projects";
 export default {
-    components: { Projects },
+    components: {},
     data: () => ({}),
     methods: {},
     created() {}

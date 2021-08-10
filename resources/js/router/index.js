@@ -3,6 +3,8 @@ import VueRouter from "vue-router";
 
 // Website Routes
 import WebHome from "../components/web/home/container";
+import WebArchive from "../components/web/archive/container";
+import WebDevelopment from "../components/web/development/container";
 import WebContact from "../components/web/contact/container";
 // App
 import AppDashboard from "../components/app/dashboard/container";
@@ -16,6 +18,18 @@ const routes = [
         name: "home",
         path: "/",
         meta: { section: "home" }
+    },
+    {
+        component: WebArchive,
+        name: "archive",
+        path: "/archive",
+        meta: { section: "archive" }
+    },
+    {
+        component: WebDevelopment,
+        name: "development",
+        path: "/development",
+        meta: { section: "development" }
     },
     {
         component: WebContact,
