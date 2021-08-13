@@ -42,28 +42,32 @@ export default {
     props: [],
     components: { AccountMenu },
     data: () => ({
-        selected: 0,
+        selected: null,
         drawer: true,
         items: [
             {
                 title: "Portfolio",
                 icon: "mdi-view-dashboard",
-                route: "appPortfolio"
+                route: "appPortfolio",
+                section: "appPortfolio"
             },
             {
                 title: "Media",
                 icon: "mdi-camera-iris",
-                route: "appMedia"
+                route: "appMedia",
+                section: "appMedia"
             },
             {
                 title: "Settings",
                 icon: "mdi-cog",
-                route: "appSettings"
+                route: "appSettings",
+                section: "appSettings"
             },
             {
                 title: "Tests",
                 icon: "mdi-test-tube",
-                route: "appTest"
+                route: "appTest",
+                section: "appTest"
             }
         ]
     }),
@@ -71,13 +75,27 @@ export default {
         goto(route) {
             if (this.$route.name == route) return;
             this.$router.push({ name: route });
+        },
+        selectedItem() {
+            this.items.findIndex((element, index) => {
+                if (element.section == this.$route.meta.section) {
+                    this.selected = index;
+                }
+            });
         }
     },
     created() {
+        this.selectedItem();
         bus.$on("drawer:toggle", () => {
             this.drawer = !this.drawer;
         });
         bus.$on("go:to", this.goto);
+        bus.$on("selected:item", this.selectedItem);
+    },
+    mounted() {
+        this.$router.afterEach((to, from) => {
+            this.selected = null;
+        });
     }
 };
 </script>

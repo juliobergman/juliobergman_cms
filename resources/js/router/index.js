@@ -43,10 +43,16 @@ const routes = [
     },
     // App
     {
+        component: AppAccount,
+        name: "appAccount",
+        path: "/app/account",
+        meta: { section: "appAccount" }
+    },
+    {
         component: AppPortfolio,
         name: "appPortfolio",
         path: "/app",
-        meta: { section: "AppPortfolio" }
+        meta: { section: "appPortfolio" }
     },
     {
         component: AppMedia,
@@ -65,12 +71,6 @@ const routes = [
         name: "appTest",
         path: "/app/test",
         meta: { section: "appTest" }
-    },
-    {
-        component: AppAccount,
-        name: "appAccount",
-        path: "/app/account",
-        meta: { section: "appAccount" }
     }
 ];
 

@@ -1,7 +1,7 @@
 <template>
-    <v-menu offset-x transition="scale-transition">
+    <v-menu min-width="160" transition="scale-transition">
         <template v-slot:activator="{ on, attrs }">
-            <v-btn icon v-bind="attrs" v-on="on">
+            <v-btn icon :color="icncolor" v-bind="attrs" v-on="on">
                 <v-icon>mdi-account</v-icon>
             </v-btn>
         </template>
@@ -13,7 +13,7 @@
                 :key="item.title"
                 @click="goto(item.route)"
             >
-                <v-list-item-icon>
+                <v-list-item-icon class="mr-4">
                     <v-icon>{{ item.icon }}</v-icon>
                 </v-list-item-icon>
 
@@ -21,8 +21,11 @@
                     <v-list-item-title>{{ item.title }}</v-list-item-title>
                 </v-list-item-content>
             </v-list-item>
+
+            <v-divider class="my-2"></v-divider>
+
             <v-list-item @click="logout()">
-                <v-list-item-icon>
+                <v-list-item-icon class="mr-4">
                     <v-icon>mdi-logout</v-icon>
                 </v-list-item-icon>
 
@@ -39,14 +42,23 @@ import { bus } from "../../../app";
 export default {
     props: ["bus"],
     data: () => ({
+        blue: false,
         items: [
             {
                 title: "Profile",
                 icon: "mdi-account",
-                route: "appAccount"
+                route: "appAccount",
+                section: "appAccount"
             }
         ]
     }),
+    computed: {
+        icncolor() {
+            return this.$route.meta.section == "appAccount"
+                ? "grey darken-4"
+                : "";
+        }
+    },
     methods: {
         goto(route) {
             bus.$emit("go:to", route);
@@ -63,6 +75,11 @@ export default {
                     console.log(error);
                 });
         }
+    },
+    mounted() {
+        // this.$router.afterEach((to, from) => {
+        //     this.blue = false;
+        // });
     }
 };
 </script>

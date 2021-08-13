@@ -2061,17 +2061,27 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: ["bus"],
   data: function data() {
     return {
+      blue: false,
       items: [{
         title: "Profile",
         icon: "mdi-account",
-        route: "appAccount"
+        route: "appAccount",
+        section: "appAccount"
       }]
     };
+  },
+  computed: {
+    icncolor: function icncolor() {
+      return this.$route.meta.section == "appAccount" ? "grey darken-4" : "";
+    }
   },
   methods: {
     "goto": function goto(route) {
@@ -2086,6 +2096,10 @@ __webpack_require__.r(__webpack_exports__);
         console.log(error);
       });
     }
+  },
+  mounted: function mounted() {// this.$router.afterEach((to, from) => {
+    //     this.blue = false;
+    // });
   }
 });
 
@@ -2266,24 +2280,28 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
-      selected: 0,
+      selected: null,
       drawer: true,
       items: [{
         title: "Portfolio",
         icon: "mdi-view-dashboard",
-        route: "appPortfolio"
+        route: "appPortfolio",
+        section: "appPortfolio"
       }, {
         title: "Media",
         icon: "mdi-camera-iris",
-        route: "appMedia"
+        route: "appMedia",
+        section: "appMedia"
       }, {
         title: "Settings",
         icon: "mdi-cog",
-        route: "appSettings"
+        route: "appSettings",
+        section: "appSettings"
       }, {
         title: "Tests",
         icon: "mdi-test-tube",
-        route: "appTest"
+        route: "appTest",
+        section: "appTest"
       }]
     };
   },
@@ -2293,15 +2311,33 @@ __webpack_require__.r(__webpack_exports__);
       this.$router.push({
         name: route
       });
+    },
+    selectedItem: function selectedItem() {
+      var _this = this;
+
+      this.items.findIndex(function (element, index) {
+        if (element.section == _this.$route.meta.section) {
+          _this.selected = index;
+        }
+      });
     }
   },
   created: function created() {
-    var _this = this;
+    var _this2 = this;
 
+    this.selectedItem();
     _app__WEBPACK_IMPORTED_MODULE_0__.bus.$on("drawer:toggle", function () {
-      _this.drawer = !_this.drawer;
+      _this2.drawer = !_this2.drawer;
     });
     _app__WEBPACK_IMPORTED_MODULE_0__.bus.$on("go:to", this["goto"]);
+    _app__WEBPACK_IMPORTED_MODULE_0__.bus.$on("selected:item", this.selectedItem);
+  },
+  mounted: function mounted() {
+    var _this3 = this;
+
+    this.$router.afterEach(function (to, from) {
+      _this3.selected = null;
+    });
   }
 });
 
@@ -2998,11 +3034,18 @@ var routes = [// Web
   }
 }, // App
 {
+  component: _components_app_account_container__WEBPACK_IMPORTED_MODULE_4__.default,
+  name: "appAccount",
+  path: "/app/account",
+  meta: {
+    section: "appAccount"
+  }
+}, {
   component: _components_app_portfolio_container__WEBPACK_IMPORTED_MODULE_5__.default,
   name: "appPortfolio",
   path: "/app",
   meta: {
-    section: "AppPortfolio"
+    section: "appPortfolio"
   }
 }, {
   component: _components_app_media_container__WEBPACK_IMPORTED_MODULE_6__.default,
@@ -3024,13 +3067,6 @@ var routes = [// Web
   path: "/app/test",
   meta: {
     section: "appTest"
-  }
-}, {
-  component: _components_app_account_container__WEBPACK_IMPORTED_MODULE_4__.default,
-  name: "appAccount",
-  path: "/app/account",
-  meta: {
-    section: "appAccount"
   }
 }];
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (new vue_router__WEBPACK_IMPORTED_MODULE_10__.default({
@@ -23977,7 +24013,7 @@ var render = function() {
   return _c(
     "v-menu",
     {
-      attrs: { "offset-x": "", transition: "scale-transition" },
+      attrs: { "min-width": "160", transition: "scale-transition" },
       scopedSlots: _vm._u([
         {
           key: "activator",
@@ -23988,7 +24024,12 @@ var render = function() {
               _c(
                 "v-btn",
                 _vm._g(
-                  _vm._b({ attrs: { icon: "" } }, "v-btn", attrs, false),
+                  _vm._b(
+                    { attrs: { icon: "", color: _vm.icncolor } },
+                    "v-btn",
+                    attrs,
+                    false
+                  ),
                   on
                 ),
                 [_c("v-icon", [_vm._v("mdi-account")])],
@@ -24020,6 +24061,7 @@ var render = function() {
               [
                 _c(
                   "v-list-item-icon",
+                  { staticClass: "mr-4" },
                   [_c("v-icon", [_vm._v(_vm._s(item.icon))])],
                   1
                 ),
@@ -24034,6 +24076,8 @@ var render = function() {
             )
           }),
           _vm._v(" "),
+          _c("v-divider", { staticClass: "my-2" }),
+          _vm._v(" "),
           _c(
             "v-list-item",
             {
@@ -24044,7 +24088,12 @@ var render = function() {
               }
             },
             [
-              _c("v-list-item-icon", [_c("v-icon", [_vm._v("mdi-logout")])], 1),
+              _c(
+                "v-list-item-icon",
+                { staticClass: "mr-4" },
+                [_c("v-icon", [_vm._v("mdi-logout")])],
+                1
+              ),
               _vm._v(" "),
               _c(
                 "v-list-item-content",
@@ -40663,12 +40712,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! !../../../../../node_modules/vuetify-loader/lib/runtime/installComponents.js */ "./node_modules/vuetify-loader/lib/runtime/installComponents.js");
 /* harmony import */ var _node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var vuetify_lib_components_VBtn__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! vuetify/lib/components/VBtn */ "./node_modules/vuetify/lib/components/VBtn/VBtn.js");
-/* harmony import */ var vuetify_lib_components_VIcon__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vuetify/lib/components/VIcon */ "./node_modules/vuetify/lib/components/VIcon/VIcon.js");
-/* harmony import */ var vuetify_lib_components_VList__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! vuetify/lib/components/VList */ "./node_modules/vuetify/lib/components/VList/VList.js");
-/* harmony import */ var vuetify_lib_components_VList__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! vuetify/lib/components/VList */ "./node_modules/vuetify/lib/components/VList/VListItem.js");
-/* harmony import */ var vuetify_lib_components_VList__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! vuetify/lib/components/VList */ "./node_modules/vuetify/lib/components/VList/index.js");
-/* harmony import */ var vuetify_lib_components_VList__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! vuetify/lib/components/VList */ "./node_modules/vuetify/lib/components/VList/VListItemIcon.js");
-/* harmony import */ var vuetify_lib_components_VMenu__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! vuetify/lib/components/VMenu */ "./node_modules/vuetify/lib/components/VMenu/VMenu.js");
+/* harmony import */ var vuetify_lib_components_VDivider__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vuetify/lib/components/VDivider */ "./node_modules/vuetify/lib/components/VDivider/VDivider.js");
+/* harmony import */ var vuetify_lib_components_VIcon__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! vuetify/lib/components/VIcon */ "./node_modules/vuetify/lib/components/VIcon/VIcon.js");
+/* harmony import */ var vuetify_lib_components_VList__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! vuetify/lib/components/VList */ "./node_modules/vuetify/lib/components/VList/VList.js");
+/* harmony import */ var vuetify_lib_components_VList__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! vuetify/lib/components/VList */ "./node_modules/vuetify/lib/components/VList/VListItem.js");
+/* harmony import */ var vuetify_lib_components_VList__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! vuetify/lib/components/VList */ "./node_modules/vuetify/lib/components/VList/index.js");
+/* harmony import */ var vuetify_lib_components_VList__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! vuetify/lib/components/VList */ "./node_modules/vuetify/lib/components/VList/VListItemIcon.js");
+/* harmony import */ var vuetify_lib_components_VMenu__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! vuetify/lib/components/VMenu */ "./node_modules/vuetify/lib/components/VMenu/VMenu.js");
 
 
 
@@ -40697,7 +40747,8 @@ var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__
 
 
 
-_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3___default()(component, {VBtn: vuetify_lib_components_VBtn__WEBPACK_IMPORTED_MODULE_4__.default,VIcon: vuetify_lib_components_VIcon__WEBPACK_IMPORTED_MODULE_5__.default,VList: vuetify_lib_components_VList__WEBPACK_IMPORTED_MODULE_6__.default,VListItem: vuetify_lib_components_VList__WEBPACK_IMPORTED_MODULE_7__.default,VListItemContent: vuetify_lib_components_VList__WEBPACK_IMPORTED_MODULE_8__.VListItemContent,VListItemIcon: vuetify_lib_components_VList__WEBPACK_IMPORTED_MODULE_9__.default,VListItemTitle: vuetify_lib_components_VList__WEBPACK_IMPORTED_MODULE_8__.VListItemTitle,VMenu: vuetify_lib_components_VMenu__WEBPACK_IMPORTED_MODULE_10__.default})
+
+_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3___default()(component, {VBtn: vuetify_lib_components_VBtn__WEBPACK_IMPORTED_MODULE_4__.default,VDivider: vuetify_lib_components_VDivider__WEBPACK_IMPORTED_MODULE_5__.default,VIcon: vuetify_lib_components_VIcon__WEBPACK_IMPORTED_MODULE_6__.default,VList: vuetify_lib_components_VList__WEBPACK_IMPORTED_MODULE_7__.default,VListItem: vuetify_lib_components_VList__WEBPACK_IMPORTED_MODULE_8__.default,VListItemContent: vuetify_lib_components_VList__WEBPACK_IMPORTED_MODULE_9__.VListItemContent,VListItemIcon: vuetify_lib_components_VList__WEBPACK_IMPORTED_MODULE_10__.default,VListItemTitle: vuetify_lib_components_VList__WEBPACK_IMPORTED_MODULE_9__.VListItemTitle,VMenu: vuetify_lib_components_VMenu__WEBPACK_IMPORTED_MODULE_11__.default})
 
 
 /* hot reload */
