@@ -1,6 +1,6 @@
 <template>
     <v-container fluid>
-        <h1>Media</h1>
+        <h1>test</h1>
     </v-container>
 </template>
 

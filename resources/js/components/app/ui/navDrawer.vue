@@ -1,5 +1,5 @@
 <template>
-    <v-navigation-drawer v-model="drawer" expand-on-hover app>
+    <v-navigation-drawer v-model="drawer" :expand-on-hover="false" app>
         <!-- Card -->
         <v-list-item class="px-2">
             <v-list-item-avatar>
@@ -9,16 +9,19 @@
 
             <v-list-item-title>John Leider</v-list-item-title>
 
-            <v-btn icon>
-                <v-icon>mdi-account</v-icon>
-            </v-btn>
+            <account-menu></account-menu>
         </v-list-item>
 
         <v-divider></v-divider>
 
         <v-list dense nav>
             <v-list-item-group v-model="selected">
-                <v-list-item v-for="item in items" :key="item.title" link>
+                <v-list-item
+                    link
+                    v-for="item in items"
+                    :key="item.title"
+                    @click="goto(item.route)"
+                >
                     <v-list-item-icon>
                         <v-icon>{{ item.icon }}</v-icon>
                     </v-list-item-icon>
@@ -34,8 +37,10 @@
 
 <script>
 import { bus } from "../../../app";
+import AccountMenu from "./accountMenu";
 export default {
     props: [],
+    components: { AccountMenu },
     data: () => ({
         selected: 0,
         drawer: true,
@@ -43,30 +48,36 @@ export default {
             {
                 title: "Portfolio",
                 icon: "mdi-view-dashboard",
-                route: "app/portfolio"
+                route: "appPortfolio"
             },
             {
-                title: "Archive",
-                icon: "mdi-archive",
-                route: "app/archive"
+                title: "Media",
+                icon: "mdi-camera-iris",
+                route: "appMedia"
             },
             {
                 title: "Settings",
                 icon: "mdi-cog",
-                route: "app/settings"
+                route: "appSettings"
             },
             {
                 title: "Tests",
                 icon: "mdi-test-tube",
-                route: "app/test"
+                route: "appTest"
             }
         ]
     }),
-    methods: {},
+    methods: {
+        goto(route) {
+            if (this.$route.name == route) return;
+            this.$router.push({ name: route });
+        }
+    },
     created() {
         bus.$on("drawer:toggle", () => {
             this.drawer = !this.drawer;
         });
+        bus.$on("go:to", this.goto);
     }
 };
 </script>

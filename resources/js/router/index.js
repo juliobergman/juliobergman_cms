@@ -7,12 +7,16 @@ import WebArchive from "../components/web/archive/container";
 import WebDevelopment from "../components/web/development/container";
 import WebContact from "../components/web/contact/container";
 // App
-import AppDashboard from "../components/app/dashboard/container";
+import AppAccount from "../components/app/account/container";
+import AppPortfolio from "../components/app/portfolio/container";
 import AppMedia from "../components/app/media/container";
+import AppSettings from "../components/app/settings/container";
+import AppTest from "../components/app/test/container";
 
 Vue.use(VueRouter);
 
 const routes = [
+    // Web
     {
         component: WebHome,
         name: "home",
@@ -39,16 +43,34 @@ const routes = [
     },
     // App
     {
-        component: AppDashboard,
-        name: "appDashboard",
-        path: "/app/",
-        meta: { section: "appDashboard" }
+        component: AppPortfolio,
+        name: "appPortfolio",
+        path: "/app",
+        meta: { section: "AppPortfolio" }
     },
     {
         component: AppMedia,
         name: "appMedia",
         path: "/app/media",
         meta: { section: "appMedia" }
+    },
+    {
+        component: AppSettings,
+        name: "appSettings",
+        path: "/app/settings",
+        meta: { section: "appSettings" }
+    },
+    {
+        component: AppTest,
+        name: "appTest",
+        path: "/app/test",
+        meta: { section: "appTest" }
+    },
+    {
+        component: AppAccount,
+        name: "appAccount",
+        path: "/app/account",
+        meta: { section: "appAccount" }
     }
 ];
 

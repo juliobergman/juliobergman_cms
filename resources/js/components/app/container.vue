@@ -3,7 +3,7 @@
         <nav-drawer></nav-drawer>
         <app-bar></app-bar>
         <v-main>
-            <!--  -->
+            <router-view :key="$route.path"></router-view>
         </v-main>
     </v-app>
 </template>

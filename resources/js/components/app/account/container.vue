@@ -1,7 +1,7 @@
 <template>
-    <v-main>
-        <h1>Dashboard</h1>
-    </v-main>
+    <v-container fluid>
+        <h1>User Profile</h1>
+    </v-container>
 </template>
 
 <script>

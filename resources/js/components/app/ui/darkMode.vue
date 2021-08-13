@@ -9,16 +9,16 @@
                 v-on="on"
                 @click="darkMode()"
             >
-                <v-icon v-if="dmode">
+                <v-icon small v-if="dmode">
                     mdi-white-balance-sunny
                 </v-icon>
-                <v-icon v-if="!dmode">
+                <v-icon small v-if="!dmode">
                     mdi-moon-waxing-crescent
                 </v-icon>
             </v-btn>
         </template>
-        <span v-if="dmode">Dark Mode</span>
-        <span v-if="!dmode">Light Mode</span>
+        <span v-if="!dmode">Dark Mode</span>
+        <span v-if="dmode">Light Mode</span>
     </v-tooltip>
 </template>
 
