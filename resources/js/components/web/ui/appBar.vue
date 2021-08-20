@@ -8,81 +8,46 @@
         dark
         flat
     >
-        <v-container :class="barAlign + ' d-flex pa-0'">
+        <v-container
+            :class="barAlign + ' d-md-flex justify-space-between pa-0'"
+        >
             <v-avatar size="36">
                 <v-img src="storage/ui/nav-logo.svg"></v-img>
             </v-avatar>
 
             <v-spacer></v-spacer>
-
-            <v-btn-toggle
+            <menu-desktop
                 v-if="!$isMobile()"
-                tile
-                group
-                background-color="transparent"
-                v-model="menuSelected"
-                borderless
-            >
-                <v-btn
-                    active-class="rounded"
-                    small
-                    text
-                    v-for="(item, idx) in items"
-                    :key="idx"
-                    @click="goToRoute(item)"
-                >
-                    <v-icon
-                        small
-                        v-if="item.icon"
-                        v-text="item.icon"
-                        class="mr-2"
-                    ></v-icon>
-                    <span v-if="item.text" v-text="item.text"></span>
-                </v-btn>
-            </v-btn-toggle>
+                :items="itms"
+                @menu:go="this.goToRoute"
+            ></menu-desktop>
+            <div v-if="false" class="d-none d-md-flex dm-btn">
+                <dark-mode-switch></dark-mode-switch>
+            </div>
         </v-container>
     </v-app-bar>
 </template>
 
 <script>
 import { bus } from "../../../app";
+import DarkModeSwitch from "../../app/ui/darkMode.vue";
+import MenuDesktop from "./menuDesktop.vue";
+import { items } from "./menuItems";
+console.log(items);
 export default {
+    components: { DarkModeSwitch, MenuDesktop },
     data: () => ({
         barColor: "app-bar-transparent",
         barAlign: "mt-auto mb-1 align-center",
         barScroll: false,
-        current: {},
-        menuSelected: 0,
-        items: [
-            {
-                text: "Projects",
-                icon: "mdi-view-dashboard",
-                to: "home",
-                hero: "100vh"
-            },
-            {
-                text: "Archive",
-                icon: "mdi-folder",
-                to: "archive",
-                hero: "0px"
-            },
-            {
-                text: "Development",
-                icon: "mdi-laptop",
-                to: "development",
-                hero: "0px"
-            },
-            {
-                text: "Contact",
-                icon: "mdi-account",
-                to: "contact",
-                hero: "0px"
-            }
-        ]
+        current: {}
     }),
     computed: {
         shrink() {
             return this.current.to != "home" ? false : true;
+        },
+        itms() {
+            return items;
         }
     },
     methods: {
@@ -110,9 +75,8 @@ export default {
     created() {
         this.appBarColor();
 
-        this.items.findIndex((element, index) => {
+        items.findIndex((element, index) => {
             if (element.to == this.$router.currentRoute.name) {
-                this.menuSelected = index;
                 this.current = element;
             }
         });
@@ -121,7 +85,6 @@ export default {
         window.onscroll = () => {
             this.appBarColor();
         };
-        console.log(this.current.hero);
     },
     watch: {
         current() {
@@ -132,6 +95,11 @@ export default {
 </script>
 
 <style scoped>
+.dm-btn {
+    position: fixed;
+    right: 0.7rem;
+    top: 1rem;
+}
 .app-bar-color {
     background-color: rgba(0, 0, 0, 0.7) !important;
 }

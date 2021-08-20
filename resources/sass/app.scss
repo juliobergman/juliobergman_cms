@@ -3,3 +3,41 @@
 
 // Variables
 @import "variables";
+
+// Transitions
+.fade-enter,
+.fade-leave-to {
+    opacity: 0;
+}
+
+.slide-enter,
+.slide-leave-to {
+    opacity: 0;
+    transform: translateY(-200vh);
+}
+.slide-left-leave-to,
+.slide-right-enter {
+    opacity: 0;
+    transform: translateX(-100vw);
+}
+.slide-right-leave-to,
+.slide-left-enter {
+    opacity: 0;
+    transform: translateX(100vw);
+}
+
+.t-hero-duration {
+    transition: all 0.5s ease-in;
+}
+.fade-enter-active,
+.fade-leave-active {
+    transition: all 1s ease;
+}
+.slide-enter-active,
+.slide-leave-active,
+.slide-right-enter-active,
+.slide-right-leave-active,
+.slide-left-enter-active,
+.slide-left-leave-active {
+    transition: all 0.5s ease-in-out;
+}

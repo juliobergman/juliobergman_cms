@@ -1,6 +1,6 @@
 <template>
     <v-main>
-        <h1>Archive</h1>
+        <h1>Lab</h1>
     </v-main>
 </template>
 
