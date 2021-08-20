@@ -2,7 +2,7 @@
     <v-container class="justify-end align-center pa-0 ma-0 d-flex">
         <v-btn-toggle
             mandatory
-            class="mr-2 d-none d-md-flex"
+            class="mr-2"
             tile
             group
             background-color="transparent"
@@ -16,7 +16,7 @@
                 text
                 v-for="(item, idx) in items"
                 :key="idx"
-                @click="$emit('menu:go', item)"
+                @click="goto(item)"
             >
                 <v-icon
                     small
@@ -32,6 +32,7 @@
 </template>
 
 <script>
+import { bus } from "../../../app";
 import DarkModeSwitch from "../../app/ui/darkMode.vue";
 export default {
     props: ["items"],
@@ -39,6 +40,11 @@ export default {
     data: () => ({
         selected: 0
     }),
+    methods: {
+        goto(item) {
+            bus.$emit("menu:go", item);
+        }
+    },
     created() {
         this.items.findIndex((element, index) => {
             if (element.to == this.$router.currentRoute.name) {

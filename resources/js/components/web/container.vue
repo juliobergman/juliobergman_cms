@@ -1,5 +1,6 @@
 <template>
     <v-app id="inspire">
+        <nav-drawer v-if="$isMobile()"></nav-drawer>
         <app-bar></app-bar>
         <hero></hero>
         <transition :name="transitionName" mode="out-in">
@@ -10,10 +11,12 @@
 
 <script>
 import { bus } from "../../app";
+import NavDrawer from "./ui/navDrawer.vue";
 import AppBar from "./ui/appBar.vue";
 import Hero from "./ui/hero.vue";
 export default {
     components: {
+        NavDrawer,
         AppBar,
         Hero
     },

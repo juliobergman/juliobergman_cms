@@ -7,35 +7,32 @@
         :class="barColor"
         dark
         flat
+        style="z-index: 6;"
     >
-        <v-container
-            :class="barAlign + ' d-md-flex justify-space-between pa-0'"
-        >
+        <v-container :class="barAlign + ' d-flex justify-space-between py-0'">
             <v-avatar size="36">
                 <v-img src="storage/ui/nav-logo.svg"></v-img>
             </v-avatar>
 
             <v-spacer></v-spacer>
-            <menu-desktop
-                v-if="!$isMobile()"
-                :items="itms"
-                @menu:go="this.goToRoute"
-            ></menu-desktop>
-            <div v-if="false" class="d-none d-md-flex dm-btn">
-                <dark-mode-switch></dark-mode-switch>
-            </div>
+
+            <menu-desktop v-if="!$isMobile()" :items="itms"></menu-desktop>
+            <menu-mobile v-if="$isMobile()" :items="itms"></menu-mobile>
         </v-container>
     </v-app-bar>
 </template>
 
 <script>
 import { bus } from "../../../app";
-import DarkModeSwitch from "../../app/ui/darkMode.vue";
 import MenuDesktop from "./menuDesktop.vue";
+import MenuMobile from "./menuMobile.vue";
 import { items } from "./menuItems";
 console.log(items);
 export default {
-    components: { DarkModeSwitch, MenuDesktop },
+    components: {
+        MenuDesktop,
+        MenuMobile
+    },
     data: () => ({
         barColor: "app-bar-transparent",
         barAlign: "mt-auto mb-1 align-center",
@@ -44,21 +41,17 @@ export default {
     }),
     computed: {
         shrink() {
-            return this.current.to != "home" ? false : true;
+            return this.current.to != "home" || this.$isMobile() ? false : true;
         },
         itms() {
             return items;
         }
     },
     methods: {
-        goToRoute(item) {
-            this.current = item;
-            this.$router.push({ name: item.to });
-            this.appBarColor();
-        },
         appBarColor() {
             if (
                 this.$router.currentRoute.name != "home" ||
+                this.$isMobile() ||
                 document.body.scrollTop > 505 ||
                 document.documentElement.scrollTop > 505
             ) {
@@ -79,6 +72,13 @@ export default {
             if (element.to == this.$router.currentRoute.name) {
                 this.current = element;
             }
+        });
+
+        // Bus
+        bus.$on("menu:go", item => {
+            this.current = item;
+            this.$router.push({ name: item.to });
+            this.appBarColor();
         });
     },
     mounted() {

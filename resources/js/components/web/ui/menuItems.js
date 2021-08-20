@@ -12,7 +12,7 @@ export const items = [
         hero: "0px"
     },
     {
-        text: "Development",
+        text: "Dev",
         icon: "mdi-laptop",
         to: "development",
         hero: "0px"

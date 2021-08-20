@@ -1,7 +1,7 @@
 <template>
     <v-sheet
         min-height="200px"
-        class="black t-hero-duration"
+        class="hero t-hero-duration"
         :height="height"
         dark
     >
@@ -41,5 +41,10 @@ export default {
     transform: translateZ(0);
     backface-visibility: hidden;
     perspective: 1000px;
+}
+
+.hero {
+    background-color: #000;
+    z-index: 5;
 }
 </style>
