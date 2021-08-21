@@ -9,7 +9,7 @@ import WebLab from "../components/web/lab/container";
 import WebContact from "../components/web/contact/container";
 // App
 import AppAccount from "../components/app/account/container";
-import AppPortfolio from "../components/app/portfolio/container";
+import AppContents from "../components/app/contents/container";
 import AppMedia from "../components/app/media/container";
 import AppSettings from "../components/app/settings/container";
 import AppTest from "../components/app/test/container";
@@ -56,10 +56,10 @@ const routes = [
         meta: { section: "appAccount" }
     },
     {
-        component: AppPortfolio,
-        name: "appPortfolio",
+        component: AppContents,
+        name: "appContents",
         path: "/app",
-        meta: { section: "appPortfolio" }
+        meta: { section: "appContents" }
     },
     {
         component: AppMedia,

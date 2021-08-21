@@ -1,7 +1,7 @@
 <template>
-    <v-main>
-        adsdnfskdn
-    </v-main>
+    <v-container fluid>
+        <h1>Media</h1>
+    </v-container>
 </template>
 
 <script>
