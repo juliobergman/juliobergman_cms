@@ -15,11 +15,9 @@ class SectionSeeder extends Seeder
     public function run()
     {
         $sections = [
-            [
-                'name' => 'home',
-                'name' => 'dev',
-                'name' => 'lab',
-            ],
+            ['name' => 'home'],
+            ['name' => 'dev'],
+            ['name' => 'lab'],
         ];
 
         DB::table('sections')->insert($sections);
