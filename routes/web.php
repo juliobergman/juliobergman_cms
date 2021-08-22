@@ -1,7 +1,9 @@
 <?php
 
-use App\Http\Controllers\TestsController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\MediaController;
+use App\Http\Controllers\TestsController;
+use App\Http\Controllers\UploadController;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,3 +36,12 @@ Route::prefix('/app')->group(function(){
 Route::get('/{any}', function () {
     return view('welcome');
 })->where('any', '.*');
+
+// Upload
+Route::post('/upload', [UploadController::class, 'upload']);
+Route::post('/upload/test', [UploadController::class, 'test']);
+
+// Media
+Route::prefix('app/media')->group(function(){
+    Route::post('/all', [MediaController::class, 'all']);
+});

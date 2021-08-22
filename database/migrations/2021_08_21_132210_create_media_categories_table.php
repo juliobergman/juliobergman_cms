@@ -18,11 +18,7 @@ class CreateMediaCategoriesTable extends Migration
 
             $table->string('name');
             $table->string('info')->nullable();
-            $table->unsignedBigInteger('oby', false)->default(0);
 
-            $table->unsignedBigInteger('cover', false)->default(1);
-
-            $table->enum('public', ['yes','no'])->default('no');
             $table->timestamps();
         });
     }
