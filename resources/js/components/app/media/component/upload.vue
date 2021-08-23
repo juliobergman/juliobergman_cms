@@ -33,7 +33,7 @@
                 </v-btn>
                 <v-spacer></v-spacer>
                 <v-btn
-                    :disabled="loading"
+                    :disabled="uploadDisabled"
                     :loading="loading"
                     text
                     @click="upload()"
@@ -52,6 +52,11 @@ export default {
         dialog: false,
         files: []
     }),
+    computed: {
+        uploadDisabled() {
+            return _.isEmpty(this.files);
+        }
+    },
     methods: {
         upload() {
             this.loading = true;
@@ -84,6 +89,13 @@ export default {
                     console.error(response.name);
                     console.error(response.message);
                 });
+        }
+    },
+    watch: {
+        dialog() {
+            if (this.dialog == false) {
+                this.files = [];
+            }
         }
     }
 };

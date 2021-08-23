@@ -4,6 +4,11 @@
 // Variables
 @import "variables";
 
+// Misc
+.cursor-pointer:hover {
+    cursor: pointer;
+}
+
 // Transitions
 .fade-enter,
 .fade-leave-to {

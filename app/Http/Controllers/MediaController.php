@@ -9,10 +9,16 @@ class MediaController extends Controller
 {
     public function all(Request $request)
     {
-        if ($request->category) {
-            return Media::where('category_id', $request->category)->get();
-        } else {
-            return Media::all();
-        }
+
+        $media = Media::query();
+        if ($request->category) { $media->where('category_id', $request->category)->get(); }
+
+
+        $media->orderBy('oby');
+
+
+        return $media->get();
+
+
     }
 }

@@ -1,3 +1,7 @@
+.cursor-pointer:hover {
+  cursor: pointer;
+}
+
 .fade-enter,
 .fade-leave-to {
   opacity: 0;
