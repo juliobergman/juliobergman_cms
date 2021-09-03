@@ -74,7 +74,7 @@ export default {
             });
 
             axios
-                .post("/upload", formData, headers)
+                .post("/api/upload", formData, headers)
                 .then(response => {
                     if (response.status == "200") {
                         this.files = [];

@@ -37,11 +37,11 @@ Route::get('/{any}', function () {
     return view('welcome');
 })->where('any', '.*');
 
-// Upload
-Route::post('/upload', [UploadController::class, 'upload']);
-Route::post('/upload/test', [UploadController::class, 'test']);
+// // Upload
+// Route::post('/upload', [UploadController::class, 'upload']);
+// Route::post('/upload/test', [UploadController::class, 'test']);
 
-// Media
-Route::prefix('app/media')->group(function(){
-    Route::post('/all', [MediaController::class, 'all']);
-});
+// // Media
+// Route::prefix('app/media')->group(function(){
+//     Route::post('/all', [MediaController::class, 'all']);
+// });

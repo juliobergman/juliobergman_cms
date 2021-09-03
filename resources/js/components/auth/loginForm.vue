@@ -73,19 +73,23 @@ export default {
         login() {
             this.loading = true;
             if (this.validate()) {
-                axios
-                    .post("login", this.user)
-                    .then(response => {
-                        if (response.status === 200) {
-                            window.location.replace("/app");
-                        }
-                    })
-                    .catch(res => {
-                        console.error(res);
-                        let error = JSON.parse(res.request.response);
-                        this.error = error.errors.email[0];
-                        setTimeout(() => (this.loading = false), 1000);
-                    });
+                axios.get("/sanctum/csrf-cookie").then(response => {
+                    if (response.status == 204) {
+                        axios
+                            .post("login", this.user)
+                            .then(response => {
+                                if (response.status === 200) {
+                                    window.location.replace("/app");
+                                }
+                            })
+                            .catch(res => {
+                                console.error(res);
+                                let error = JSON.parse(res.request.response);
+                                this.error = error.errors.email[0];
+                                setTimeout(() => (this.loading = false), 1000);
+                            });
+                    }
+                });
             } else {
                 setTimeout(() => (this.loading = false), 1000);
             }

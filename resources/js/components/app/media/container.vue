@@ -1,63 +1,121 @@
 <template>
     <v-container fluid>
         <v-toolbar dense flat>
-            <v-toolbar-title>Media</v-toolbar-title>
-
+            <v-select
+                v-model="category"
+                :items="categories"
+                item-text="name"
+                item-value="id"
+                hide-details
+                hide-selected
+                flat
+                solo
+                dense
+                :append-icon="null"
+                @change="getMedia()"
+                class="title-select"
+            >
+                <template slot="selection" slot-scope="data">
+                    <span class="text-button">{{ data.item.name }}</span>
+                </template>
+            </v-select>
             <v-spacer></v-spacer>
-
+            <v-slide-x-reverse-transition>
+                <v-btn v-show="btnSave" icon @click="saveOrder()">
+                    <v-icon>mdi-content-save</v-icon>
+                </v-btn>
+            </v-slide-x-reverse-transition>
             <upload-dialog @update:done="getMedia()" />
         </v-toolbar>
-        <v-divider></v-divider>
 
-        <v-row class="mt-4">
-            <v-col cols="6" sm="2" v-for="(item, idx) in media" :key="idx">
-                <v-skeleton-loader type="image" :loading="!loaded">
+        <draggable v-model="media" handle=".handle" @change="btnSave = true">
+            <transition-group tag="div" class="row mt-4">
+                <v-col
+                    cols="6"
+                    sm="2"
+                    v-for="(item, idx) in media"
+                    :key="item.id"
+                >
                     <v-hover v-slot:default="{ hover }">
-                        <v-card
-                            flat
-                            :elevation="hover ? 3 : 0"
-                            class="cursor-pointer"
-                            @click="show(item)"
-                        >
+                        <v-card flat class="cursor-pointer" @click="show(item)">
                             <v-img :src="item.thumbnail" :aspect-ratio="1 / 1">
                                 <v-fade-transition>
                                     <v-container
                                         fluid
-                                        v-if="false"
-                                        class="d-flex align-start justify-end pa-0 ma-0 img-overlay cursor-pointer"
+                                        v-if="hover"
+                                        class="d-flex pa-0 ma-0 img-overlay cursor-pointer"
                                     >
-                                        <v-icon light class="mr-3 mt-2">
-                                            mdi-eye
+                                        <v-icon
+                                            dark
+                                            class="mb-auto mt-2 ml-2 mr-auto cursor-all-scroll handle"
+                                            style="opacity: 0.6"
+                                        >
+                                            <!-- mdi-checkbox-blank-circle-outline -->
+                                            mdi-cursor-move
                                         </v-icon>
                                     </v-container>
                                 </v-fade-transition>
                             </v-img>
                         </v-card>
                     </v-hover>
-                </v-skeleton-loader>
-            </v-col>
-        </v-row>
+                </v-col>
+            </transition-group>
+        </draggable>
+        <media-dialog
+            v-model="showMediaDialog"
+            :media="itemMediaDialog"
+            :categories="categories"
+            @update="itemMediaDialog = $event"
+            @saved="getMedia()"
+        />
     </v-container>
 </template>
 
 <script>
+import mediaDialog from "./component/mediaFile.vue";
 import UploadDialog from "./component/upload.vue";
+import draggable from "vuedraggable";
 export default {
-    components: { UploadDialog },
+    components: { draggable, UploadDialog, mediaDialog },
     data: () => ({
         loaded: false,
-        category: null,
+        btnSave: false,
+        showMediaDialog: false,
+        itemMediaDialog: {},
+        category: 1,
         categories: [],
-        media: []
+        drag: false,
+        dragging: false,
+        edit: false,
+        media: [],
+        categories: []
     }),
     methods: {
+        getMediaCategories() {
+            this.loaded = false;
+            let postData = {
+                public: null
+            };
+            axios
+                .post("/api/media/categories", postData)
+                .then(response => {
+                    if (response.status == 200) {
+                        this.categories = response.data;
+                        this.loaded = true;
+                    }
+                })
+                .catch(response => {
+                    console.error(response.name);
+                    console.error(response.message);
+                });
+        },
         getMedia() {
             this.loaded = false;
             let postData = {
                 category: this.category
             };
             axios
-                .post("media/all", postData)
+                .post("/api/media", postData)
                 .then(response => {
                     if (response.status == 200) {
                         this.media = response.data;
@@ -70,22 +128,42 @@ export default {
                 });
         },
         show(item) {
-            console.log("show", item);
+            this.itemMediaDialog = item;
+            this.showMediaDialog = true;
+        },
+        saveOrder() {
+            this.loaded = false;
+            axios
+                .post("/api/media/update/bulk", this.media)
+                .then(response => {
+                    if (response.status == 200) {
+                        this.btnSave = false;
+                        this.loaded = true;
+                    }
+                })
+                .catch(response => {
+                    console.error(response.name);
+                    console.error(response.message);
+                });
         }
     },
     created() {
+        this.getMediaCategories();
         this.getMedia();
     }
 };
 </script>
 
-<style scoped>
+<style>
+.title-select .v-input__slot {
+    padding: 0 0px !important;
+    background: none !important;
+    width: fit-content;
+    block-size: fit-content;
+}
 .img-overlay {
     height: 100%;
     width: 100%;
-    background: rgba(0, 0, 0, 0.1);
-}
-.img-overlay div {
-    width: 100%;
+    background: rgba(0, 0, 0, 0.5);
 }
 </style>
