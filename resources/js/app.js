@@ -9,7 +9,7 @@ window.axios.defaults.headers.common["Accept"] = "application/json";
 import "@mdi/font/css/materialdesignicons.css";
 import Vue from "vue";
 import router from "./router";
-
+import store from "./store";
 // Plugins
 import vuetify from "../plugins/vuetify";
 import VueMobileDetection from "vue-mobile-detection";
@@ -25,6 +25,7 @@ import ViewLogin from "./components/auth/login";
 import AppContainer from "./components/app/container";
 
 const app = new Vue({
+    store,
     router,
     vuetify,
     components: { GuestContainer, ViewLogin, AppContainer },
