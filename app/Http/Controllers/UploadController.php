@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Media;
+use App\Models\UserData;
 use Illuminate\Http\File;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -64,5 +65,45 @@ class UploadController extends Controller
         }
 
         return new JsonResponse(['message' => 'Success'], 200);
+    }
+
+    public function avatar(Request $request)
+    {
+
+        // Validation
+        $this->validate($request, [
+            'image' => 'required',
+            'image.*' => 'mimes:png,jpg,jpeg'
+        ]);
+        $user_id = $request->user()->id;
+        // $user_id = 1;
+
+        // Delete Old Avatar
+        $oldpath = UserData::select('profile_pic')->where('user_id', $user_id)->first();
+        $deletepath = str_replace('/storage/', '/public/', $oldpath->profile_pic);
+        $factory = strstr($deletepath, '/factory/');
+        if(!$factory){
+            Storage::delete($deletepath);
+        };
+        // Upload New Avatar
+        $file = $request->file('image');
+        $original_filename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+        $random_number = rand(1,5000);
+        $hash = hash('md5', $original_filename.time().$random_number);
+
+        $ext = 'jpg';
+        $img = Image::make($file->getRealPath());
+        $name = $hash.'.'.$ext;
+        $path = storage_path('app/public/avatars/'.$user_id.'/'.$name);
+        $img->fit(800, 800, function ($constraint) {
+            $constraint->upsize();
+        });
+        $img->save($path, 60, $ext);
+        $newpath = '/storage/avatars/'.$user_id.'/'.$name;
+        $update = array('profile_pic' => $newpath);
+        UserData::where('user_id', $user_id)->update($update);
+        // Response
+        return new JsonResponse(['message' => 'Success', 'path' => $newpath], 200);
+
     }
 }

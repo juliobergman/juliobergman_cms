@@ -2,8 +2,10 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\UploadController;
+use App\Http\Controllers\CountryController;
 use App\Http\Controllers\MediaCategoryController;
 
 /*
@@ -21,8 +23,14 @@ use App\Http\Controllers\MediaCategoryController;
 //     return $request->user();
 // });
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+
+
+// User
+Route::get('/user', [UserController::class, 'user']);
+// Route::middleware('auth:sanctum')->get('/user', [UserController::class, 'user']);
+Route::prefix('user')->group(function () {
+    Route::put('/update', [UserController::class, 'update']);
+
 });
 
 // Media
@@ -36,3 +44,7 @@ Route::prefix('media')->group(function () {
 
 // Upload
 Route::middleware('auth:sanctum')->post('/upload', [UploadController::class, 'upload']);
+Route::post('/upload/avatar', [UploadController::class, 'avatar']);
+
+// Resources
+Route::get('/countries', [CountryController::class, 'countries']);

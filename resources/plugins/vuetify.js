@@ -11,6 +11,7 @@ const opts = {
             light: {
                 appbar: "#FFFFFF",
                 primary: "#4285F4",
+                // primary: "#9C27B0",
                 accent: "#00B6FF",
                 success: "#5CE537",
                 info: "#3ED1F9",
@@ -21,6 +22,7 @@ const opts = {
             dark: {
                 appbar: "#272727",
                 primary: "#4285F4",
+                // primary: "#9C27B0",
                 accent: "#00B6FF",
                 success: "#5CE537",
                 info: "#3ED1F9",

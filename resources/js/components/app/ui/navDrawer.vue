@@ -1,16 +1,7 @@
 <template>
     <v-navigation-drawer v-model="drawer" :expand-on-hover="false" app>
         <!-- Card -->
-        <v-list-item class="px-2">
-            <v-list-item-avatar>
-                <v-img src="storage/factory/3.jpg"> </v-img>
-            </v-list-item-avatar>
-
-            <v-list-item-title>John Leider</v-list-item-title>
-
-            <account-menu></account-menu>
-        </v-list-item>
-
+        <drawer-user-card />
         <v-divider></v-divider>
 
         <v-list dense nav>
@@ -36,10 +27,10 @@
 
 <script>
 import { bus } from "../../../app";
-import AccountMenu from "./accountMenu";
+import DrawerUserCard from "./drawerUserCard.vue";
 export default {
     props: [],
-    components: { AccountMenu },
+    components: { DrawerUserCard },
     data: () => ({
         selected: null,
         drawer: true,

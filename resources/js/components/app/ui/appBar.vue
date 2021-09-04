@@ -3,6 +3,14 @@
         <v-app-bar-nav-icon @click.stop="draw()"></v-app-bar-nav-icon>
         <v-spacer></v-spacer>
         <dark-mode-switch></dark-mode-switch>
+        <v-progress-linear
+            :active="$store.state.loading"
+            :indeterminate="$store.state.loading"
+            absolute
+            bottom
+            height="2"
+            color="primary"
+        ></v-progress-linear>
     </v-app-bar>
 </template>
 
