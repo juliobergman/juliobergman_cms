@@ -252,6 +252,7 @@ export default {
             document.getElementById("image").click();
         },
         changeAvatar(e) {
+            this.$store.commit("loading", true);
             let formData = new FormData();
 
             formData.append("image", e);
@@ -266,12 +267,12 @@ export default {
             axios
                 .post("/api/upload/avatar", formData, axiosHeaders)
                 .then(response => {
-                    console.log(response);
-                    if (response.status == "200") {
-                        this.getUser();
-                    }
+                    this.$store.dispatch("user/setUser");
+                    this.getUser();
+                    this.$store.commit("loading", false);
                 })
                 .catch(error => {
+                    console.log("esdsfsdhfdshk");
                     console.error(error);
                     console.error(error.response);
                 });

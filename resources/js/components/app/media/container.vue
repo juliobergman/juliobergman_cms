@@ -78,7 +78,6 @@ import draggable from "vuedraggable";
 export default {
     components: { draggable, UploadDialog, mediaDialog },
     data: () => ({
-        loaded: false,
         btnSave: false,
         showMediaDialog: false,
         itemMediaDialog: {},
@@ -92,7 +91,7 @@ export default {
     }),
     methods: {
         getMediaCategories() {
-            this.loaded = false;
+            this.$store.commit("loading", true);
             let postData = {
                 public: null
             };
@@ -101,7 +100,7 @@ export default {
                 .then(response => {
                     if (response.status == 200) {
                         this.categories = response.data;
-                        this.loaded = true;
+                        this.$store.commit("loading", false);
                     }
                 })
                 .catch(response => {
@@ -110,7 +109,7 @@ export default {
                 });
         },
         getMedia() {
-            this.loaded = false;
+            this.$store.commit("loading", true);
             let postData = {
                 category: this.category
             };
@@ -119,7 +118,7 @@ export default {
                 .then(response => {
                     if (response.status == 200) {
                         this.media = response.data;
-                        this.loaded = true;
+                        this.$store.commit("loading", false);
                     }
                 })
                 .catch(response => {
@@ -132,13 +131,13 @@ export default {
             this.showMediaDialog = true;
         },
         saveOrder() {
-            this.loaded = false;
+            this.$store.commit("loading", true);
             axios
                 .post("/api/media/update/bulk", this.media)
                 .then(response => {
                     if (response.status == 200) {
                         this.btnSave = false;
-                        this.loaded = true;
+                        this.$store.commit("loading", false);
                     }
                 })
                 .catch(response => {

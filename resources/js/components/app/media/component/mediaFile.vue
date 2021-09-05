@@ -6,7 +6,26 @@
         fullscreen
     >
         <v-card flat tile>
+            <v-progress-linear
+                :active="$store.state.loading"
+                :indeterminate="$store.state.loading"
+                absolute
+                top
+                height="2"
+                color="primary"
+            ></v-progress-linear>
             <v-container fluid>
+                <v-btn
+                    small
+                    class="btn-close"
+                    icon
+                    @click="close()"
+                    :dark="$isMobile()"
+                >
+                    <v-icon>
+                        mdi-close
+                    </v-icon>
+                </v-btn>
                 <v-row>
                     <!-- Image Column -->
                     <v-col order="0" order-md="0" cols="12" md="7">
@@ -30,20 +49,31 @@
                                         ></v-progress-circular>
                                     </v-row>
                                 </template>
-
-                                <v-container
-                                    fluid
-                                    fill-height
-                                    class="align-end justify-end"
+                                <v-row
+                                    v-if="$store.state.loading"
+                                    class="fill-height ma-0"
+                                    align="center"
+                                    justify="center"
+                                >
+                                    <v-progress-circular
+                                        indeterminate
+                                        color="grey lighten-5"
+                                    ></v-progress-circular>
+                                </v-row>
+                                <v-row
+                                    v-if="!$store.state.loading"
+                                    class="fill-height ma-0"
+                                    align="end"
+                                    justify="end"
                                 >
                                     <v-switch
                                         dark
                                         inset
                                         v-model="imgContain"
                                         label="Contain"
-                                        class="mr-3"
+                                        class="mr-6"
                                     ></v-switch>
-                                </v-container>
+                                </v-row>
                             </v-img>
                         </v-card>
                     </v-col>
@@ -82,12 +112,14 @@
                             </v-card-text>
 
                             <v-card-actions>
-                                <v-btn @click="close()" text color="danger">
-                                    cancel
+                                <v-btn text @click="destroy()" color="danger">
+                                    delete
                                 </v-btn>
                                 <v-spacer></v-spacer>
-
-                                <v-btn @click="save()" text>
+                                <v-btn text @click="replace()">
+                                    replace
+                                </v-btn>
+                                <v-btn text @click="save()">
                                     save
                                 </v-btn>
                             </v-card-actions>
@@ -96,11 +128,27 @@
                 </v-row>
             </v-container>
         </v-card>
+        <confirm ref="confirm"></confirm>
+        <alert ref="alert"></alert>
+        <v-file-input
+            v-show="false"
+            id="image"
+            name="image"
+            ref="image"
+            @change="replaceImage"
+        ></v-file-input>
     </v-dialog>
 </template>
 
 <script>
+import confirm from "../../ui/alert/confirm.vue";
+import alert from "../../ui/alert/alert.vue";
+
 export default {
+    components: {
+        confirm,
+        alert
+    },
     props: {
         value: Boolean,
         media: Object,
@@ -147,13 +195,75 @@ export default {
     },
     methods: {
         save() {
+            this.$store.commit("loading", true);
             axios
                 .post("/api/media/store", this.item)
                 .then(() => {
                     this.$emit("saved");
+                    this.$store.commit("loading", false);
                 })
                 .catch(response => {
                     console.error(response);
+                });
+        },
+        replace() {
+            document.getElementById("image").click();
+        },
+        replaceImage(e) {
+            this.$store.commit("loading", true);
+            let formData = new FormData();
+
+            formData.append("image", e);
+            formData.append("id", this.media.id);
+
+            let axiosHeaders = {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                    Accept: "application/json"
+                }
+            };
+
+            axios
+                .post("/api/upload/replace", formData, axiosHeaders)
+                .then(response => {
+                    this.item = response.data;
+                    this.$emit("saved");
+                    this.$store.commit("loading", false);
+                })
+                .catch(error => {
+                    console.error(error);
+                    console.error(error.response);
+                });
+        },
+        destroy() {
+            this.$refs.confirm
+                .open(null, "Are you sure you want to delete this image?", {
+                    color: "danger"
+                })
+                .then(confirmResponse => {
+                    if (confirmResponse) {
+                        this.$store.commit("loading", true);
+                        axios
+                            .delete("/api/upload/destroy", { data: this.media })
+                            .then(response => {
+                                if (response.status == 200) {
+                                    this.$refs.alert
+                                        .open(null, response.data.message)
+                                        .then(() => {
+                                            this.$emit("saved");
+                                            this.close();
+                                            this.$store.commit(
+                                                "loading",
+                                                false
+                                            );
+                                        });
+                                }
+                            })
+                            .catch(error => {
+                                console.error(error);
+                                console.error(error.response);
+                            });
+                    }
                 });
         },
         close() {
@@ -173,4 +283,11 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped>
+.btn-close {
+    z-index: 10;
+    position: absolute;
+    right: 12px;
+    top: 12px;
+}
+</style>

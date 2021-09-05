@@ -6,7 +6,7 @@
             </v-btn>
         </template>
 
-        <v-card :loading="loading">
+        <v-card :loading="$store.state.loading">
             <v-card-title>
                 File Upload
             </v-card-title>
@@ -28,13 +28,17 @@
             </v-card-text>
 
             <v-card-actions>
-                <v-btn :disabled="loading" text @click="dialog = false">
+                <v-btn
+                    :disabled="$store.state.loading"
+                    text
+                    @click="dialog = false"
+                >
                     Cancel
                 </v-btn>
                 <v-spacer></v-spacer>
                 <v-btn
                     :disabled="uploadDisabled"
-                    :loading="loading"
+                    :loading="$store.state.loading"
                     text
                     @click="upload()"
                 >
@@ -48,7 +52,6 @@
 <script>
 export default {
     data: () => ({
-        loading: false,
         dialog: false,
         files: []
     }),
@@ -59,7 +62,7 @@ export default {
     },
     methods: {
         upload() {
-            this.loading = true;
+            this.$store.commit("loading", true);
             let headers = {
                 headers: {
                     "Content-Type": "multipart/form-data",
@@ -78,16 +81,14 @@ export default {
                 .then(response => {
                     if (response.status == "200") {
                         this.files = [];
-                        this.loading = false;
+                        this.$store.commit("loading", false);
                         this.$emit("update:done");
-                        setTimeout(() => {
-                            this.dialog = false;
-                        }, 200);
+                        this.dialog = false;
                     }
                 })
-                .catch(response => {
-                    console.error(response.name);
-                    console.error(response.message);
+                .catch(error => {
+                    console.error(error);
+                    console.error(error.response);
                 });
         }
     },
