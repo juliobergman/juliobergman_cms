@@ -33,7 +33,7 @@
                 <v-col
                     cols="6"
                     sm="2"
-                    v-for="(item, idx) in media"
+                    v-for="(item, idx) in $store.state.media.data"
                     :key="item.id"
                 >
                     <v-hover v-slot:default="{ hover }">
@@ -51,7 +51,7 @@
                                             style="opacity: 0.6"
                                         >
                                             <!-- mdi-checkbox-blank-circle-outline -->
-                                            mdi-cursor-move
+                                            mdi-fit-to-page
                                         </v-icon>
                                     </v-container>
                                 </v-fade-transition>
@@ -110,6 +110,7 @@ export default {
         },
         getMedia() {
             this.$store.commit("loading", true);
+            this.$store.dispatch("media/setMedia");
             let postData = {
                 category: this.category
             };

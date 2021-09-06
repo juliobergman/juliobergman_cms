@@ -5,7 +5,10 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\UploadController;
+use App\Http\Controllers\ContentController;
 use App\Http\Controllers\CountryController;
+use App\Http\Controllers\SectionController;
+use App\Http\Controllers\ConnectionController;
 use App\Http\Controllers\MediaCategoryController;
 
 /*
@@ -47,6 +50,16 @@ Route::middleware('auth:sanctum')->post('/upload', [UploadController::class, 'up
 Route::post('/upload/avatar', [UploadController::class, 'avatar']);
 Route::post('/upload/replace', [UploadController::class, 'replace']);
 Route::delete('/upload/destroy', [UploadController::class, 'destroy']);
+
+// Content
+Route::get('/sections', [SectionController::class, 'sections']);
+Route::post('/content', [ContentController::class, 'content']);
+Route::post('/content/update', [ContentController::class, 'update']);
+Route::post('/connections', [ConnectionController::class, 'connections']);
+
+
+
+
 
 // Resources
 Route::get('/countries', [CountryController::class, 'countries']);

@@ -9,6 +9,9 @@
 //     border-style: none !important;
 // }
 // Misc
+.overlay {
+    background: rgba($color: #000000, $alpha: 0.5);
+}
 .cursor-alias {
     cursor: alias;
 }

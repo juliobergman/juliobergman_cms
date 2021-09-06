@@ -36,7 +36,7 @@ class UserController extends Controller
         // Selects
         $user->select($data_select);
         // Join
-        $user->join('user_data', 'users.id', '=', 'user_data.id');
+        $user->join('user_data', 'users.id', '=', 'user_data.user_id');
         $user->join('countries', 'user_data.country', '=', 'countries.iso2');
         return $user->first();
     }

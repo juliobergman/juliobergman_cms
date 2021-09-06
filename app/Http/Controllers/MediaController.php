@@ -16,8 +16,10 @@ class MediaController extends Controller
     public function all(Request $request)
     {
         $media = Media::query();
-        if ($request->category) { $media->where('category_id', $request->category)->get(); }
-        $media->orderBy('oby');
+        if ($request->category) {
+            $media->where('category_id', $request->category)->get();
+            $media->orderBy('oby');
+        }
         return $media->get();
     }
     public function bulkUpsert(Request $request)
