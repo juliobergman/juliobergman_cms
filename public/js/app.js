@@ -2611,36 +2611,40 @@ __webpack_require__.r(__webpack_exports__);
       content: []
     };
   },
-  computed: {// section() {
-    //     let split = this.tab_section.split("-");
-    //     return split[1];
-    // }
+  computed: {
+    currentSection: function currentSection() {
+      var _this = this;
+
+      return this.sections.find(function (e) {
+        return e.id == _this.section;
+      });
+    }
   },
   methods: {
     getSections: function getSections() {
-      var _this = this;
+      var _this2 = this;
 
       this.$store.commit("loading", true);
       axios.get("/api/sections").then(function (response) {
-        _this.tabs = response.data;
-        _this.sections = response.data;
+        _this2.tabs = response.data;
+        _this2.sections = response.data;
 
-        _this.$store.commit("loading", false);
+        _this2.$store.commit("loading", false);
       })["catch"](function (error) {
         console.error(error);
         console.error(error.response);
       });
     },
     getContents: function getContents() {
-      var _this2 = this;
+      var _this3 = this;
 
       this.$store.commit("loading", true);
       axios.post("/api/connections", {
         section: this.section
       }).then(function (response) {
-        _this2.content = response.data;
+        _this3.content = response.data;
 
-        _this2.$store.commit("loading", false);
+        _this3.$store.commit("loading", false);
       })["catch"](function (error) {
         console.error(error);
         console.error(error.response);
@@ -32645,75 +32649,82 @@ var render = function() {
     "v-container",
     { attrs: { fluid: "" } },
     [
-      _c(
-        "v-toolbar",
-        { attrs: { dense: "", flat: "" } },
-        [
-          _c("menu-select", {
-            attrs: {
-              items: _vm.sections,
-              btnText: _vm.sections[_vm.section - 1]["name"]
-            },
-            model: {
-              value: _vm.section,
-              callback: function($$v) {
-                _vm.section = $$v
-              },
-              expression: "section"
-            }
-          }),
-          _vm._v(" "),
-          _c("v-spacer"),
-          _vm._v(" "),
-          _c("new-section", {
-            on: {
-              saved: function($event) {
-                return _vm.getSections()
-              }
-            }
-          }),
-          _vm._v(" "),
-          _c(
-            "v-tooltip",
-            {
-              attrs: { bottom: "" },
-              scopedSlots: _vm._u([
-                {
-                  key: "activator",
-                  fn: function(ref) {
-                    var on = ref.on
-                    var attrs = ref.attrs
-                    return [
-                      _c(
-                        "v-btn",
-                        _vm._g(
-                          _vm._b(
-                            { attrs: { icon: "" } },
-                            "v-btn",
-                            attrs,
-                            false
-                          ),
-                          on
-                        ),
-                        [
-                          _c("v-icon", [
-                            _vm._v(
-                              "\n                        mdi-view-grid-plus\n                    "
-                            )
-                          ])
-                        ],
-                        1
-                      )
-                    ]
+      _vm.currentSection
+        ? _c(
+            "v-toolbar",
+            { attrs: { dense: "", flat: "" } },
+            [
+              _c("menu-select", {
+                attrs: {
+                  items: _vm.sections,
+                  btnText: _vm.currentSection.name
+                },
+                model: {
+                  value: _vm.section,
+                  callback: function($$v) {
+                    _vm.section = $$v
+                  },
+                  expression: "section"
+                }
+              }),
+              _vm._v(" "),
+              _c("v-spacer"),
+              _vm._v(" "),
+              _c("new-section", {
+                on: {
+                  saved: function($event) {
+                    return _vm.getSections()
                   }
                 }
-              ])
-            },
-            [_vm._v(" "), _c("span", [_vm._v("New Content")])]
+              }),
+              _vm._v(" "),
+              _c(
+                "v-tooltip",
+                {
+                  attrs: { bottom: "" },
+                  scopedSlots: _vm._u(
+                    [
+                      {
+                        key: "activator",
+                        fn: function(ref) {
+                          var on = ref.on
+                          var attrs = ref.attrs
+                          return [
+                            _c(
+                              "v-btn",
+                              _vm._g(
+                                _vm._b(
+                                  { attrs: { icon: "" } },
+                                  "v-btn",
+                                  attrs,
+                                  false
+                                ),
+                                on
+                              ),
+                              [
+                                _c("v-icon", [
+                                  _vm._v(
+                                    "\n                        mdi-view-grid-plus\n                    "
+                                  )
+                                ])
+                              ],
+                              1
+                            )
+                          ]
+                        }
+                      }
+                    ],
+                    null,
+                    false,
+                    217551722
+                  )
+                },
+                [_vm._v(" "), _c("span", [_vm._v("New Content")])]
+              )
+            ],
+            1
           )
-        ],
-        1
-      ),
+        : _vm._e(),
       _vm._v(" "),
       _c(
         "draggable",

@@ -1,10 +1,10 @@
 <template>
     <v-container fluid>
-        <v-toolbar dense flat>
+        <v-toolbar dense flat v-if="currentSection">
             <menu-select
                 v-model="section"
                 :items="sections"
-                :btnText="sections[section - 1]['name']"
+                :btnText="currentSection.name"
             />
 
             <v-spacer></v-spacer>
@@ -76,10 +76,9 @@ export default {
         content: []
     }),
     computed: {
-        // section() {
-        //     let split = this.tab_section.split("-");
-        //     return split[1];
-        // }
+        currentSection() {
+            return this.sections.find(e => e.id == this.section);
+        }
     },
     methods: {
         getSections() {
