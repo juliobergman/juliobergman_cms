@@ -4628,7 +4628,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.img-overlay[data-v-862a0ba6] {\n    height: 100%;\n    width: 100%;\n    background: rgba(0, 0, 0, 0.1);\n}\n.img-overlay div[data-v-862a0ba6] {\n    width: 100%;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.img-overlay[data-v-862a0ba6] {\r\n    height: 100%;\r\n    width: 100%;\r\n    background: rgba(0, 0, 0, 0.1);\n}\n.img-overlay div[data-v-862a0ba6] {\r\n    width: 100%;\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -4652,7 +4652,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.custom-loader {\n    -webkit-animation: loader 1s infinite;\n            animation: loader 1s infinite;\n    display: flex;\n}\n@-webkit-keyframes loader {\nfrom {\n        transform: rotate(0);\n}\nto {\n        transform: rotate(360deg);\n}\n}\n@keyframes loader {\nfrom {\n        transform: rotate(0);\n}\nto {\n        transform: rotate(360deg);\n}\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.custom-loader {\r\n    -webkit-animation: loader 1s infinite;\r\n            animation: loader 1s infinite;\r\n    display: flex;\n}\n@-webkit-keyframes loader {\nfrom {\r\n        transform: rotate(0);\n}\nto {\r\n        transform: rotate(360deg);\n}\n}\n@keyframes loader {\nfrom {\r\n        transform: rotate(0);\n}\nto {\r\n        transform: rotate(360deg);\n}\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -4676,7 +4676,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.dm-btn[data-v-1072c7d7] {\n    position: fixed;\n    right: 0.7rem;\n    top: 1rem;\n}\n.app-bar-color[data-v-1072c7d7] {\n    background-color: rgba(0, 0, 0, 0.7) !important;\n}\n.app-bar-transparent[data-v-1072c7d7] {\n    background: rgba(0, 0, 0, 0) !important;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.dm-btn[data-v-1072c7d7] {\r\n    position: fixed;\r\n    right: 0.7rem;\r\n    top: 1rem;\n}\n.app-bar-color[data-v-1072c7d7] {\r\n    background-color: rgba(0, 0, 0, 0.7) !important;\n}\n.app-bar-transparent[data-v-1072c7d7] {\r\n    background: rgba(0, 0, 0, 0) !important;\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
