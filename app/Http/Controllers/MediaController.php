@@ -15,13 +15,25 @@ class MediaController extends Controller
     }
     public function all(Request $request)
     {
+
+        $records = $request->records;
+        if(!$records){ $records = 18; }
+
         $media = Media::query();
+        // return Media::simplePaginate(6);
         if ($request->category) {
-            $media->where('category_id', $request->category)->get();
-            $media->orderBy('oby');
+            $media->where('category_id', $request->category);
         }
-        return $media->get();
+        $media->orderBy('oby');
+        return $media->paginate($records);
+        // return $media->get();
     }
+
+    public function show(Request $request)
+    {
+        return Media::where('id', $request->id)->first();
+    }
+
     public function bulkUpsert(Request $request)
     {
         // Columns to Update
@@ -53,7 +65,8 @@ class MediaController extends Controller
             $update[$key]['updated_at'] = date(now());
         }
 
-        return DB::table('media')->upsert($update, ['id'], $columns);
+        $records = DB::table('media')->upsert($update, ['id'], $columns);
+        return new JsonResponse(['message' => 'Records Updated', 'data' => $update, 'count' => $records], 200);
     }
     public function store(Request $request)
     {

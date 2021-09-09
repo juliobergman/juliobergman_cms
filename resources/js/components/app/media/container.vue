@@ -1,24 +1,12 @@
 <template>
     <v-container fluid>
-        <v-toolbar dense flat>
-            <v-select
+        <v-toolbar dense flat v-if="currentCategory">
+            <menu-select
                 v-model="category"
                 :items="categories"
-                item-text="name"
-                item-value="id"
-                hide-details
-                hide-selected
-                flat
-                solo
-                dense
-                :append-icon="null"
-                @change="getMedia()"
-                class="title-select"
-            >
-                <template slot="selection" slot-scope="data">
-                    <span class="text-button">{{ data.item.name }}</span>
-                </template>
-            </v-select>
+                :btnText="currentCategory.name"
+                @input="menuChange"
+            />
             <v-spacer></v-spacer>
             <v-slide-x-reverse-transition>
                 <v-btn v-show="btnSave" icon @click="saveOrder()">
@@ -33,34 +21,32 @@
                 <v-col
                     cols="6"
                     sm="2"
-                    v-for="(item, idx) in $store.state.media.data"
+                    v-for="(item, idx) in media"
                     :key="item.id"
                 >
-                    <v-hover v-slot:default="{ hover }">
-                        <v-card flat class="cursor-pointer" @click="show(item)">
-                            <v-img :src="item.thumbnail" :aspect-ratio="1 / 1">
-                                <v-fade-transition>
-                                    <v-container
-                                        fluid
-                                        v-if="hover"
-                                        class="d-flex pa-0 ma-0 img-overlay cursor-pointer"
-                                    >
-                                        <v-icon
-                                            dark
-                                            class="mb-auto mt-2 ml-2 mr-auto cursor-all-scroll handle"
-                                            style="opacity: 0.6"
-                                        >
-                                            <!-- mdi-checkbox-blank-circle-outline -->
-                                            mdi-fit-to-page
-                                        </v-icon>
-                                    </v-container>
-                                </v-fade-transition>
-                            </v-img>
-                        </v-card>
-                    </v-hover>
+                    <media-thumbnail
+                        :aspectRatio="1 / 1"
+                        :media="item"
+                        :src="item.thumbnail"
+                        @click="show"
+                    />
                 </v-col>
             </transition-group>
         </draggable>
+
+        <v-footer padless absolute>
+            <v-card tile flat width="100%">
+                <v-pagination
+                    color="primary"
+                    v-model="page"
+                    :length="pageLength"
+                    total-visible="7"
+                    class="pagination"
+                    @input="getMedia"
+                ></v-pagination>
+            </v-card>
+        </v-footer>
+
         <media-dialog
             v-model="showMediaDialog"
             :media="itemMediaDialog"
@@ -72,23 +58,37 @@
 </template>
 
 <script>
-import mediaDialog from "./component/mediaFile.vue";
-import UploadDialog from "./component/upload.vue";
+import mediaThumbnail from "./components/mediaThumbnail.vue";
 import draggable from "vuedraggable";
+import mediaDialog from "./components/mediaDialog.vue";
+import uploadDialog from "./components/mediaUploadDialog.vue";
+import menuSelect from "../ui/menuSelect.vue";
 export default {
-    components: { draggable, UploadDialog, mediaDialog },
+    components: {
+        menuSelect,
+        draggable,
+        mediaThumbnail,
+        uploadDialog,
+        mediaDialog
+    },
     data: () => ({
         btnSave: false,
         showMediaDialog: false,
         itemMediaDialog: {},
         category: 1,
+        page: 1,
+        pageLength: 6,
         categories: [],
-        drag: false,
-        dragging: false,
-        edit: false,
-        media: [],
-        categories: []
+        media: []
     }),
+    computed: {
+        pageRecords() {
+            return this.$isMobile() ? 6 : 18;
+        },
+        currentCategory() {
+            return this.categories.find(e => e.id == this.category);
+        }
+    },
     methods: {
         getMediaCategories() {
             this.$store.commit("loading", true);
@@ -108,17 +108,23 @@ export default {
                     console.error(response.message);
                 });
         },
+        menuChange($event) {
+            this.page = 1;
+            sessionStorage.setItem("media_category", $event);
+            this.getMedia();
+        },
         getMedia() {
             this.$store.commit("loading", true);
-            this.$store.dispatch("media/setMedia");
             let postData = {
-                category: this.category
+                category: this.category,
+                records: this.pageRecords
             };
             axios
-                .post("/api/media", postData)
+                .post("/api/media?page=" + this.page, postData)
                 .then(response => {
                     if (response.status == 200) {
-                        this.media = response.data;
+                        this.media = response.data.data;
+                        this.pageLength = response.data.last_page;
                         this.$store.commit("loading", false);
                     }
                 })
@@ -128,11 +134,12 @@ export default {
                 });
         },
         show(item) {
-            this.itemMediaDialog = item;
+            this.itemMediaDialog = this.media.find(e => e.id == item);
             this.showMediaDialog = true;
         },
         saveOrder() {
             this.$store.commit("loading", true);
+
             axios
                 .post("/api/media/update/bulk", this.media)
                 .then(response => {
@@ -148,9 +155,13 @@ export default {
         }
     },
     created() {
+        if (sessionStorage.getItem("media_category")) {
+            this.category = sessionStorage.getItem("media_category");
+        }
         this.getMediaCategories();
         this.getMedia();
-    }
+    },
+    mounted() {}
 };
 </script>
 
@@ -165,5 +176,9 @@ export default {
     height: 100%;
     width: 100%;
     background: rgba(0, 0, 0, 0.5);
+}
+.pagination .v-pagination__navigation,
+.pagination .v-pagination__item {
+    box-shadow: none;
 }
 </style>

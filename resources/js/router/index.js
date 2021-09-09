@@ -12,7 +12,7 @@ import AppAccount from "../components/app/account/container";
 import AppContents from "../components/app/contents/container";
 import AppMedia from "../components/app/media/container";
 import AppSettings from "../components/app/settings/container";
-import AppTest from "../components/app/test/container";
+import AppTest from "../components/app/test/container.vue";
 
 Vue.use(VueRouter);
 

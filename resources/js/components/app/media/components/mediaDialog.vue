@@ -15,70 +15,20 @@
                 color="primary"
             ></v-progress-linear>
             <v-container fluid>
-                <v-btn
-                    small
-                    class="btn-close"
-                    icon
-                    @click="close()"
-                    :dark="$isMobile()"
-                >
-                    <v-icon>
-                        mdi-close
-                    </v-icon>
-                </v-btn>
                 <v-row>
                     <!-- Image Column -->
-                    <v-col order="0" order-md="0" cols="12" md="7">
-                        <v-card flat>
-                            <v-img
-                                class="blackBack"
-                                :contain="imgContain"
-                                aspect-ratio="1"
-                                :src="media.xlarge"
-                                :lazy-src="media.thumbnail"
-                            >
-                                <template v-slot:placeholder>
-                                    <v-row
-                                        class="fill-height ma-0"
-                                        align="center"
-                                        justify="center"
-                                    >
-                                        <v-progress-circular
-                                            indeterminate
-                                            color="grey lighten-5"
-                                        ></v-progress-circular>
-                                    </v-row>
-                                </template>
-                                <v-row
-                                    v-if="$store.state.loading"
-                                    class="fill-height ma-0"
-                                    align="center"
-                                    justify="center"
-                                >
-                                    <v-progress-circular
-                                        indeterminate
-                                        color="grey lighten-5"
-                                    ></v-progress-circular>
-                                </v-row>
-                                <v-row
-                                    v-if="!$store.state.loading"
-                                    class="fill-height ma-0"
-                                    align="end"
-                                    justify="end"
-                                >
-                                    <v-switch
-                                        dark
-                                        inset
-                                        v-model="imgContain"
-                                        label="Contain"
-                                        class="mr-6"
-                                    ></v-switch>
-                                </v-row>
-                            </v-img>
-                        </v-card>
+                    <v-col order="0" order-md="0" cols="12" md="6">
+                        <media-dialog-image
+                            :contain="imgContain"
+                            :src="media.fullsize"
+                            :lazySrc="media.thumbnail"
+                            btn-text="Replace"
+                            btn-icon="mdi-image-multiple-outline"
+                            @action="replace"
+                        />
                     </v-col>
                     <!-- Information Column -->
-                    <v-col order="1" order-md="1" cols="12" md="5">
+                    <v-col order="1" order-md="1" cols="12" md="6">
                         <v-card flat>
                             <v-card-text class="mb-3 mb-md-6">
                                 <v-select
@@ -102,22 +52,31 @@
                                     v-model="item.info"
                                     label="Info"
                                 ></v-textarea>
-
-                                <v-switch
-                                    inset
-                                    v-model="pub"
-                                    label="Public"
-                                    color="success"
-                                ></v-switch>
+                                <div
+                                    class="d-flex justify-space-around justify-md-start"
+                                >
+                                    <v-switch
+                                        inset
+                                        v-model="imgContain"
+                                        label="Contain"
+                                        class="ml-3"
+                                    />
+                                    <v-switch
+                                        inset
+                                        v-model="pub"
+                                        label="Public"
+                                        class="ml-6"
+                                    />
+                                </div>
                             </v-card-text>
 
                             <v-card-actions>
-                                <v-btn text @click="destroy()" color="danger">
-                                    delete
+                                <v-btn text @click="close()">
+                                    close
                                 </v-btn>
                                 <v-spacer></v-spacer>
-                                <v-btn text @click="replace()">
-                                    replace
+                                <v-btn text @click="destroy()" color="danger">
+                                    delete
                                 </v-btn>
                                 <v-btn text @click="save()">
                                     save
@@ -141,11 +100,12 @@
 </template>
 
 <script>
+import MediaDialogImage from "./mediaDialogImage.vue";
 import confirm from "../../ui/alert/confirm.vue";
 import alert from "../../ui/alert/alert.vue";
-
 export default {
     components: {
+        MediaDialogImage,
         confirm,
         alert
     },
@@ -283,11 +243,4 @@ export default {
 };
 </script>
 
-<style scoped>
-.btn-close {
-    z-index: 10;
-    position: absolute;
-    right: 12px;
-    top: 12px;
-}
-</style>
+<style scoped></style>

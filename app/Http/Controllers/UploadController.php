@@ -19,7 +19,7 @@ class UploadController extends Controller
         'xlarge' => ['2048','1536', true],
         'large' => ['1024','768', true],
         'medium' => ['640','480', false],
-        'thumbnail' => ['200','200', false],
+        'thumbnail' => ['360','360', false],
     ];
 
     public function upload(Request $request)

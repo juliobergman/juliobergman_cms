@@ -37,9 +37,10 @@ Route::prefix('user')->group(function () {
 });
 
 // Media
-Route::get('/media', [MediaController::class, 'index']);
+// Route::get('/media', [MediaController::class, 'index']);
 Route::prefix('media')->group(function () {
     Route::post('/', [MediaController::class, 'all']);
+    Route::post('/show', [MediaController::class, 'show']);
     Route::post('/categories', [MediaCategoryController::class, 'categories']);
     Route::middleware('auth:sanctum')->post('/store', [MediaController::class, 'store']);
     Route::post('/update/bulk', [MediaController::class, 'bulkUpsert']);
@@ -52,11 +53,13 @@ Route::post('/upload/replace', [UploadController::class, 'replace']);
 Route::delete('/upload/destroy', [UploadController::class, 'destroy']);
 
 // Content
-Route::get('/sections', [SectionController::class, 'sections']);
 Route::post('/content', [ContentController::class, 'content']);
 Route::post('/content/update', [ContentController::class, 'update']);
 Route::post('/connections', [ConnectionController::class, 'connections']);
 
+// Section
+Route::get('/sections', [SectionController::class, 'sections']);
+Route::post('/section/store', [SectionController::class, 'store']);
 
 
 

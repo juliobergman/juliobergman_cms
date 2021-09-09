@@ -17,23 +17,17 @@
             <v-container fluid>
                 <v-row>
                     <!-- Image Column -->
-                    <v-col order="0" order-md="0" cols="12" md="7">
-                        <cd-img
+                    <v-col order="0" order-md="0" cols="12" md="6">
+                        <media-dialog-image
                             v-if="item.cover_image"
-                            :src="item.cover_image.fullsize"
-                            :mediaId="item.cover"
-                            @select="selectCover"
-                        />
-                        <cd-img
-                            v-if="item.og_image"
-                            :src="item.og_image.fullsize"
-                            :ar="1.91 / 1"
-                            :mediaId="item.og_img"
-                            @select="selectOG"
+                            :src="item.cover_image.large"
+                            btn-text="Cover Image"
+                            btn-icon="mdi-image-multiple-outline"
+                            @action="replaceCover"
                         />
                     </v-col>
                     <!-- Information Column -->
-                    <v-col order="1" order-md="1" cols="12" md="5">
+                    <v-col order="1" order-md="1" cols="12" md="6">
                         <v-card flat>
                             <v-card-text class="mb-3 mb-md-6">
                                 <v-select
@@ -64,11 +58,13 @@
                                 <v-text-field
                                     label="Cover ID"
                                     v-model="item.cover"
+                                    readonly
                                 />
 
                                 <v-text-field
                                     label="OG Image ID"
                                     v-model="item.og_img"
+                                    readonly
                                 />
 
                                 <v-switch
@@ -84,7 +80,11 @@
                                     close
                                 </v-btn>
                                 <v-spacer></v-spacer>
-                                <v-btn text @click="save()">
+                                <v-btn
+                                    :loading="$store.state.loading"
+                                    text
+                                    @click="save()"
+                                >
                                     save
                                 </v-btn>
                             </v-card-actions>
@@ -95,16 +95,23 @@
         </v-card>
         <confirm ref="confirm"></confirm>
         <alert ref="alert"></alert>
+        <media-select
+            v-model="item.cover"
+            :dialog="mediaCover"
+            @view="selectCover"
+        />
     </v-dialog>
 </template>
 
 <script>
-import cdImg from "./contentImage.vue";
+import MediaDialogImage from "../../media/components/mediaDialogImage.vue";
+import MediaSelect from "../../media/components/mediaSelect.vue";
 import confirm from "../../ui/alert/confirm.vue";
 import alert from "../../ui/alert/alert.vue";
 export default {
     components: {
-        cdImg,
+        MediaDialogImage,
+        MediaSelect,
         confirm,
         alert
     },
@@ -114,6 +121,7 @@ export default {
         sections: Array
     },
     data: () => ({
+        mediaCover: false,
         public: [
             { name: "Yes", value: "yes" },
             { name: "No", value: "no" }
@@ -144,34 +152,35 @@ export default {
                 if (value) this.item.public = "yes";
                 if (!value) this.item.public = "no";
             }
-        },
-        tbColor() {
-            return this.$vuetify.theme.dark
-                ? "rgba(30,30,30,0.6)"
-                : "rgba(255,255,255,0.6)";
         }
     },
     methods: {
-        selectCover(image) {
-            this.item.cover = image;
-            this.item.cover_image = this.$store.state.media.data.find(
-                e => e.id == image
-            );
+        replaceCover() {
+            this.mediaCover = true;
         },
-        selectOG(image) {
-            this.item.og_img = image;
-            this.item.og_image = this.$store.state.media.data.find(
-                e => e.id == image
-            );
+        selectCover(payload) {
+            this.$store.commit("loading", true);
+            this.mediaCover = payload;
+            axios
+                .post("/api/media/show", { id: this.item.cover })
+                .then(response => {
+                    this.item.cover_image = response.data;
+                    this.$store.commit("loading", false);
+                })
+                .catch(response => {
+                    console.error(response);
+                });
         },
         save() {
             this.$store.commit("loading", true);
             axios
                 .post("/api/content/update", this.item)
-                .then(response => {
-                    this.$emit("saved");
-                    this.close();
-                    this.$store.commit("loading", false);
+                .then(() => {
+                    setTimeout(() => {
+                        this.$emit("saved");
+                        this.close();
+                        this.$store.commit("loading", false);
+                    }, 200);
                 })
                 .catch(response => {
                     console.error(response);

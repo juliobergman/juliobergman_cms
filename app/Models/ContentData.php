@@ -20,13 +20,4 @@ class ContentData extends Model
         'updated_at',
         'created_at',
     ];
-
-    public function cover_image()
-    {
-        return $this->hasOne(Media::class, 'cover');
-    }
-    public function og_image()
-    {
-        return $this->hasOne(Media::class, 'og_img');
-    }
 }
