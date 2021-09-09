@@ -3,7 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Models\UserData;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class UserSeeder extends Seeder
 {
@@ -15,7 +17,11 @@ class UserSeeder extends Seeder
     public function run()
     {
         User::factory(1)
-        ->state(['email' => 'admin@mail.com'])
+        ->has(UserData::factory())
+        ->state([
+            'email' => env('OWNER_EMAIL'),
+            'password' => Hash::make(env('OWNER_PASSWORD'))
+        ])
         ->create();
     }
 }

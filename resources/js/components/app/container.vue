@@ -18,7 +18,10 @@ export default {
     },
     data: () => ({}),
     methods: {},
-    created() {}
+    created() {
+        this.$store.dispatch("user/setUser");
+        this.$store.dispatch("media/setMedia");
+    }
 };
 </script>
 

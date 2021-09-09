@@ -27,7 +27,6 @@ import { bus } from "../../../app";
 import MenuDesktop from "./menuDesktop.vue";
 import MenuMobile from "./menuMobile.vue";
 import { items } from "./menuItems";
-console.log(items);
 export default {
     components: {
         MenuDesktop,

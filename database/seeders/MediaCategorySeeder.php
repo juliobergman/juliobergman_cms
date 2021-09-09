@@ -19,6 +19,38 @@ class MediaCategorySeeder extends Seeder
             'id' => 1,
             'name' => 'Recent Uploads',
             ],
+            [
+            'id' => 2,
+            'name' => 'Resources',
+            ],
+            [
+            'id' => 3,
+            'name' => 'Covers',
+            ],
+            [
+            'id' => 4,
+            'name' => 'Logofolio',
+            ],
+            [
+            'id' => 5,
+            'name' => 'Graphic Design',
+            ],
+            [
+            'id' => 6,
+            'name' => 'Product Rendering',
+            ],
+            [
+            'id' => 7,
+            'name' => 'Photography',
+            ],
+            [
+            'id' => 8,
+            'name' => 'Web Design & Development',
+            ],
+            [
+            'id' => 9,
+            'name' => 'Architectural Rendering',
+            ]
         ];
 
         DB::table('media_categories')->insert($data);

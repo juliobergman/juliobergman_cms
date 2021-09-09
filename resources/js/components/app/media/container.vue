@@ -1,67 +1,131 @@
 <template>
     <v-container fluid>
-        <v-toolbar dense flat>
-            <v-toolbar-title>Media</v-toolbar-title>
-
+        <v-toolbar dense flat v-if="currentCategory">
+            <menu-select
+                v-model="category"
+                :items="categories"
+                :btnText="currentCategory.name"
+                @input="menuChange"
+            />
             <v-spacer></v-spacer>
-
+            <v-slide-x-reverse-transition>
+                <v-btn v-show="btnSave" icon @click="saveOrder()">
+                    <v-icon>mdi-content-save</v-icon>
+                </v-btn>
+            </v-slide-x-reverse-transition>
             <upload-dialog @update:done="getMedia()" />
         </v-toolbar>
-        <v-divider></v-divider>
 
-        <v-row class="mt-4">
-            <v-col cols="6" sm="2" v-for="(item, idx) in media" :key="idx">
-                <v-skeleton-loader type="image" :loading="!loaded">
-                    <v-hover v-slot:default="{ hover }">
-                        <v-card
-                            flat
-                            :elevation="hover ? 3 : 0"
-                            class="cursor-pointer"
-                            @click="show(item)"
-                        >
-                            <v-img :src="item.thumbnail" :aspect-ratio="1 / 1">
-                                <v-fade-transition>
-                                    <v-container
-                                        fluid
-                                        v-if="false"
-                                        class="d-flex align-start justify-end pa-0 ma-0 img-overlay cursor-pointer"
-                                    >
-                                        <v-icon light class="mr-3 mt-2">
-                                            mdi-eye
-                                        </v-icon>
-                                    </v-container>
-                                </v-fade-transition>
-                            </v-img>
-                        </v-card>
-                    </v-hover>
-                </v-skeleton-loader>
-            </v-col>
-        </v-row>
+        <draggable v-model="media" handle=".handle" @change="btnSave = true">
+            <transition-group tag="div" class="row mt-4">
+                <v-col
+                    cols="6"
+                    sm="2"
+                    v-for="(item, idx) in media"
+                    :key="item.id"
+                >
+                    <media-thumbnail
+                        :aspectRatio="1 / 1"
+                        :media="item"
+                        :src="item.thumbnail"
+                        @click="show"
+                    />
+                </v-col>
+            </transition-group>
+        </draggable>
+
+        <v-footer padless absolute>
+            <v-card tile flat width="100%">
+                <v-pagination
+                    color="primary"
+                    v-model="page"
+                    :length="pageLength"
+                    total-visible="7"
+                    class="pagination"
+                    @input="getMedia"
+                ></v-pagination>
+            </v-card>
+        </v-footer>
+
+        <media-dialog
+            v-model="showMediaDialog"
+            :media="itemMediaDialog"
+            :categories="categories"
+            @update="itemMediaDialog = $event"
+            @saved="getMedia()"
+        />
     </v-container>
 </template>
 
 <script>
-import UploadDialog from "./component/upload.vue";
+import mediaThumbnail from "./components/mediaThumbnail.vue";
+import draggable from "vuedraggable";
+import mediaDialog from "./components/mediaDialog.vue";
+import uploadDialog from "./components/mediaUploadDialog.vue";
+import menuSelect from "../ui/menuSelect.vue";
 export default {
-    components: { UploadDialog },
+    components: {
+        menuSelect,
+        draggable,
+        mediaThumbnail,
+        uploadDialog,
+        mediaDialog
+    },
     data: () => ({
-        loaded: false,
-        category: null,
+        btnSave: false,
+        showMediaDialog: false,
+        itemMediaDialog: {},
+        category: 1,
+        page: 1,
+        pageLength: 6,
         categories: [],
         media: []
     }),
+    computed: {
+        pageRecords() {
+            return this.$isMobile() ? 6 : 18;
+        },
+        currentCategory() {
+            return this.categories.find(e => e.id == this.category);
+        }
+    },
     methods: {
-        getMedia() {
-            this.loaded = false;
+        getMediaCategories() {
+            this.$store.commit("loading", true);
             let postData = {
-                category: this.category
+                public: null
             };
             axios
-                .post("media/all", postData)
+                .post("/api/media/categories", postData)
                 .then(response => {
                     if (response.status == 200) {
-                        this.media = response.data;
-                        this.loaded = true;
+                        this.categories = response.data;
+                        this.$store.commit("loading", false);
+                    }
+                })
+                .catch(response => {
+                    console.error(response.name);
+                    console.error(response.message);
+                });
+        },
+        menuChange($event) {
+            this.page = 1;
+            sessionStorage.setItem("media_category", $event);
+            this.getMedia();
+        },
+        getMedia() {
+            this.$store.commit("loading", true);
+            let postData = {
+                category: this.category,
+                records: this.pageRecords
+            };
+            axios
+                .post("/api/media?page=" + this.page, postData)
+                .then(response => {
+                    if (response.status == 200) {
+                        this.media = response.data.data;
+                        this.pageLength = response.data.last_page;
+                        this.$store.commit("loading", false);
                     }
                 })
                 .catch(response => {
@@ -70,22 +134,51 @@ export default {
                 });
         },
         show(item) {
-            console.log("show", item);
+            this.itemMediaDialog = this.media.find(e => e.id == item);
+            this.showMediaDialog = true;
+        },
+        saveOrder() {
+            this.$store.commit("loading", true);
+
+            axios
+                .post("/api/media/update/bulk", this.media)
+                .then(response => {
+                    if (response.status == 200) {
+                        this.btnSave = false;
+                        this.$store.commit("loading", false);
+                    }
+                })
+                .catch(response => {
+                    console.error(response.name);
+                    console.error(response.message);
+                });
         }
     },
     created() {
+        if (sessionStorage.getItem("media_category")) {
+            this.category = sessionStorage.getItem("media_category");
+        }
+        this.getMediaCategories();
         this.getMedia();
-    }
+    },
+    mounted() {}
 };
 </script>
 
-<style scoped>
+<style>
+.title-select .v-input__slot {
+    padding: 0 0px !important;
+    background: none !important;
+    width: fit-content;
+    block-size: fit-content;
+}
 .img-overlay {
     height: 100%;
     width: 100%;
-    background: rgba(0, 0, 0, 0.1);
+    background: rgba(0, 0, 0, 0.5);
 }
-.img-overlay div {
-    width: 100%;
+.pagination .v-pagination__navigation,
+.pagination .v-pagination__item {
+    box-shadow: none;
 }
 </style>
