@@ -20,14 +20,14 @@
             <transition-group tag="div" class="row mt-4">
                 <v-col
                     cols="6"
-                    sm="2"
+                    sm="4"
                     v-for="(item, idx) in media"
                     :key="item.id"
                 >
+                    <!-- :aspectRatio="1 / 1" -->
                     <media-thumbnail
-                        :aspectRatio="1 / 1"
                         :media="item"
-                        :src="item.thumbnail"
+                        :src="item.medium"
                         @click="show"
                     />
                 </v-col>
