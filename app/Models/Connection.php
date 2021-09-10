@@ -17,10 +17,11 @@ class Connection extends Model
         'oby',
         'updated_at',
     ];
+
     protected $hidden = [
-        'updated_at',
         'created_at',
     ];
+
     protected $image_defaults = [
         'name' => null,
         'fullsize' => '/storage/factory/stock/cover-placeholder.jpg',

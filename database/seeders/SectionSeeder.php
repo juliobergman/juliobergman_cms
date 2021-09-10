@@ -16,11 +16,13 @@ class SectionSeeder extends Seeder
     {
         $sections = [
             [
-                'name' => 'home',
+                'name' => 'Home',
             ],[
-                'name' => 'dev',
+                'name' => 'Dev',
             ],[
-                'name' => 'lab',
+                'name' => 'Lab',
+            ],[
+                'name' => 'Media',
             ],
         ];
 

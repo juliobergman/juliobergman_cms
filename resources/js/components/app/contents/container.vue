@@ -5,29 +5,42 @@
                 v-model="section"
                 :items="sections"
                 :btnText="currentSection.name"
+                @input="getContents()"
             />
 
             <v-spacer></v-spacer>
 
-            <new-section @saved="getSections()" />
+            <v-slide-x-reverse-transition>
+                <v-btn v-show="btnSave" icon @click="saveOrder()">
+                    <v-icon>mdi-content-save</v-icon>
+                </v-btn>
+            </v-slide-x-reverse-transition>
 
-            <v-tooltip bottom>
-                <template v-slot:activator="{ on, attrs }">
-                    <v-btn icon v-bind="attrs" v-on="on">
-                        <v-icon>
-                            mdi-view-grid-plus
-                        </v-icon>
-                    </v-btn>
-                </template>
-                <span>New Content</span>
-            </v-tooltip>
+            <new-section @saved="getSections()" />
+            <new-content
+                :sections="sections"
+                :section="section"
+                @saved="getContents()"
+                @section="section = $event"
+            />
         </v-toolbar>
 
-        <draggable v-model="content" handle=".handle" @change="btnSave = true">
-            <transition-group tag="div" class="row mt-4">
+        <draggable
+            v-model="content"
+            handle=".handle"
+            @change="btnSave = true"
+            v-bind="dragOptions"
+            @start="drag = true"
+            @end="drag = false"
+        >
+            <transition-group
+                type="transition"
+                :name="!drag ? 'flip-list' : null"
+                tag="div"
+                class="row mt-4"
+            >
                 <v-col
-                    v-if="item.section_id == section"
-                    cols="12"
+                    cols="6"
                     sm="3"
                     v-for="(item, idx) in content"
                     :key="item.id"
@@ -41,10 +54,23 @@
             </transition-group>
         </draggable>
 
+        <v-footer padless absolute v-if="pageLength > 1">
+            <v-card tile flat width="100%">
+                <v-pagination
+                    color="primary"
+                    v-model="page"
+                    :length="pageLength"
+                    total-visible="7"
+                    class="pagination"
+                    @input="getContents"
+                ></v-pagination>
+            </v-card>
+        </v-footer>
+
         <content-dialog
             v-model="showContentDialog"
             :content="itemContentDialog"
-            :sections="tabs"
+            :sections="sections"
             @saved="getContents()"
         />
         <!-- @update="itemContentDialog = $event" -->
@@ -53,6 +79,7 @@
 
 <script>
 import newSection from "./components/contentNewSection.vue";
+import newContent from "./components/contentNew.vue";
 
 import draggable from "vuedraggable";
 import mediaThumbnail from "../../app/media/components/mediaThumbnail.vue";
@@ -62,13 +89,16 @@ export default {
     components: {
         menuSelect,
         newSection,
+        newContent,
         draggable,
         mediaThumbnail,
         contentDialog
     },
     data: () => ({
-        tabs: [],
-        tab_section: "tab-1",
+        btnSave: false,
+        drag: false,
+        page: 1,
+        pageLength: 1,
         sections: [],
         section: 1,
         showContentDialog: false,
@@ -76,8 +106,19 @@ export default {
         content: []
     }),
     computed: {
+        dragOptions() {
+            return {
+                animation: 200,
+                group: "description",
+                disabled: false,
+                ghostClass: "ghost"
+            };
+        },
         currentSection() {
             return this.sections.find(e => e.id == this.section);
+        },
+        pageRecords() {
+            return this.$isMobile() ? 6 : 12;
         }
     },
     methods: {
@@ -86,7 +127,6 @@ export default {
             axios
                 .get("/api/sections")
                 .then(response => {
-                    this.tabs = response.data;
                     this.sections = response.data;
                     this.$store.commit("loading", false);
                 })
@@ -97,10 +137,16 @@ export default {
         },
         getContents() {
             this.$store.commit("loading", true);
+            let postData = {
+                section: this.section,
+                records: this.pageRecords
+            };
+
             axios
-                .post("/api/connections", { section: this.section })
+                .post("/api/connections?page=" + this.page, postData)
                 .then(response => {
-                    this.content = response.data;
+                    this.content = response.data.data;
+                    this.pageLength = response.data.last_page;
                     this.$store.commit("loading", false);
                 })
                 .catch(error => {
@@ -111,13 +157,62 @@ export default {
         show(item) {
             this.itemContentDialog = this.content.find(e => e.id == item);
             this.showContentDialog = true;
+        },
+        saveOrder() {
+            this.$store.commit("loading", true);
+            axios
+                .post("/api/connection/update/bulk", this.content)
+                .then(response => {
+                    if (response.status == 200) {
+                        this.btnSave = false;
+                        this.$store.commit("loading", false);
+                    }
+                })
+                .catch(response => {
+                    console.error(response.name);
+                    console.error(response.message);
+                });
         }
     },
     created() {
         this.getSections();
         this.getContents();
+    },
+    watch: {
+        section() {
+            this.getContents();
+        }
     }
 };
 </script>
 
-<style></style>
+<style scoped>
+.button {
+    margin-top: 35px;
+}
+.flip-list-move {
+    transition: transform 0.5s;
+}
+.no-move {
+    transition: transform 0s;
+}
+.ghost {
+    opacity: 0.5;
+    background: #c8ebfb;
+}
+.list-group {
+    min-height: 20px;
+}
+.list-group-item {
+    cursor: move;
+}
+.list-group-item i {
+    cursor: pointer;
+}
+
+/* Pagination */
+.pagination .v-pagination__navigation,
+.pagination .v-pagination__item {
+    box-shadow: none;
+}
+</style>

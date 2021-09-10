@@ -16,11 +16,18 @@
             <upload-dialog @update:done="getMedia()" />
         </v-toolbar>
 
-        <draggable v-model="media" handle=".handle" @change="btnSave = true">
+        <draggable
+            v-model="media"
+            handle=".handle"
+            @change="btnSave = true"
+            v-bind="dragOptions"
+            @start="drag = true"
+            @end="drag = false"
+        >
             <transition-group tag="div" class="row mt-4">
                 <v-col
                     cols="6"
-                    sm="4"
+                    sm="3"
                     v-for="(item, idx) in media"
                     :key="item.id"
                 >
@@ -34,7 +41,7 @@
             </transition-group>
         </draggable>
 
-        <v-footer padless absolute>
+        <v-footer padless absolute v-if="pageLength > 1">
             <v-card tile flat width="100%">
                 <v-pagination
                     color="primary"
@@ -73,17 +80,26 @@ export default {
     },
     data: () => ({
         btnSave: false,
+        drag: false,
         showMediaDialog: false,
         itemMediaDialog: {},
         category: 1,
         page: 1,
-        pageLength: 6,
+        pageLength: 1,
         categories: [],
         media: []
     }),
     computed: {
+        dragOptions() {
+            return {
+                animation: 200,
+                group: "description",
+                disabled: false,
+                ghostClass: "ghost"
+            };
+        },
         pageRecords() {
-            return this.$isMobile() ? 6 : 18;
+            return this.$isMobile() ? 6 : 12;
         },
         currentCategory() {
             return this.categories.find(e => e.id == this.category);
@@ -122,11 +138,9 @@ export default {
             axios
                 .post("/api/media?page=" + this.page, postData)
                 .then(response => {
-                    if (response.status == 200) {
-                        this.media = response.data.data;
-                        this.pageLength = response.data.last_page;
-                        this.$store.commit("loading", false);
-                    }
+                    this.media = response.data.data;
+                    this.pageLength = response.data.last_page;
+                    this.$store.commit("loading", false);
                 })
                 .catch(response => {
                     console.error(response.name);
@@ -139,7 +153,6 @@ export default {
         },
         saveOrder() {
             this.$store.commit("loading", true);
-
             axios
                 .post("/api/media/update/bulk", this.media)
                 .then(response => {
@@ -180,5 +193,28 @@ export default {
 .pagination .v-pagination__navigation,
 .pagination .v-pagination__item {
     box-shadow: none;
+}
+/* Draggable */
+.button {
+    margin-top: 35px;
+}
+.flip-list-move {
+    transition: transform 0.5s;
+}
+.no-move {
+    transition: transform 0s;
+}
+.ghost {
+    opacity: 0.5;
+    background: #c8ebfb;
+}
+.list-group {
+    min-height: 20px;
+}
+.list-group-item {
+    cursor: move;
+}
+.list-group-item i {
+    cursor: pointer;
 }
 </style>

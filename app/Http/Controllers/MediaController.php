@@ -34,6 +34,27 @@ class MediaController extends Controller
         return Media::where('id', $request->id)->first();
     }
 
+    public function store(Request $request)
+    {
+        // Columns to Update
+        $columns = [
+            'name',
+            'alt',
+            'info',
+            'category_id',
+            'public',
+        ];
+        $update = $request->only($columns);
+        // return $update;
+        $updated = Media::where('id', $request->id)->update($update);
+        if ($updated) {
+            return new JsonResponse(['message' => 'Success'], 200);
+        } else {
+            return new JsonResponse([], 204);
+        }
+    }
+
+
     public function bulkUpsert(Request $request)
     {
         // Columns to Update
@@ -68,23 +89,5 @@ class MediaController extends Controller
         $records = DB::table('media')->upsert($update, ['id'], $columns);
         return new JsonResponse(['message' => 'Records Updated', 'data' => $update, 'count' => $records], 200);
     }
-    public function store(Request $request)
-    {
-        // Columns to Update
-        $columns = [
-            'name',
-            'alt',
-            'info',
-            'category_id',
-            'public',
-        ];
-        $update = $request->only($columns);
-        // return $update;
-        $updated = Media::where('id', $request->id)->update($update);
-        if ($updated) {
-            return new JsonResponse(['message' => 'Success'], 200);
-        } else {
-            return new JsonResponse([], 204);
-        }
-    }
+
 }

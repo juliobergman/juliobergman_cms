@@ -15,20 +15,20 @@
                 >
                     <v-fade-transition>
                         <v-icon
-                            dark
                             v-show="hover || $isMobile()"
                             class="cursor-grab handle mt-2 ml-2"
-                            style="opacity: 0.9"
                         >
-                            mdi-fit-to-page
+                            mdi-dots-grid
                         </v-icon>
                     </v-fade-transition>
                     <v-spacer></v-spacer>
                     <!-- v-show="hover || $isMobile()" -->
                     <v-fade-transition v-if="media.public">
                         <v-icon
+                            v-if="hover || media.public == 'yes'"
+                            small
                             :color="pubColor"
-                            class="cursor-grab handle mt-2 mr-2"
+                            class="mt-2 mr-2"
                             style="opacity: 0.9"
                         >
                             {{ pubIcon }}
@@ -85,4 +85,8 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped>
+.handle {
+    color: white;
+}
+</style>

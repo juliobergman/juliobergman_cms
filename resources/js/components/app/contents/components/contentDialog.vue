@@ -56,12 +56,14 @@
                                 />
 
                                 <v-text-field
+                                    v-if="false"
                                     label="Cover ID"
                                     v-model="item.cover"
                                     readonly
                                 />
 
                                 <v-text-field
+                                    v-if="false"
                                     label="OG Image ID"
                                     v-model="item.og_img"
                                     readonly
@@ -175,15 +177,16 @@ export default {
             this.$store.commit("loading", true);
             axios
                 .post("/api/content/update", this.item)
-                .then(() => {
+                .then(response => {
+                    console.log(response);
                     setTimeout(() => {
                         this.$emit("saved");
                         this.close();
                         this.$store.commit("loading", false);
                     }, 200);
                 })
-                .catch(response => {
-                    console.error(response);
+                .catch(error => {
+                    console.error(error);
                 });
         },
         destroy() {

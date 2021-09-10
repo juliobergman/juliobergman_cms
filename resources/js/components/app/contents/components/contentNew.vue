@@ -3,31 +3,42 @@
         <template v-slot:activator="{ on, attrs }">
             <v-btn icon v-bind="attrs" v-on="on">
                 <v-icon>
-                    mdi-playlist-plus
+                    mdi-view-grid-plus
                 </v-icon>
             </v-btn>
         </template>
 
         <v-card :loading="$store.state.loading">
             <v-card-title>
-                New Section
+                New Content
             </v-card-title>
 
             <v-card-text>
-                <v-text-field v-model="section.name" />
+                <v-select
+                    v-model="sec"
+                    label="Section"
+                    :items="sections"
+                    item-text="name"
+                    item-value="id"
+                />
+                <v-text-field label="Name" v-model="content.name" />
+                <v-text-field label="Page Title" v-model="content.page_title" />
+                <v-text-field label="Path" v-model="content.path" />
+                <v-text-field label="SEO Info" v-model="content.seo_info" />
             </v-card-text>
-
-            <v-card-text v-if="errors">
-                <v-alert
-                    dense
-                    text
-                    type="error"
-                    v-for="(error, key) in errors"
-                    :key="key"
-                >
-                    {{ error[0] }}
-                </v-alert>
-            </v-card-text>
+            <v-slide-y-transition>
+                <v-card-text v-show="errors">
+                    <v-alert
+                        dense
+                        text
+                        type="error"
+                        v-for="(error, key) in errors"
+                        :key="key"
+                    >
+                        {{ error[0] }}
+                    </v-alert>
+                </v-card-text>
+            </v-slide-y-transition>
 
             <v-divider></v-divider>
 
@@ -46,19 +57,45 @@
 
 <script>
 export default {
+    props: {
+        sections: Array,
+        section: {
+            type: Number,
+            default: null
+        }
+    },
     data: () => ({
         dialog: false,
         errors: null,
-        section: {
+        content: {
             name: ""
         }
     }),
+    computed: {
+        sec: {
+            get() {
+                return this.section;
+            },
+            set(val) {
+                this.$emit("section", val);
+            }
+        },
+        sendContent() {
+            return {
+                section: this.sec,
+                name: this.content.name,
+                page_title: this.content.page_title,
+                path: this.content.path,
+                seo_info: this.content.seo_info
+            };
+        }
+    },
     methods: {
         save() {
             this.$store.commit("loading", true);
             this.errors = null;
             axios
-                .post("/api/section/store", this.section)
+                .post("/api/content/store", this.sendContent)
                 .then(() => {
                     this.$emit("saved");
                     this.dialog = false;
@@ -70,7 +107,7 @@ export default {
                 });
         },
         reset() {
-            this.section.name = "";
+            this.content.name = "";
             this.errors = false;
         }
     }

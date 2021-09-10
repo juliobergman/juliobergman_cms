@@ -15,8 +15,8 @@ class CreateConnectionsTable extends Migration
     {
         Schema::create('connections', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('section')->nullable()->constrained()->references('id')->on('sections');
-            $table->foreignId('content')->nullable()->constrained()->references('id')->on('contents');
+            $table->foreignId('section_id')->nullable()->constrained()->references('id')->on('sections');
+            $table->foreignId('content_id')->nullable()->constrained()->references('id')->on('contents');
             $table->enum('public', ['yes','no'])->default('no');
             $table->unsignedBigInteger('oby', false)->default(0);
             $table->timestamps();

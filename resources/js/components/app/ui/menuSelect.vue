@@ -13,6 +13,7 @@
                     v-for="(item, key) in items"
                     :key="item.id"
                     :value="item[itemValue]"
+                    v-show="item[itemValue] != value"
                 >
                     <v-list-item-content>
                         <v-list-item-title class="text-button">
@@ -53,6 +54,7 @@ export default {
                 return this.value;
             },
             set(val) {
+                this.$emit("change");
                 this.$emit("input", val);
             }
         }

@@ -9,6 +9,7 @@ class ContentData extends Model
 {
     use HasFactory;
     protected $fillable = [
+        'content_id',
         'path',
         'page_title',
         'seo_info',
@@ -17,7 +18,6 @@ class ContentData extends Model
         'updated_at',
     ];
     protected $hidden = [
-        'updated_at',
         'created_at',
     ];
 }
