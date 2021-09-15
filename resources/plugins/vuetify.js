@@ -15,7 +15,7 @@ const opts = {
                 accent: "#00B6FF",
                 success: "#5CE537",
                 info: "#3ED1F9",
-                warning: "#EFB92F",
+                warning: "#D19600",
                 danger: "#FF4B30",
                 blackBack: "#121212"
             },

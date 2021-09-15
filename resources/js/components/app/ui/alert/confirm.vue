@@ -11,11 +11,12 @@
                     title
                 }}</v-toolbar-title>
             </v-toolbar>
-            <v-card-text
-                v-show="!!message"
-                :class="'pa-4 text-' + options.messageAlign"
-                v-text="message"
-            />
+            <v-card-text :class="'pa-4 text-' + options.messageAlign">
+                <div class="my-1" v-for="msg in message">
+                    {{ msg }}
+                </div>
+            </v-card-text>
+
             <v-card-actions class="pt-0">
                 <v-btn
                     v-text="options.btnCancel"
@@ -41,7 +42,7 @@ export default {
         dialog: false,
         resolve: null,
         reject: null,
-        message: null,
+        message: [],
         title: null,
         options: {
             messageAlign: "center",

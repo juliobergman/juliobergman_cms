@@ -39,7 +39,10 @@
                         </v-select>
                         <v-spacer></v-spacer>
                         <v-btn text @click="show = false">
-                            Close
+                            Cancel
+                        </v-btn>
+                        <v-btn text :disabled="!sel" @click="selectImage()">
+                            Select
                         </v-btn>
                     </v-toolbar>
                 </v-row>
@@ -55,14 +58,14 @@
                                 flat
                                 class="cursor-pointer"
                                 color="grey darken-4"
-                                @click="selected = item.id"
+                                @click="sel = item.id"
                             >
                                 <v-img
                                     :aspectRatio="1 / 1"
                                     :src="item.thumbnail"
                                 >
                                     <v-row
-                                        v-if="hover || selected == item.id"
+                                        v-if="hover || sel == item.id"
                                         no-gutters
                                         class="ma-0 fill-height cursor-pointer img-overlay"
                                         align="center"
@@ -71,7 +74,7 @@
                                         <v-icon
                                             large
                                             :color="
-                                                selected == item.id
+                                                sel == item.id
                                                     ? 'rgba(255,255,255,1)'
                                                     : 'rgba(255,255,255,0.5)'
                                             "
@@ -84,17 +87,18 @@
                         </v-hover>
                     </v-col>
                 </v-row>
-
-                <v-card tile flat width="100%" class="mt-6">
-                    <v-pagination
-                        color="primary"
-                        v-model="page"
-                        :length="pageLength"
-                        total-visible="7"
-                        class="pagination"
-                        @input="getMedia"
-                    ></v-pagination>
-                </v-card>
+                <v-footer padless absolute v-if="pageLength > 1" class="mb-2">
+                    <v-card tile flat width="100%">
+                        <v-pagination
+                            color="primary"
+                            v-model="page"
+                            :length="pageLength"
+                            total-visible="7"
+                            class="pagination"
+                            @input="getMedia"
+                        ></v-pagination>
+                    </v-card>
+                </v-footer>
             </v-container>
         </v-card>
     </v-dialog>
@@ -116,9 +120,10 @@ export default {
     data: () => ({
         category: 1,
         page: 1,
-        pageLength: 6,
+        pageLength: 1,
         categories: [],
-        media: []
+        media: [],
+        sel: null
     }),
     computed: {
         selected: {
@@ -142,6 +147,10 @@ export default {
         }
     },
     methods: {
+        selectImage() {
+            this.$emit("input", this.sel);
+            this.show = false;
+        },
         getMediaCategories() {
             this.$store.commit("loading", true);
             let postData = {
@@ -184,6 +193,11 @@ export default {
     created() {
         this.getMediaCategories();
         this.getMedia();
+    },
+    watch: {
+        selected() {
+            this.sel = this.selected;
+        }
     }
 };
 </script>

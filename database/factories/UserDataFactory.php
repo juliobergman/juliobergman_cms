@@ -22,7 +22,7 @@ class UserDataFactory extends Factory
     public function definition()
     {
         return [
-            'profile_pic' => '/storage/factory/avatar/male/avatar-10.jpg',
+            'profile_pic' => '/storage/factory/avatar/misc/avatar-user.jpg',
             'phone' => $this->faker->phoneNumber(),
             'country' => $this->faker->countryCode(),
             'city' => $this->faker->city(),

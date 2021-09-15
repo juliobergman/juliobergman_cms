@@ -197,7 +197,7 @@ export default {
         },
         destroy() {
             this.$refs.confirm
-                .open(null, "Are you sure you want to delete this image?", {
+                .open(null, ["Are you sure you want to delete this image?"], {
                     color: "danger"
                 })
                 .then(confirmResponse => {

@@ -20,7 +20,6 @@ export default {
     methods: {},
     created() {
         this.$store.dispatch("user/setUser");
-        this.$store.dispatch("media/setMedia");
     }
 };
 </script>

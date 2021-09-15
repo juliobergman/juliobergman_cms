@@ -4,6 +4,7 @@
         hide-overlay
         transition="dialog-bottom-transition"
         fullscreen
+        @keydown="$store.commit('unsaved', true)"
     >
         <v-card flat tile>
             <v-progress-linear
@@ -73,7 +74,8 @@
                                     inset
                                     v-model="pub"
                                     label="Public"
-                                    color="success"
+                                    color="primary"
+                                    @change="$store.commit('unsaved', true)"
                                 ></v-switch>
                             </v-card-text>
 
@@ -84,6 +86,7 @@
                                 <v-spacer></v-spacer>
                                 <v-btn
                                     :loading="$store.state.loading"
+                                    :disabled="!$store.state.unsaved"
                                     text
                                     @click="save()"
                                 >
@@ -166,7 +169,10 @@ export default {
             axios
                 .post("/api/media/show", { id: this.item.cover })
                 .then(response => {
-                    this.item.cover_image = response.data;
+                    if (response.data) {
+                        this.item.cover_image = response.data;
+                        this.$store.commit("unsaved", true);
+                    }
                     this.$store.commit("loading", false);
                 })
                 .catch(response => {
@@ -178,10 +184,10 @@ export default {
             axios
                 .post("/api/content/update", this.item)
                 .then(response => {
-                    console.log(response);
                     setTimeout(() => {
-                        this.$emit("saved");
+                        this.$emit("reload");
                         this.close();
+                        this.$store.commit("unsaved", false);
                         this.$store.commit("loading", false);
                     }, 200);
                 })
@@ -192,7 +198,7 @@ export default {
         destroy() {
             return;
             this.$refs.confirm
-                .open(null, "Are you sure you want to delete this image?", {
+                .open(null, ["Are you sure you want to delete this image?"], {
                     color: "danger"
                 })
                 .then(confirmResponse => {
@@ -205,7 +211,7 @@ export default {
                                     this.$refs.alert
                                         .open(null, response.data.message)
                                         .then(() => {
-                                            this.$emit("saved");
+                                            this.$emit("reload");
                                             this.close();
                                             this.$store.commit(
                                                 "loading",
@@ -222,8 +228,36 @@ export default {
                 });
         },
         close() {
-            this.dialog = false;
-            this.item = {};
+            if (this.$store.state.unsaved) {
+                this.$refs.confirm
+                    .open(
+                        "Warning",
+                        [
+                            "You currently have unsaved changes, Are you sure you want to exit without saving?",
+                            "Choose YES to leave without saving any changes."
+                        ],
+                        {
+                            color: "warning",
+                            messageAlign: "left",
+                            btnCancel: "return",
+                            width: 375
+                        }
+                    )
+                    .then(confirmResponse => {
+                        if (confirmResponse) {
+                            this.$emit("reload");
+                            setTimeout(() => {
+                                this.$store.commit("unsaved", false);
+                                this.dialog = false;
+                                this.item = {};
+                            }, 200);
+                        }
+                    });
+            }
+            if (!this.$store.state.unsaved) {
+                this.dialog = false;
+                this.item = {};
+            }
         }
     },
     created() {}

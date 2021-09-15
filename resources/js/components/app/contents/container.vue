@@ -11,7 +11,7 @@
             <v-spacer></v-spacer>
 
             <v-slide-x-reverse-transition>
-                <v-btn v-show="btnSave" icon @click="saveOrder()">
+                <v-btn v-show="$store.state.unsaved" icon @click="saveOrder()">
                     <v-icon>mdi-content-save</v-icon>
                 </v-btn>
             </v-slide-x-reverse-transition>
@@ -66,13 +66,13 @@
                 ></v-pagination>
             </v-card>
         </v-footer>
-
         <content-dialog
             v-model="showContentDialog"
             :content="itemContentDialog"
             :sections="sections"
-            @saved="getContents()"
+            @reload="getContents()"
         />
+        <confirm ref="confirm"></confirm>
         <!-- @update="itemContentDialog = $event" -->
     </v-container>
 </template>
@@ -85,6 +85,7 @@ import draggable from "vuedraggable";
 import mediaThumbnail from "../../app/media/components/mediaThumbnail.vue";
 import contentDialog from "./components/contentDialog.vue";
 import menuSelect from "../ui/menuSelect.vue";
+import confirm from "../ui/alert/confirm.vue";
 export default {
     components: {
         menuSelect,
@@ -92,10 +93,10 @@ export default {
         newContent,
         draggable,
         mediaThumbnail,
-        contentDialog
+        contentDialog,
+        confirm
     },
     data: () => ({
-        btnSave: false,
         drag: false,
         page: 1,
         pageLength: 1,
@@ -155,18 +156,45 @@ export default {
                 });
         },
         show(item) {
-            this.itemContentDialog = this.content.find(e => e.id == item);
-            this.showContentDialog = true;
+            if (this.$store.state.unsaved) {
+                this.$refs.confirm
+                    .open(
+                        "Warning",
+                        [
+                            "You currently have unsaved changes, Are you sure you want to exit without saving?",
+                            "Choose YES to leave without saving any changes."
+                        ],
+                        {
+                            color: "warning",
+                            messageAlign: "left",
+                            btnCancel: "return",
+                            width: 375
+                        }
+                    )
+                    .then(confirmResponse => {
+                        if (confirmResponse) {
+                            this.$store.commit("unsaved", false);
+                            this.itemContentDialog = this.content.find(
+                                e => e.id == item
+                            );
+                            this.showContentDialog = true;
+                        }
+                    });
+            }
+            if (!this.$store.state.unsaved) {
+                this.itemContentDialog = this.content.find(e => e.id == item);
+                this.showContentDialog = true;
+            }
         },
         saveOrder() {
             this.$store.commit("loading", true);
+            console.log(this.content);
             axios
                 .post("/api/connection/update/bulk", this.content)
                 .then(response => {
-                    if (response.status == 200) {
-                        this.btnSave = false;
-                        this.$store.commit("loading", false);
-                    }
+                    console.log(response.data);
+                    this.$store.commit("unsaved", false);
+                    this.$store.commit("loading", false);
                 })
                 .catch(response => {
                     console.error(response.name);
@@ -181,6 +209,9 @@ export default {
     watch: {
         section() {
             this.getContents();
+        },
+        drag() {
+            this.$store.commit("unsaved", true);
         }
     }
 };
