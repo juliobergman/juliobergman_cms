@@ -1,14 +1,15 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import user from "./modules/user";
-// import media from "./modules/media";
+// import hero from "./modules/hero";
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
     state: {
         loading: false,
-        unsaved: false
+        unsaved: false,
+        webDrawer: false
     },
     mutations: {
         loading(state, payload) {
@@ -16,12 +17,15 @@ export default new Vuex.Store({
         },
         unsaved(state, payload) {
             state.unsaved = payload;
+        },
+        webDrawer(state, payload) {
+            state.webDrawer = payload;
         }
     },
     actions: {},
     getters: {},
     modules: {
         user
-        // media
+        // hero
     }
 });

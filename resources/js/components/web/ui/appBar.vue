@@ -1,23 +1,20 @@
 <template>
-    <v-app-bar
-        fixed
-        :shrink-on-scroll="shrink"
-        :prominent="shrink"
+    <v-app-bar fixed :class="barColor" dark flat style="z-index: 6;">
+        <!-- :shrink-on-scroll="shrink"
         scroll-threshold="500"
-        :class="barColor"
-        dark
-        flat
-        style="z-index: 6;"
-    >
-        <v-container :class="barAlign + ' d-flex justify-space-between py-0'">
+        :prominent="shrink" -->
+        <v-container
+            fluid
+            :class="barAlign + ' d-flex justify-space-between py-0 px-0'"
+        >
             <v-avatar size="36">
                 <v-img src="storage/ui/nav-logo.svg"></v-img>
             </v-avatar>
 
             <v-spacer></v-spacer>
 
-            <menu-desktop v-if="!$isMobile()" :items="itms"></menu-desktop>
-            <menu-mobile v-if="$isMobile()" :items="itms"></menu-mobile>
+            <!-- <menu-desktop v-if="!$isMobile()" :items="itms"></menu-desktop> -->
+            <menu-mobile :items="itms"></menu-mobile>
         </v-container>
     </v-app-bar>
 </template>
@@ -34,7 +31,7 @@ export default {
     },
     data: () => ({
         barColor: "app-bar-transparent",
-        barAlign: "mt-auto mb-1 align-center",
+        barAlign: "my-auto align-center",
         barScroll: false,
         current: {}
     }),
@@ -55,11 +52,11 @@ export default {
                 document.documentElement.scrollTop > 505
             ) {
                 this.barColor = "app-bar-color";
-                this.barAlign = "my-auto align-center";
+                // this.barAlign = "my-auto align-center";
                 this.barScroll = true;
             } else {
                 this.barColor = "app-bar-transparent";
-                this.barAlign = "mt-auto mb-1 align-center";
+                // this.barAlign = "mt-auto mb-1 align-center";
                 this.barScroll = false;
             }
         }
@@ -100,7 +97,7 @@ export default {
     top: 1rem;
 }
 .app-bar-color {
-    background-color: rgba(0, 0, 0, 0.7) !important;
+    background-color: rgba(0, 0, 0, 0.4) !important;
 }
 .app-bar-transparent {
     background: rgba(0, 0, 0, 0) !important;

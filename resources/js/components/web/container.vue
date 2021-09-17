@@ -1,8 +1,8 @@
 <template>
     <v-app id="inspire">
-        <nav-drawer v-if="$isMobile()"></nav-drawer>
+        <nav-drawer></nav-drawer>
         <app-bar></app-bar>
-        <hero></hero>
+        <!-- <hero></hero> -->
         <transition :name="transitionName" mode="out-in">
             <router-view :key="$route.path"></router-view>
         </transition>

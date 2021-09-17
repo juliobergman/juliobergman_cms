@@ -45,25 +45,33 @@ import DarkModeSwitch from "../../app/ui/darkMode.vue";
 export default {
     components: { DarkModeSwitch },
     data: () => ({
-        drawer: false,
         selected: 0
     }),
     computed: {
         itms() {
             return items;
+        },
+        drawer: {
+            get() {
+                return this.$store.state.webDrawer;
+            },
+            set(val) {
+                this.$store.commit("webDrawer", val);
+            }
         }
     },
     methods: {
         goto(item) {
             bus.$emit("menu:go", item);
+            this.$store.commit("webDrawer", false);
         }
     },
     created() {
-        items.findIndex((element, index) => {
-            if (element.to == this.$router.currentRoute.name) {
-                this.selected = index;
-            }
-        });
+        // items.findIndex((element, index) => {
+        //     if (element.to == this.$router.currentRoute.name) {
+        //         this.selected = index;
+        //     }
+        // });
         bus.$on("drawer:set", payload => {
             this.drawer = payload;
         });

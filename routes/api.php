@@ -64,8 +64,8 @@ Route::post('/connection/update/bulk', [ConnectionController::class, 'bulkUpsert
 Route::get('/sections', [SectionController::class, 'sections']);
 Route::post('/section/store', [SectionController::class, 'store']);
 
-
-
-
 // Resources
 Route::get('/countries', [CountryController::class, 'countries']);
+
+// ----------------------------------- GUEST ------------------------------------ //
+Route::post('/guest/content', [ContentController::class, 'guest_content']);

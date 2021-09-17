@@ -25,6 +25,9 @@
         "webpack": "^5.45.1"
     },
     "dependencies": {
+        "gsap": "file:gsap-bonus.tgz",
+        "particles.vue": "^2.17.1",
+        "three": "^0.132.2",
         "vue": "^2.6.14",
         "vue-mobile-detection": "^1.0.0",
         "vue-router": "^3.5.2",

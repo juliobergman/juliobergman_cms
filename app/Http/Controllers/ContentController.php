@@ -16,6 +16,46 @@ class ContentController extends Controller
         return ContentData::all();
     }
 
+    public function guest_content(Request $request)
+    {
+        $records = $request->records;
+        if(!$records){ $records = 12; }
+
+        $data_select = [
+            // Connection
+            'connections.id as id',
+            'connections.section_id',
+            'connections.content_id',
+            'connections.public',
+            'connections.oby',
+            'connections.updated_at',
+            // Content
+            'contents.name',
+            // Content Data
+            'content_data.path',
+            'content_data.page_title',
+            'content_data.seo_info',
+            'content_data.og_img',
+            'content_data.cover',
+        ];
+
+        $connections = Connection::query();
+        // Where
+        $connections->where('connections.section_id', $request->section);
+        // $connections->where('connections.public', 'yes');
+        // Selects
+        $connections->select($data_select);
+        // With
+        $connections->with('og_image');
+        $connections->with('cover_image');
+        // Join
+        $connections->join('contents', 'connections.content_id', '=', 'contents.id');
+        $connections->join('content_data', 'connections.content_id', '=', 'content_data.content_id');
+        // OrderBy
+        $connections->orderBy('oby');
+        return $connections->paginate($records);
+    }
+
     public function store(Request $request)
     {
         $request->validate([
