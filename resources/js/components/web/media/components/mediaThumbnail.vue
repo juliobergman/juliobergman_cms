@@ -18,27 +18,6 @@
                     justify="center"
                     align="start"
                 >
-                    <v-fade-transition>
-                        <v-icon
-                            v-show="hover || $isMobile()"
-                            class="cursor-grab handle mt-2 ml-2"
-                        >
-                            mdi-dots-grid
-                        </v-icon>
-                    </v-fade-transition>
-                    <v-spacer></v-spacer>
-                    <!-- v-show="hover || $isMobile()" -->
-                    <v-fade-transition v-if="media.public">
-                        <v-icon
-                            v-if="hover || media.public == 'yes'"
-                            small
-                            :color="pubColor"
-                            class="mt-2 mr-2"
-                            style="opacity: 0.9"
-                        >
-                            {{ pubIcon }}
-                        </v-icon>
-                    </v-fade-transition>
                     <v-slide-y-reverse-transition v-if="media.name">
                         <v-card
                             v-if="hover || $isMobile()"
@@ -46,9 +25,10 @@
                             tile
                             class="mt-auto"
                             width="100%"
+                            dark
                         >
                             <v-card-text
-                                class="text-md-subtitle-2 white--text pa-2"
+                                class="text-h5 font-weight-light text--white pa-3 pa-md-6"
                                 v-text="media.name"
                             />
                         </v-card>

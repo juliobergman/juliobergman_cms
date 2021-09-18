@@ -13,14 +13,14 @@
                 md="2"
             >
                 <v-card color="transparent" flat class="mx-auto">
-                    <v-img contain src="storage/ui/icn-lines-white.svg"></v-img>
+                    <v-img contain src="storage/ui/logo-outline.svg"></v-img>
                 </v-card>
             </v-col>
             <v-col id="anim2" class="mx-auto" cols="10" sm="6" md="4">
                 <v-card color="transparent" flat class="mx-auto">
                     <v-img
                         contain
-                        src="storage/ui/julio_bergman_text.svg"
+                        src="storage/ui/logo-outline-text.svg"
                     ></v-img>
                 </v-card>
             </v-col>
@@ -122,8 +122,12 @@ export default {
     methods: {
         scroll() {
             console.log("scroll");
-            this.gsap.to(window, { duration: 0.8, scrollTo: ".v-main" });
             // this.gsap.to(window, { duration: 2, scrollTo: 200 });
+            // this.gsap.to(window, { duration: 0.8, scrollTo: ".v-main" });
+            this.gsap.to(window, {
+                duration: 0.7,
+                scrollTo: { y: ".v-main", offsetY: 64 }
+            });
         }
     },
     created() {
@@ -132,19 +136,23 @@ export default {
     mounted() {
         this.tl = this.gsap
             .timeline({ yoyo: true })
-            .from("#anim1", { duration: 1, autoAlpha: 0, y: -500, scale: 0.01 })
-            .from("#anim2", { duration: 1, autoAlpha: 0 }, 1)
-            .from("#anim3", { duration: 1, autoAlpha: 0 }, "-=0.5")
+            .from("#anim1", {
+                duration: 1,
+                autoAlpha: 0,
+                y: -500,
+                scale: 0.01
+            })
+            .from("#anim2", { duration: 3, autoAlpha: 0 }, 1)
+            .from("#anim3", { duration: 0.5, autoAlpha: 0 }, "-=2.5")
             .from(
                 ".sbtn",
                 {
                     duration: 0.2,
                     scale: 0.01,
                     autoAlpha: 0,
-                    ease: "power1",
                     stagger: 0.2
                 },
-                "-=0.05"
+                "-=2"
             )
             .from(".btn-explore", {
                 duration: 1,

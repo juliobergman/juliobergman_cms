@@ -181,13 +181,13 @@ export default {
         },
         save() {
             this.$store.commit("loading", true);
+            this.$store.commit("unsaved", false);
             axios
                 .post("/api/content/update", this.item)
                 .then(response => {
                     setTimeout(() => {
                         this.$emit("reload");
                         this.close();
-                        this.$store.commit("unsaved", false);
                         this.$store.commit("loading", false);
                     }, 200);
                 })

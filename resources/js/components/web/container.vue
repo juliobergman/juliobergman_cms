@@ -1,11 +1,12 @@
 <template>
     <v-app id="inspire">
-        <nav-drawer></nav-drawer>
-        <app-bar></app-bar>
-        <!-- <hero></hero> -->
-        <transition :name="transitionName" mode="out-in">
+        <nav-drawer />
+        <app-bar />
+        <hero />
+        <!-- <transition :name="transitionName" mode="out-in">
             <router-view :key="$route.path"></router-view>
-        </transition>
+        </transition> -->
+        <!-- <app-footer /> -->
     </v-app>
 </template>
 
@@ -14,11 +15,13 @@ import { bus } from "../../app";
 import NavDrawer from "./ui/navDrawer.vue";
 import AppBar from "./ui/appBar.vue";
 import Hero from "./ui/hero.vue";
+import appFooter from "./ui/footer.vue";
 export default {
     components: {
         NavDrawer,
         AppBar,
-        Hero
+        Hero,
+        appFooter
     },
     data: () => ({
         transitionName: "slide-right"

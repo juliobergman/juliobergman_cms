@@ -63,14 +63,16 @@ export default {
             this.hero++;
             this.height = data.height;
             this.gradient = data.gradient;
-            let deg = Math.floor(Math.random() * (360 - 0)) + 0;
-            this.rotation = 0;
             this.gsap.to(".hero", {
-                duration: data.duration,
+                duration: 0.5,
                 height: data.height,
                 ease: "power2",
                 background:
-                    "linear-gradient(" + deg + "deg, " + data.gradient + ")"
+                    "linear-gradient(" +
+                    data.deg +
+                    "deg, " +
+                    data.gradient +
+                    ")"
             });
         });
     }
@@ -88,16 +90,17 @@ export default {
     z-index: 10;
 }
 .hero {
-    background: linear-gradient(45deg, #20bdff, #5433ff);
+    background: #000;
     min-height: 200px;
-    /* z-index: 1; */
+    z-index: 0;
 }
 .btn-explore {
     position: absolute;
     z-index: 2;
 }
 #tsparticles {
-    position: absolute;
+    position: fixed;
+    z-index: -1;
     left: 0;
     top: 0;
     width: 100%;
