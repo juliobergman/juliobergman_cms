@@ -17,6 +17,9 @@ const opts = {
                 info: "#3ED1F9",
                 warning: "#D19600",
                 danger: "#FF4B30",
+                titles: "#666A7E",
+                subtitles: "#666A7E",
+                body: "#2b3036",
                 blackBack: "#121212"
             },
             dark: {
@@ -28,6 +31,9 @@ const opts = {
                 info: "#3ED1F9",
                 warning: "#EFB92F",
                 danger: "#FF4B30",
+                titles: "#e4e6f1",
+                subtitles: "#ccc",
+                body: "#ccc",
                 blackBack: "#121212"
             }
         }

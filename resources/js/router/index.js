@@ -7,6 +7,10 @@ import WebMedia from "../components/web/media/container";
 import WebDevelopment from "../components/web/development/container";
 import WebLab from "../components/web/lab/container";
 import WebContact from "../components/web/contact/container";
+// WebsiteSubSections
+import WebMediaLogos from "../components/web/media/container";
+import WebCervezaBenitz from "../components/web/project/cervezabenitz.vue";
+
 // App
 import AppAccount from "../components/app/account/container";
 import AppContents from "../components/app/contents/container";
@@ -22,7 +26,9 @@ const routes = [
         component: WebHome,
         name: "home",
         path: "/",
-        meta: { section: "home" }
+        meta: {
+            section: "home"
+        }
     },
     {
         component: WebMedia,
@@ -31,10 +37,16 @@ const routes = [
         meta: { section: "media" }
     },
     {
+        component: WebMediaLogos,
+        name: "mediaLogos",
+        path: "/media/logo",
+        meta: { section: "media" }
+    },
+    {
         component: WebDevelopment,
-        name: "development",
-        path: "/development",
-        meta: { section: "development" }
+        name: "dev",
+        path: "/dev",
+        meta: { section: "dev" }
     },
     {
         component: WebLab,
@@ -47,6 +59,13 @@ const routes = [
         name: "contact",
         path: "/contact",
         meta: { section: "contact" }
+    },
+    // Projects
+    {
+        component: WebCervezaBenitz,
+        name: "cervezabenitz",
+        path: "/project/cervezabenitz",
+        meta: { section: "projects" }
     },
     // App
     {

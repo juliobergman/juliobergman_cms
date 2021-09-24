@@ -1,47 +1,90 @@
 <template>
-    <v-app id="inspire">
-        <nav-drawer />
+    <v-app id="application">
+        <drawer />
         <app-bar />
-        <hero />
-        <!-- <transition :name="transitionName" mode="out-in">
-            <router-view :key="$route.path"></router-view>
-        </transition> -->
-        <!-- <app-footer /> -->
+        <hero :key="hero" />
+        <v-main class="pb-16">
+            <v-fade-transition mode="out-in">
+                <router-view :key="$route.path"></router-view>
+            </v-fade-transition>
+        </v-main>
+        <app-footer />
     </v-app>
 </template>
 
 <script>
 import { bus } from "../../app";
-import NavDrawer from "./ui/navDrawer.vue";
+import Drawer from "./ui/drawer.vue";
 import AppBar from "./ui/appBar.vue";
 import Hero from "./ui/hero.vue";
 import appFooter from "./ui/footer.vue";
 export default {
     components: {
-        NavDrawer,
+        Drawer,
         AppBar,
         Hero,
         appFooter
     },
     data: () => ({
+        hero: 0,
+        tl: undefined,
         transitionName: "slide-right"
     }),
-    methods: {},
-    created() {},
-    mounted() {
-        // Router Transitions
-        this.$router.beforeEach((to, from, next) => {
-            let toDepth = to.path.split("/").length;
-            let fromDepth = from.path.split("/").length;
-            this.transitionName =
-                toDepth < fromDepth ? "slide-right" : "slide-left";
-            // toDepth < fromDepth ? "fade" : "fade";
+    methods: {
+        // enter(e, done) {
+        //     this.gsap.from(e, {
+        //         delay: 0.1,
+        //         duration: 0.8,
+        //         overflow: "hidden",
+        //         autoAlpha: 0,
+        //         onComplete: () => {
 
-            if (to.meta.section != from.meta.section) {
-                this.transitionName = "fade";
-            }
+        //         }
+        //     });
+        // },
+        // leave(e, done) {
+        //     this.gsap.to(e, {
+        //         duration: 0.8,
+        //         overflow: "hidden",
+        //         autoAlpha: 0,
+        //         onComplete: () => {
+        //             done();
+        //         }
+        //     });
+        // },
+        enableScroll() {
+            document.body.classList.remove("stop-scrolling");
+        },
+        disableScroll() {
+            document.body.classList.add("stop-scrolling");
+        }
+    },
+    created() {
+        this.$store.dispatch("setContent", {
+            path: this.$route.path
+        });
+    },
+    mounted() {
+        bus.$on("scroll:enable", this.enableScroll);
+        bus.$on("scroll:disable", this.disableScroll);
+        // Router Guards
+        this.$router.beforeEach((to, from, next) => {
+            // this.hero++;
             next();
+        });
+        this.$router.afterEach((to, from) => {
+            this.gsap.to(window, {
+                delay: 0.1,
+                duration: 0.5,
+                scrollTo: 0
+            });
         });
     }
 };
 </script>
+<style>
+.stop-scrolling {
+    height: 100vh !important;
+    overflow: hidden !important;
+}
+</style>

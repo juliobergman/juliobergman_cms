@@ -24,9 +24,11 @@ class ConnectionController extends Controller
             'connections.oby',
             'connections.updated_at',
             // Content
+            'contents.folio',
             'contents.name',
+            'contents.subtitle',
+            'contents.path',
             // Content Data
-            'content_data.path',
             'content_data.page_title',
             'content_data.seo_info',
             'content_data.og_img',

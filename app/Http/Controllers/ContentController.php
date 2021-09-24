@@ -30,9 +30,11 @@ class ContentController extends Controller
             'connections.oby',
             'connections.updated_at',
             // Content
+            'contents.folio',
             'contents.name',
+            'contents.subtitle',
+            'contents.path',
             // Content Data
-            'content_data.path',
             'content_data.page_title',
             'content_data.seo_info',
             'content_data.og_img',
@@ -56,24 +58,71 @@ class ContentController extends Controller
         return $connections->paginate($records);
     }
 
+    public function show(Request $request)
+    {
+
+        $path = $request->path;
+        if(!$path){
+            $path = '/';
+        }
+
+        $data_select = [
+            // Content
+            'contents.id',
+            'contents.folio',
+            'contents.name',
+            'contents.subtitle',
+            'contents.path',
+            // Content Data
+            'content_data.page_title',
+            'content_data.seo_info',
+            'content_data.og_img',
+            'content_data.cover',
+        ];
+
+        $content = Content::query();
+        // Where
+        $content->where('contents.path', $path);
+        // Selects
+        $content->select($data_select);
+        // With
+        $content->with('og_image');
+        $content->with('cover_image');
+        // Join
+        $content->join('content_data', 'contents.id', '=', 'content_data.content_id');
+        // OrderBy
+        // $content->orderBy('oby');
+        return $content->first();
+    }
+
     public function store(Request $request)
     {
+
+        // Fix Path
+        $path = $request->path;
+        $path = rtrim($path, '/');
+        $path = ltrim($path, '/');
+        $request->path = '/'.$path;
+        $request->merge(["path"=> $path]);
+
         $request->validate([
             'section' => 'required',
             'name' => 'required|unique:sections|max:255|min:3',
             'page_title' => 'required|min:3',
-            'path' => 'required|unique:content_data',
+            'path' => 'required|unique:contents',
+            'folio' => 'required|unique:contents',
             'seo_info' => 'min:3',
         ]);
 
         $newContent = Content::create([
+            'folio' => $request->folio,
             'name' => $request->name,
+            'path' => $path,
         ])->id;
 
         $newContentData = ContentData::insert([
             'content_id' => $newContent,
             'page_title' => $request->page_title,
-            'path' => $request->path,
             'seo_info' => $request->seo_info,
         ]);
         $newConnection = Connection::insert([
@@ -93,6 +142,13 @@ class ContentController extends Controller
 
     public function update(Request $request)
     {
+
+        // Fix Path
+        $path = $request->path;
+        $path = rtrim($path, '/');
+        $path = ltrim($path, '/');
+        $request->merge(["path"=> $path]);
+
         $id['connection'] = $request->id;
         $id['content'] = $request->content_id;
 
@@ -101,9 +157,12 @@ class ContentController extends Controller
             'content_id',
             'public',
         );
-        $update['content'] = $request->only('name');
+        $update['content'] = [
+            'folio' => $request->folio,
+            'name' => $request->name,
+            'path' => '/'.$path,
+        ];
         $update['content_data'] = $request->only(
-            'path',
             'page_title',
             'seo_info',
             'og_img',

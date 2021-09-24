@@ -1,7 +1,7 @@
 <template>
-    <v-main>
+    <v-container>
         <h1>Lab</h1>
-    </v-main>
+    </v-container>
 </template>
 
 <script>

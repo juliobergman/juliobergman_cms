@@ -9,6 +9,9 @@
 //     border-style: none !important;
 // }
 // Misc
+html {
+    overflow-y: auto;
+}
 .overlay {
     background: rgba($color: #000000, $alpha: 0.5);
 }

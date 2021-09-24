@@ -69,3 +69,4 @@ Route::get('/countries', [CountryController::class, 'countries']);
 
 // ----------------------------------- GUEST ------------------------------------ //
 Route::post('/guest/content', [ContentController::class, 'guest_content']);
+Route::post('/guest/content/show', [ContentController::class, 'show']);

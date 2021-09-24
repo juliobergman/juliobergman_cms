@@ -1,7 +1,7 @@
 <template>
-    <v-main>
+    <v-container>
         <h1>Media</h1>
-    </v-main>
+    </v-container>
 </template>
 
 <script>

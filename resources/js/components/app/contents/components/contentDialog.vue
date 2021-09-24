@@ -182,6 +182,7 @@ export default {
         save() {
             this.$store.commit("loading", true);
             this.$store.commit("unsaved", false);
+
             axios
                 .post("/api/content/update", this.item)
                 .then(response => {

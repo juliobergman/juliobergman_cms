@@ -1,80 +1,136 @@
 <template>
-    <v-sheet class="hero d-flex justify-center align-end">
-        <Particles id="tsparticles" url="/storage/factory/particles.json" />
-        <hero-content id="heroContent" :height="height" />
-        <div class="process">
-            <div class="ma-2">
-                {{ mouse }}
-            </div>
-            <div class="ma-2">
-                {{ rotation }}
-            </div>
-        </div>
-    </v-sheet>
+    <v-card
+        tile
+        flat
+        :height="height"
+        class="hero d-flex justify-center align-end"
+    >
+        <Particles
+            v-if="particles && !cover"
+            id="tsparticles"
+            url="/storage/factory/particles.json"
+        />
+        <custom-parallax v-if="cover" :src="cover" />
+        <hero-content v-if="!cover" id="heroContent" />
+
+        <v-progress-linear
+            :active="$store.state.loading"
+            :indeterminate="$store.state.loading"
+            absolute
+            bottom
+            color="deep-purple accent-4"
+        ></v-progress-linear>
+    </v-card>
 </template>
 
 <script>
 import { bus } from "../../../app";
-import heroContent from "./heroContent.vue";
+import { heroConfig } from "../ui/assets/hero.js";
+import heroContent from "./components/heroContent.vue";
+import customParallax from "./components/customParallax.vue";
 export default {
-    components: { heroContent },
+    components: { heroContent, customParallax },
     data: () => ({
-        loaded: true,
-        height: "100vh",
-        hero: 1,
-        gradient: undefined,
-        rotation: 0,
-        mouse: {
-            x: null,
-            y: null,
-            deg: null
-        }
+        height: "0px"
     }),
     methods: {
-        scroll() {
-            console.log("scroll");
+        setup() {
+            if (!this.hero || !this.content) return;
+            this.gsap.timeline({}).to(".hero", this.options);
         },
-        onMouseMove(event) {
-            // this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-            // this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-            // this.mouse.deg =
-            //     (Math.atan2(this.mouse.y, this.mouse.x) * 180) / Math.PI;
-            // let nr = this.mouse.deg;
-            // console.log(nr);
-            // this.rotation = (nr + 90) * -1;
-            // this.gsap.to(".hero", {
-            //     duration: 20,
-            //     delay: 0.5,
-            //     ease: "none",
-            //     background:
-            //         "linear-gradient(" +
-            //         this.rotation +
-            //         "deg, " +
-            //         this.gradient +
-            //         ")"
-            // });
+        animateCover() {
+            if (!this.cover) return;
+        },
+        imageLoad(src) {
+            console.log("image loaded");
         }
     },
-    computed: {},
+    computed: {
+        windowSize() {
+            return {
+                w: 400,
+                y: 400
+            };
+        },
+        content() {
+            return this.$store.state.content;
+        },
+        hero() {
+            this.$store.commit("loading", true);
+            let ret = heroConfig.find(e => e.folio == this.content.folio);
+            if (ret) {
+                this.$store.commit("loading", false);
+                return heroConfig.find(e => e.folio == this.content.folio);
+            }
+            if (!ret) {
+                this.$store.commit("loading", false);
+                return heroConfig.find(e => e.folio == "default");
+            }
+        },
+        options() {
+            this.$store.commit("loading", true);
+            let hero = this.hero;
+            let options = {};
+
+            if (!this.content.cover) {
+                options = {
+                    duration: 0.5,
+                    ease: "power2",
+                    height: hero.height,
+                    background: hero.background
+                };
+            }
+            if (this.content.cover) {
+                options = {
+                    duration: 0.5,
+                    ease: "power2",
+                    height: "70vh"
+                };
+            }
+            this.$store.commit("loading", false);
+            return options;
+        },
+        cover() {
+            let contentCover = this.content.cover;
+
+            if (!contentCover) {
+                return "";
+            }
+            if (contentCover) {
+                return this.content.cover_image.xlarge;
+            }
+        },
+        lazycover() {
+            let contentCover = this.content.cover;
+
+            if (!contentCover) {
+                return "";
+            }
+            if (contentCover) {
+                return this.content.cover_image.thumbnail;
+            }
+        },
+        particles() {
+            if (this.hero) {
+                return this.hero["particles"];
+            } else {
+                return false;
+            }
+        }
+    },
     created() {},
     mounted() {
-        // document.addEventListener("mousemove", this.onMouseMove, false);
-        bus.$on("hero:height", data => {
-            this.hero++;
-            this.height = data.height;
-            this.gradient = data.gradient;
-            this.gsap.to(".hero", {
-                duration: 0.5,
-                height: data.height,
-                ease: "power2",
-                background:
-                    "linear-gradient(" +
-                    data.deg +
-                    "deg, " +
-                    data.gradient +
-                    ")"
-            });
+        this.gsap.set(".hero", {
+            height: "30vh"
         });
+    },
+    watch: {
+        hero() {
+            this.setup();
+        },
+        cover() {
+            this.animateCover();
+        }
     }
 };
 </script>
@@ -91,7 +147,7 @@ export default {
 }
 .hero {
     background: #000;
-    min-height: 200px;
+    min-height: 1px;
     z-index: 0;
 }
 .btn-explore {

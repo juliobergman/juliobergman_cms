@@ -23,7 +23,7 @@
             <v-list-item
                 v-for="item in itms"
                 :key="item.title"
-                @click="goto(item)"
+                @click="goto(item.to)"
                 link
             >
                 <v-list-item-icon>
@@ -40,7 +40,7 @@
 
 <script>
 import { bus } from "../../../app";
-import { items } from "./menuItems";
+import { items } from "./assets/menuItems";
 import DarkModeSwitch from "../../app/ui/darkMode.vue";
 export default {
     components: { DarkModeSwitch },
@@ -58,20 +58,24 @@ export default {
             set(val) {
                 this.$store.commit("webDrawer", val);
             }
+        },
+        content() {
+            return this.$store.state.content;
         }
     },
     methods: {
-        goto(item) {
-            bus.$emit("menu:go", item);
+        goto(routeName) {
+            this.$router.push({ name: routeName });
+            this.$store.dispatch("setContent", {
+                path: this.$route.path
+            });
             this.$store.commit("webDrawer", false);
         }
     },
     created() {
-        // items.findIndex((element, index) => {
-        //     if (element.to == this.$router.currentRoute.name) {
-        //         this.selected = index;
-        //     }
-        // });
+        bus.$on("goto:name", payload => {
+            this.goto(payload);
+        });
         bus.$on("drawer:set", payload => {
             this.drawer = payload;
         });

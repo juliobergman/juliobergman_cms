@@ -24,6 +24,7 @@
                 <v-text-field label="Name" v-model="content.name" />
                 <v-text-field label="Page Title" v-model="content.page_title" />
                 <v-text-field label="Path" v-model="content.path" />
+                <v-text-field label="Folio" v-model="folio" readonly />
                 <v-text-field label="SEO Info" v-model="content.seo_info" />
             </v-card-text>
             <v-slide-y-transition>
@@ -80,9 +81,24 @@ export default {
                 this.$emit("section", val);
             }
         },
+        folio: {
+            get() {
+                if (this.content.path) {
+                    const splited = this.content.path.split("/");
+                    let pos = splited.length - 1;
+                    return splited[pos];
+                } else {
+                    return "";
+                }
+            },
+            set(val) {
+                // this.$emit("section", val);
+            }
+        },
         sendContent() {
             return {
                 section: this.sec,
+                folio: this.folio,
                 name: this.content.name,
                 page_title: this.content.page_title,
                 path: this.content.path,
@@ -94,6 +110,10 @@ export default {
         save() {
             this.$store.commit("loading", true);
             this.errors = null;
+
+            console.log(this.sendContent);
+
+            return;
             axios
                 .post("/api/content/store", this.sendContent)
                 .then(() => {

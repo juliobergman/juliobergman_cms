@@ -1,13 +1,19 @@
 <template>
-    <v-main>
+    <v-container>
+        <!-- <v-img src="/storage/factory/stock/1.jpg"></v-img> -->
+        <pt
+            title="Work"
+            subtitle="Branding | 3D Rendering | Photography | Development"
+        />
         <projects></projects>
-    </v-main>
+    </v-container>
 </template>
 
 <script>
-import Projects from "./projects";
+import pt from "../ui/components/webTitle.vue";
+import Projects from "./components/projects.vue";
 export default {
-    components: { Projects },
+    components: { pt, Projects },
     data: () => ({}),
     methods: {},
     created() {}

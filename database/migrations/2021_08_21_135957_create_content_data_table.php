@@ -18,7 +18,6 @@ class CreateContentDataTable extends Migration
 
             $table->foreignId('content_id')->constrained()->references('id')->on('contents')->onDelete('cascade');
 
-            $table->string('path');
             $table->string('page_title');
             $table->string('seo_info')->nullable();
             $table->foreignId('og_img')->nullable()->references('id')->on('media');

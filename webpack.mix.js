@@ -21,5 +21,8 @@ mix.webpackConfig(webpackConfig);
  */
 
 mix.js("resources/js/app.js", "public/js")
+    .js("resources/js/error.js", "public/js")
     .vue()
+    .css("resources/css/app.css", "public/css")
+    .css("resources/css/error.css", "public/css")
     .sass("resources/sass/app.scss", "public/css");

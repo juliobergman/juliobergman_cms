@@ -41,6 +41,8 @@ gsap.registerPlugin(
     SlowMo
 );
 
+gsap.defaults({ overwrite: "auto", lazy: false });
+
 Vue.mixin({
     created: function() {
         this.gsap = gsap;

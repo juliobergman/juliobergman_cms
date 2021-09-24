@@ -9,7 +9,8 @@ export default new Vuex.Store({
     state: {
         loading: false,
         unsaved: false,
-        webDrawer: false
+        webDrawer: false,
+        content: {}
     },
     mutations: {
         loading(state, payload) {
@@ -20,9 +21,26 @@ export default new Vuex.Store({
         },
         webDrawer(state, payload) {
             state.webDrawer = payload;
+        },
+        content(state, payload) {
+            state.content = payload;
         }
     },
-    actions: {},
+    actions: {
+        setContent({ commit, state }, payload) {
+            commit("loading", true);
+            axios
+                .post("/api/guest/content/show", payload)
+                .then(response => {
+                    commit("content", response.data);
+                    commit("loading", false);
+                })
+                .catch(response => {
+                    console.error(response);
+                    console.error(response.message);
+                });
+        }
+    },
     getters: {},
     modules: {
         user

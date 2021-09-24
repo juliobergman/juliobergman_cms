@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import DarkModeSwitch from "../../app/ui/darkMode.vue";
+import DarkModeSwitch from "../../../app/ui/darkMode.vue";
 export default {
     components: { DarkModeSwitch }
 };

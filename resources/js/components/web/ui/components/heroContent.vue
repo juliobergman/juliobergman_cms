@@ -13,19 +13,25 @@
                 md="2"
             >
                 <v-card color="transparent" flat class="mx-auto">
-                    <v-img contain src="storage/ui/logo-outline.svg"></v-img>
+                    <v-img contain src="/storage/ui/logo-outline.svg"></v-img>
                 </v-card>
             </v-col>
             <v-col id="anim2" class="mx-auto" cols="10" sm="6" md="4">
                 <v-card color="transparent" flat class="mx-auto">
                     <v-img
                         contain
-                        src="storage/ui/logo-outline-text.svg"
+                        src="/storage/ui/logo-outline-text.svg"
                     ></v-img>
                 </v-card>
             </v-col>
             <v-col id="anim3" class="mx-auto" cols="10" sm="6" md="4" lg="3">
-                <v-card color="transparent" dark flat class="mx-auto">
+                <v-card
+                    v-if="false"
+                    color="transparent"
+                    dark
+                    flat
+                    class="mx-auto"
+                >
                     <v-card-text
                         class="text-center text-subtitle-1 text-lg-h6 font-weight-light"
                     >
@@ -72,8 +78,8 @@
 </template>
 
 <script>
+import { bus } from "../../../../app";
 export default {
-    props: ["height"],
     data: () => ({
         tl: null,
         csection: null,
@@ -131,11 +137,12 @@ export default {
         }
     },
     created() {
+        bus.$emit("scroll:disable");
         this.csection = this.$route.name;
     },
     mounted() {
         this.tl = this.gsap
-            .timeline({ yoyo: true })
+            .timeline({})
             .from("#anim1", {
                 duration: 1,
                 autoAlpha: 0,
@@ -157,7 +164,10 @@ export default {
             .from(".btn-explore", {
                 duration: 1,
                 delay: 1,
-                autoAlpha: 0
+                autoAlpha: 0,
+                onComplete: () => {
+                    bus.$emit("scroll:enable");
+                }
             });
 
         if (this.csection != "home") {
