@@ -31,7 +31,7 @@ import customParallax from "./components/customParallax.vue";
 export default {
     components: { heroContent, customParallax },
     data: () => ({
-        height: "0px"
+        height: "100vh"
     }),
     methods: {
         setup() {
@@ -121,7 +121,7 @@ export default {
     created() {},
     mounted() {
         this.gsap.set(".hero", {
-            height: "30vh"
+            height: "100vh"
         });
     },
     watch: {
