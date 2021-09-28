@@ -1,5 +1,5 @@
 <template>
-    <v-app-bar fixed dark flat>
+    <v-app-bar class="ab" color="rgba(0,0,0,0.0001)" fixed dark flat>
         <v-container fluid class="d-flex justify-space-between py-0 px-0">
             <v-avatar size="36">
                 <v-img src="/storage/ui/nav-logo.svg"></v-img>
@@ -18,16 +18,21 @@ export default {
     components: {
         btnDrawer
     },
-    data: () => ({
-        barColor: "app-bar-transparent",
-        barAlign: "my-auto align-center",
-        barScroll: false
-    }),
+    data: () => ({}),
     computed: {},
     methods: {},
     created() {},
     mounted() {
-        window.onscroll = () => {};
+        this.gsap.to(".ab", {
+            backgroundColor: "rgba(0,0,0,0.4)",
+            ease: "none",
+            scrollTrigger: {
+                trigger: "body",
+                scrub: true,
+                start: "+=200",
+                end: "+=500"
+            }
+        });
     }
 };
 </script>

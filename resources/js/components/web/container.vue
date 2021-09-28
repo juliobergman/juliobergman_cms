@@ -31,27 +31,6 @@ export default {
         transitionName: "slide-right"
     }),
     methods: {
-        // enter(e, done) {
-        //     this.gsap.from(e, {
-        //         delay: 0.1,
-        //         duration: 0.8,
-        //         overflow: "hidden",
-        //         autoAlpha: 0,
-        //         onComplete: () => {
-
-        //         }
-        //     });
-        // },
-        // leave(e, done) {
-        //     this.gsap.to(e, {
-        //         duration: 0.8,
-        //         overflow: "hidden",
-        //         autoAlpha: 0,
-        //         onComplete: () => {
-        //             done();
-        //         }
-        //     });
-        // },
         enableScroll() {
             document.body.classList.remove("stop-scrolling");
         },
@@ -74,7 +53,7 @@ export default {
         });
         this.$router.afterEach((to, from) => {
             this.gsap.to(window, {
-                delay: 0.1,
+                delay: 0.5,
                 duration: 0.5,
                 scrollTo: 0
             });
