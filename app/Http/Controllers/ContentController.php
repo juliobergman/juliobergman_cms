@@ -13,7 +13,55 @@ class ContentController extends Controller
 {
     public function content(Request $request)
     {
-        return ContentData::all();
+        $data_select = [
+            // Content
+            'contents.id',
+            'contents.folio',
+            'contents.name',
+            'contents.subtitle',
+            'contents.path',
+            // Content Data
+            'content_data.page_title',
+            'content_data.seo_info',
+            'content_data.og_img',
+            'content_data.cover',
+        ];
+
+        $contents = Content::query();
+        // With
+        $contents->with('og_image');
+        $contents->with('cover_image');
+        // Join
+        $contents->join('content_data', 'contents.id', '=', 'content_data.content_id');
+
+        return $contents->get();
+    }
+    public function content_data(Request $request)
+    {
+        $data_select = [
+            // Content
+            'contents.id',
+            'contents.folio',
+            'contents.name',
+            'contents.subtitle',
+            'contents.path',
+            // Content Data
+            'content_data.page_title',
+            'content_data.seo_info',
+            'content_data.og_img',
+            'content_data.cover',
+        ];
+
+        $content = Content::query();
+        // where
+        $content->where('contents.id', $request->id);
+        // With
+        $content->with('og_image');
+        $content->with('cover_image');
+        // Join
+        $content->join('content_data', 'contents.id', '=', 'content_data.content_id');
+
+        return $content->first();
     }
 
     public function guest_content(Request $request)
@@ -106,7 +154,6 @@ class ContentController extends Controller
         $request->merge(["path"=> $path]);
 
         $request->validate([
-            'section' => 'required',
             'name' => 'required|unique:sections|max:255|min:3',
             'page_title' => 'required|min:3',
             'path' => 'required|unique:contents',
@@ -125,12 +172,8 @@ class ContentController extends Controller
             'page_title' => $request->page_title,
             'seo_info' => $request->seo_info,
         ]);
-        $newConnection = Connection::insert([
-            'section_id' => $request->section,
-            'content_id' => $newContent,
-        ]);
 
-        if ($newContent && $newContentData && $newConnection) {
+        if ($newContent && $newContentData) {
             return new JsonResponse(['message' => 'New Content has been created.'], 201);
         } else {
             return new JsonResponse(['message' => 'Error'], 400);
@@ -149,19 +192,14 @@ class ContentController extends Controller
         $path = ltrim($path, '/');
         $request->merge(["path"=> $path]);
 
-        $id['connection'] = $request->id;
-        $id['content'] = $request->content_id;
+        $id['content'] = $request->id;
 
-        $update['connection'] = $request->only(
-            'section_id',
-            'content_id',
-            'public',
-        );
         $update['content'] = [
             'folio' => $request->folio,
             'name' => $request->name,
             'path' => '/'.$path,
         ];
+
         $update['content_data'] = $request->only(
             'page_title',
             'seo_info',
@@ -169,15 +207,11 @@ class ContentController extends Controller
             'cover',
         );
 
-        $connection = Connection::where('id', $id['connection'])->update($update['connection']);
-        $content = Content::where('id', $id['content'])->update($update['content']);
-        $contentData = ContentData::where('content_id', $id['content'])->update($update['content_data']);
+        Content::where('id', $id['content'])->update($update['content']);
+        ContentData::where('content_id', $id['content'])->update($update['content_data']);
 
-        if ($content && $contentData && $connection) {
-            return new JsonResponse(['message' => 'Content has been Updated.'], 200);
-        } else {
-            return new JsonResponse(['message' => 'Error'], 400);
-        }
+        return new JsonResponse(['message' => 'content/update'], 200);
+
     }
 
 }

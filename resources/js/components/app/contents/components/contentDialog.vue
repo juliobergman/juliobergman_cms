@@ -31,21 +31,22 @@
                     <v-col order="1" order-md="1" cols="12" md="6">
                         <v-card flat>
                             <v-card-text class="mb-3 mb-md-6">
-                                <v-select
-                                    v-model="item.section_id"
-                                    label="Section"
-                                    :items="sections"
-                                    item-text="name"
-                                    item-value="id"
-                                />
-
                                 <v-text-field
-                                    label="Name"
+                                    label="Title"
                                     v-model="item.name"
+                                />
+                                <v-text-field
+                                    label="Subtitle"
+                                    v-model="item.subtitle"
                                 />
                                 <v-text-field
                                     label="Path"
                                     v-model="item.path"
+                                />
+                                <v-text-field
+                                    readonly
+                                    label="Folio"
+                                    v-model="item.folio"
                                 />
                                 <v-text-field
                                     label="Page Title"
@@ -55,28 +56,6 @@
                                     label="SEO Info"
                                     v-model="item.seo_info"
                                 />
-
-                                <v-text-field
-                                    v-if="false"
-                                    label="Cover ID"
-                                    v-model="item.cover"
-                                    readonly
-                                />
-
-                                <v-text-field
-                                    v-if="false"
-                                    label="OG Image ID"
-                                    v-model="item.og_img"
-                                    readonly
-                                />
-
-                                <v-switch
-                                    inset
-                                    v-model="pub"
-                                    label="Public"
-                                    color="primary"
-                                    @change="$store.commit('unsaved', true)"
-                                ></v-switch>
                             </v-card-text>
 
                             <v-card-actions>
@@ -122,11 +101,11 @@ export default {
     },
     props: {
         value: Boolean,
-        content: Object,
-        sections: Array
+        contentId: {}
     },
     data: () => ({
         mediaCover: false,
+        item: [],
         public: [
             { name: "Yes", value: "yes" },
             { name: "No", value: "no" }
@@ -141,25 +120,25 @@ export default {
                 this.$emit("input", value);
             }
         },
-        item: {
-            get() {
-                return this.content;
-            },
-            set(content) {
-                this.$emit("update", content);
-            }
-        },
-        pub: {
-            get() {
-                return this.content.public == "yes" ? true : false;
-            },
-            set(value) {
-                if (value) this.item.public = "yes";
-                if (!value) this.item.public = "no";
-            }
+        cid() {
+            return this.contentId;
         }
     },
     methods: {
+        getContent() {
+            if (!this.cid) return;
+            this.$store.commit("loading", true);
+            axios
+                .post("/api/content/data", { id: this.cid })
+                .then(response => {
+                    this.item = response.data;
+                    this.$store.commit("loading", false);
+                })
+                .catch(error => {
+                    console.error(error);
+                    console.error(error.response);
+                });
+        },
         replaceCover() {
             this.mediaCover = true;
         },
@@ -187,8 +166,8 @@ export default {
                 .post("/api/content/update", this.item)
                 .then(response => {
                     setTimeout(() => {
-                        this.$emit("reload");
                         this.close();
+                        this.$emit("saved");
                         this.$store.commit("loading", false);
                     }, 200);
                 })
@@ -261,7 +240,12 @@ export default {
             }
         }
     },
-    created() {}
+    created() {},
+    watch: {
+        cid() {
+            this.getContent();
+        }
+    }
 };
 </script>
 

@@ -51,6 +51,47 @@ class ConnectionController extends Controller
         return $connections->paginate($records);
     }
 
+    public function store(Request $request)
+    {
+        $request->validate([
+            'section_id' => 'required',
+            'content_id' => 'required',
+        ]);
+
+        $connExists = Connection::where('section_id', $request->section_id)
+            ->where('content_id', $request->content_id)
+            ->first();
+        if ($connExists) {
+            return new JsonResponse(['errors' => ['content_id' => ['Duplicate Entry: Content already exists on this section']]], 422);
+        }
+
+
+
+        $newContent = Connection::create([
+            'section_id' => $request->section_id,
+            'content_id' => $request->content_id
+            ])->id;
+
+        if ($newContent) {
+            return new JsonResponse(['message' => 'New Connection has been created.'], 201);
+        } else {
+            return new JsonResponse(['errors' => 'Error'], 422);
+        }
+    }
+
+    public function update(Request $request)
+    {
+        $update = [
+            'section_id' => $request->section_id,
+            'public' => $request->public
+        ];
+        $connection = Connection::where('id', $request->id)->update($update);
+        if($connection){
+            return new JsonResponse(['message' => 'connection/update'], 200);
+        }
+        return new JsonResponse(['error' => ['Something Happened!']], 419);
+    }
+
     public function bulkUpsert(Request $request)
     {
         // Columns to Update

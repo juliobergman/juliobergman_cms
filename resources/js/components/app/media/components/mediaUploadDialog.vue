@@ -12,6 +12,14 @@
             </v-card-title>
 
             <v-card-text>
+                <v-select
+                    :items="mncat"
+                    item-text="name"
+                    item-value="id"
+                    v-model="currentCategory"
+                    label="Category"
+                    prepend-icon="mdi-folder-open-outline"
+                />
                 <v-file-input
                     v-model="files"
                     placeholder="Upload your documents"
@@ -51,11 +59,27 @@
 
 <script>
 export default {
+    name: "uploadDialog",
+    props: {
+        categories: Array,
+        value: {}
+    },
     data: () => ({
         dialog: false,
         files: []
     }),
     computed: {
+        mncat() {
+            return this.categories;
+        },
+        currentCategory: {
+            get() {
+                return this.categories.find(e => e.id == this.value);
+            },
+            set(val) {
+                this.$emit("input", val);
+            }
+        },
         uploadDisabled() {
             return _.isEmpty(this.files);
         }
@@ -71,6 +95,8 @@ export default {
             };
 
             let formData = new FormData();
+
+            formData.append("category", this.currentCategory.id);
 
             this.files.forEach(e => {
                 formData.append("image[]", e);

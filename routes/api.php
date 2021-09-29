@@ -54,10 +54,13 @@ Route::delete('/upload/destroy', [UploadController::class, 'destroy']);
 
 // Content
 Route::post('/content', [ContentController::class, 'content']);
+Route::post('/content/data', [ContentController::class, 'content_data']);
 Route::post('/content/store', [ContentController::class, 'store']);
 Route::post('/content/update', [ContentController::class, 'update']);
 
 Route::post('/connections', [ConnectionController::class, 'connections']);
+Route::post('/connection/store', [ConnectionController::class, 'store']);
+Route::post('/connection/update', [ConnectionController::class, 'update']);
 Route::post('/connection/update/bulk', [ConnectionController::class, 'bulkUpsert']);
 
 // Section

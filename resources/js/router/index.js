@@ -14,6 +14,7 @@ import WebCervezaBenitz from "../components/web/project/cervezabenitz.vue";
 // App
 import AppAccount from "../components/app/account/container";
 import AppContents from "../components/app/contents/container";
+import AppSection from "../components/app/section/container";
 import AppMedia from "../components/app/media/container";
 import AppSettings from "../components/app/settings/container";
 import AppTest from "../components/app/test/container.vue";
@@ -75,9 +76,15 @@ const routes = [
         meta: { section: "appAccount" }
     },
     {
+        component: AppSection,
+        name: "appSection",
+        path: "/app",
+        meta: { section: "appSection" }
+    },
+    {
         component: AppContents,
         name: "appContents",
-        path: "/app",
+        path: "/app/contents",
         meta: { section: "appContents" }
     },
     {

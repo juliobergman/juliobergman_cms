@@ -13,7 +13,12 @@
                     <v-icon>mdi-content-save</v-icon>
                 </v-btn>
             </v-slide-x-reverse-transition>
-            <upload-dialog @update:done="getMedia()" />
+            <upload-dialog
+                v-model="category"
+                :categories="categories"
+                @update:done="getMedia()"
+                @input="menuChange"
+            />
         </v-toolbar>
 
         <draggable

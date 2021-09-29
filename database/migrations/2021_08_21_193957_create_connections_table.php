@@ -17,6 +17,9 @@ class CreateConnectionsTable extends Migration
             $table->id();
             $table->foreignId('section_id')->nullable()->constrained()->references('id')->on('sections');
             $table->foreignId('content_id')->nullable()->constrained()->references('id')->on('contents');
+
+            $table->unique(['section_id','content_id'], 'unicus');
+
             $table->enum('public', ['yes','no'])->default('no');
             $table->unsignedBigInteger('oby', false)->default(0);
             $table->timestamps();

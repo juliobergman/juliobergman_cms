@@ -1,76 +1,66 @@
 <template>
     <v-container fluid>
-        <v-toolbar dense flat v-if="currentSection">
-            <menu-select
-                v-model="section"
-                :items="sections"
-                :btnText="currentSection.name"
-                @input="getContents()"
-            />
-
+        <v-toolbar dense flat>
+            <v-toolbar-title class="text-button">
+                Contents
+            </v-toolbar-title>
+            <v-text-field
+                v-if="false"
+                v-model="search"
+                append-icon="mdi-magnify"
+                label="Search"
+                single-line
+                hide-details
+                solo
+                flat
+                clearable
+                dense
+                outlined
+            ></v-text-field>
             <v-spacer></v-spacer>
-
-            <v-slide-x-reverse-transition>
-                <v-btn v-show="$store.state.unsaved" icon @click="saveOrder()">
-                    <v-icon>mdi-content-save</v-icon>
-                </v-btn>
-            </v-slide-x-reverse-transition>
-
-            <new-section @saved="getSections()" />
-            <new-content
-                :sections="sections"
-                :section="section"
-                @saved="getContents()"
-                @section="section = $event"
-            />
+            <new-content @saved="getContents()" />
         </v-toolbar>
 
-        <draggable
-            v-model="content"
-            handle=".handle"
-            @change="btnSave = true"
-            v-bind="dragOptions"
-            @start="drag = true"
-            @end="drag = false"
+        <v-data-table
+            :search="search"
+            :headers="headers"
+            :items="content"
+            :items-per-page="itemsPerPage"
+            :page.sync="page"
+            hide-default-footer
+            @click:row="show"
+            :item-class="rowClass"
+            @page-count="pageCount = $event"
         >
-            <transition-group
-                type="transition"
-                :name="!drag ? 'flip-list' : null"
-                tag="div"
-                class="row mt-4"
-            >
-                <v-col
-                    cols="6"
-                    sm="3"
-                    v-for="(item, idx) in content"
-                    :key="item.id"
-                >
-                    <media-thumbnail
-                        :media="item"
-                        :src="item.cover_image.medium"
-                        @click="show"
+            <template v-slot:item.cover="{ item }">
+                <v-card flat width="100px" height="100px" class="my-3 pa-0">
+                    <img
+                        width="100%"
+                        height="100%"
+                        :src="item.cover_image.thumbnail"
+                        class="ma-0"
                     />
-                </v-col>
-            </transition-group>
-        </draggable>
+                </v-card>
+            </template>
+        </v-data-table>
 
-        <v-footer padless absolute v-if="pageLength > 1">
+        <v-footer padless absolute v-if="pageCount > 1">
             <v-card tile flat width="100%">
                 <v-pagination
                     color="primary"
                     v-model="page"
-                    :length="pageLength"
-                    total-visible="7"
+                    :length="pageCount"
+                    :total-visible="7"
                     class="pagination"
-                    @input="getContents"
                 ></v-pagination>
             </v-card>
         </v-footer>
+
         <content-dialog
+            :content-id="itemContentDialog"
             v-model="showContentDialog"
-            :content="itemContentDialog"
-            :sections="sections"
-            @reload="getContents()"
+            @input="itemContentDialog = null"
+            @saved="getContents()"
         />
         <confirm ref="confirm"></confirm>
         <!-- @update="itemContentDialog = $event" -->
@@ -78,18 +68,13 @@
 </template>
 
 <script>
-import newSection from "./components/contentNewSection.vue";
 import newContent from "./components/contentNew.vue";
-
 import draggable from "vuedraggable";
 import mediaThumbnail from "../../app/media/components/mediaThumbnail.vue";
 import contentDialog from "./components/contentDialog.vue";
-import menuSelect from "../ui/menuSelect.vue";
 import confirm from "../ui/alert/confirm.vue";
 export default {
     components: {
-        menuSelect,
-        newSection,
         newContent,
         draggable,
         mediaThumbnail,
@@ -97,57 +82,34 @@ export default {
         confirm
     },
     data: () => ({
-        drag: false,
-        page: 1,
-        pageLength: 1,
-        sections: [],
-        section: 1,
         showContentDialog: false,
-        itemContentDialog: {},
-        content: []
+        itemContentDialog: null,
+        search: "",
+        page: 1,
+        pageCount: 0,
+        itemsPerPage: 5,
+        content: [],
+        headers: [
+            { text: "Cover", value: "cover", align: "center", width: "100px" },
+            {
+                text: "Title",
+                value: "name"
+            },
+            { text: "Path", value: "path" },
+            { text: "Page Title", value: "page_title" }
+        ]
     }),
-    computed: {
-        dragOptions() {
-            return {
-                animation: 200,
-                group: "description",
-                disabled: false,
-                ghostClass: "ghost"
-            };
-        },
-        currentSection() {
-            return this.sections.find(e => e.id == this.section);
-        },
-        pageRecords() {
-            return this.$isMobile() ? 6 : 12;
-        }
-    },
+    computed: {},
     methods: {
-        getSections() {
-            this.$store.commit("loading", true);
-            axios
-                .get("/api/sections")
-                .then(response => {
-                    this.sections = response.data;
-                    this.$store.commit("loading", false);
-                })
-                .catch(error => {
-                    console.error(error);
-                    console.error(error.response);
-                });
+        rowClass(item) {
+            return "cursor-pointer";
         },
         getContents() {
             this.$store.commit("loading", true);
-            let postData = {
-                section: this.section,
-                records: this.pageRecords
-            };
-
             axios
-                .post("/api/connections?page=" + this.page, postData)
+                .post("/api/content", {})
                 .then(response => {
-                    this.content = response.data.data;
-                    this.pageLength = response.data.last_page;
+                    this.content = response.data;
                     this.$store.commit("loading", false);
                 })
                 .catch(error => {
@@ -156,64 +118,14 @@ export default {
                 });
         },
         show(item) {
-            if (this.$store.state.unsaved) {
-                this.$refs.confirm
-                    .open(
-                        "Warning",
-                        [
-                            "You currently have unsaved changes, Are you sure you want to exit without saving?",
-                            "Choose YES to leave without saving any changes."
-                        ],
-                        {
-                            color: "warning",
-                            messageAlign: "left",
-                            btnCancel: "return",
-                            width: 375
-                        }
-                    )
-                    .then(confirmResponse => {
-                        if (confirmResponse) {
-                            this.$store.commit("unsaved", false);
-                            this.itemContentDialog = this.content.find(
-                                e => e.id == item
-                            );
-                            this.showContentDialog = true;
-                        }
-                    });
-            }
-            if (!this.$store.state.unsaved) {
-                this.itemContentDialog = this.content.find(e => e.id == item);
-                this.showContentDialog = true;
-            }
-        },
-        saveOrder() {
-            this.$store.commit("loading", true);
-            console.log(this.content);
-            axios
-                .post("/api/connection/update/bulk", this.content)
-                .then(response => {
-                    console.log(response.data);
-                    this.$store.commit("unsaved", false);
-                    this.$store.commit("loading", false);
-                })
-                .catch(response => {
-                    console.error(response.name);
-                    console.error(response.message);
-                });
+            this.itemContentDialog = item.id;
+            this.showContentDialog = true;
         }
     },
     created() {
-        this.getSections();
         this.getContents();
     },
-    watch: {
-        section() {
-            this.getContents();
-        },
-        drag() {
-            this.$store.commit("unsaved", true);
-        }
-    }
+    watch: {}
 };
 </script>
 

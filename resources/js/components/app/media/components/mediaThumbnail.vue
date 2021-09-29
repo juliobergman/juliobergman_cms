@@ -18,7 +18,7 @@
                     justify="center"
                     align="start"
                 >
-                    <v-fade-transition>
+                    <v-fade-transition v-if="sortable">
                         <v-icon
                             v-show="hover || $isMobile()"
                             class="cursor-grab handle mt-2 ml-2"
@@ -48,7 +48,13 @@
                             width="100%"
                         >
                             <v-card-text
-                                class="text-md-subtitle-2 white--text pa-2"
+                                v-if="!$isMobile()"
+                                style="opacity: 0.9"
+                                class="white--text pa-2 mb-n3"
+                                v-text="media.subtitle"
+                            />
+                            <v-card-text
+                                class="text-subtitle-2 text-uppercase white--text pa-2"
                                 v-text="media.name"
                             />
                         </v-card>
@@ -62,6 +68,10 @@
 <script>
 export default {
     props: {
+        sortable: {
+            type: Boolean,
+            default: false
+        },
         aspectRatio: { default: 4 / 3 },
         src: {
             type: String,

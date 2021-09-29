@@ -117,8 +117,8 @@ class ContentSeeder extends Seeder
             [
             'id' => 15,
             'folio' => 'cervezabenitz',
-            'name' => 'Branding | Product Rendering',
-            'subtitle' => 'Cervecería Benitz',
+            'name' => 'Cervecería Benitz',
+            'subtitle' => 'Branding | Product Rendering',
             'path' => '/project/cervezabenitz',
             ],
             [

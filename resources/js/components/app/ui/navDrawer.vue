@@ -36,8 +36,14 @@ export default {
         drawer: true,
         items: [
             {
-                title: "Contents",
+                title: "Sections",
                 icon: "mdi-view-dashboard",
+                route: "appSection",
+                section: "appSection"
+            },
+            {
+                title: "Contents",
+                icon: "mdi-folder-text",
                 route: "appContents",
                 section: "appContents"
             },

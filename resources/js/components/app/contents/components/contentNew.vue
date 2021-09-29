@@ -14,13 +14,6 @@
             </v-card-title>
 
             <v-card-text>
-                <v-select
-                    v-model="sec"
-                    label="Section"
-                    :items="sections"
-                    item-text="name"
-                    item-value="id"
-                />
                 <v-text-field label="Name" v-model="content.name" />
                 <v-text-field label="Page Title" v-model="content.page_title" />
                 <v-text-field label="Path" v-model="content.path" />
@@ -58,13 +51,7 @@
 
 <script>
 export default {
-    props: {
-        sections: Array,
-        section: {
-            type: Number,
-            default: null
-        }
-    },
+    props: {},
     data: () => ({
         dialog: false,
         errors: null,
@@ -73,14 +60,6 @@ export default {
         }
     }),
     computed: {
-        sec: {
-            get() {
-                return this.section;
-            },
-            set(val) {
-                this.$emit("section", val);
-            }
-        },
         folio: {
             get() {
                 if (this.content.path) {
@@ -91,13 +70,10 @@ export default {
                     return "";
                 }
             },
-            set(val) {
-                // this.$emit("section", val);
-            }
+            set(val) {}
         },
         sendContent() {
             return {
-                section: this.sec,
                 folio: this.folio,
                 name: this.content.name,
                 page_title: this.content.page_title,
@@ -110,10 +86,6 @@ export default {
         save() {
             this.$store.commit("loading", true);
             this.errors = null;
-
-            console.log(this.sendContent);
-
-            return;
             axios
                 .post("/api/content/store", this.sendContent)
                 .then(() => {

@@ -11,8 +11,8 @@ class Connection extends Model
 
     protected $fillable = [
         'id',
-        'section',
-        'content',
+        'section_id',
+        'content_id',
         'public',
         'oby',
         'updated_at',

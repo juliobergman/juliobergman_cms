@@ -29,12 +29,15 @@ class UploadController extends Controller
             'image.*' => 'mimes:png,jpg,jpeg'
         ]);
 
+        $category = $request->category;
+
         if($request->hasfile('image')){
             foreach ($request->file('image') as $key => $file) {
                 $original_filename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
                 $random_number = rand(1,5000);
                 $hash = hash('md5', $original_filename.time().$random_number);
 
+                $insert[$key]['category_id'] = $category;
                 $insert[$key]['public_path'] = '/public/media/'.$hash;
                 $insert[$key]['storage_path'] = '/storage/media/'.$hash;
 
@@ -67,7 +70,7 @@ class UploadController extends Controller
             Media::insert($insert);
         }
 
-        return new JsonResponse(['message' => 'Success'], 200);
+        return new JsonResponse(['message' => 'Success', 'category' => 'Category: '.$category], 200);
     }
 
     public function replace(Request $request)

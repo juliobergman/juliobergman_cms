@@ -244,8 +244,8 @@ export default {
                     this.$store.commit("loading", false);
                 })
                 .catch(error => {
-                    console.log(error);
-                    console.log(error.response);
+                    console.error(error);
+                    console.error(error.response);
                 });
         },
         pickAvatar() {
@@ -272,7 +272,6 @@ export default {
                     this.$store.commit("loading", false);
                 })
                 .catch(error => {
-                    console.log("esdsfsdhfdshk");
                     console.error(error);
                     console.error(error.response);
                 });
