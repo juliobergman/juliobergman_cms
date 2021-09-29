@@ -70,19 +70,19 @@
             </v-card>
         </v-footer>
         <edit-connection
-            v-model="connectionDialog"
+            v-model="showConnectionDialog"
             :sections="sections"
-            :connection="connectionItem"
-            @close="connectionItem = null"
-            @saved="getContents()"
+            :connection="itemConnectionDialog"
+            @close="itemConnectionDialog = null"
+            @saved="updateContents"
+            @edit="showContentDialog = true"
         />
 
-        <!-- <content-dialog
+        <content-dialog
+            :content-id="itemContentDialog"
             v-model="showContentDialog"
-            :content="itemContentDialog"
-            :sections="sections"
-            @reload="getContents()"
-        /> -->
+            @saved="updateContents"
+        />
         <confirm ref="confirm"></confirm>
         <!-- @update="itemContentDialog = $event" -->
     </v-container>
@@ -115,8 +115,9 @@ export default {
         pageLength: 1,
         sections: [],
         section: 1,
-        connectionDialog: false,
-        connectionItem: null,
+        showContentDialog: false,
+        showConnectionDialog: false,
+        itemConnectionDialog: null,
         content: []
     }),
     computed: {
@@ -136,6 +137,10 @@ export default {
         },
         armedia() {
             return this.$isMobile() ? 1 : 4 / 3;
+        },
+        itemContentDialog() {
+            if (!this.itemConnectionDialog) return null;
+            return this.itemConnectionDialog.content_id;
         }
     },
     methods: {
@@ -152,23 +157,39 @@ export default {
                     console.error(error.response);
                 });
         },
-        getContents() {
+        async getContents() {
             this.$store.commit("loading", true);
             let postData = {
                 section: this.section,
                 records: this.pageRecords
             };
 
-            axios
+            return axios
                 .post("/api/connections?page=" + this.page, postData)
                 .then(response => {
                     this.content = response.data.data;
                     this.pageLength = response.data.last_page;
                     this.$store.commit("loading", false);
+                    return Promise.resolve(response.data.data);
                 })
                 .catch(error => {
                     console.error(error);
                     console.error(error.response);
+                });
+        },
+        updateContents(payload) {
+            this.$store.commit("loading", true);
+            this.getContents()
+                .then(contents => {
+                    this.$store.commit("loading", true);
+                    return contents.find(e => e.content_id == payload);
+                })
+                .then(conn => {
+                    this.itemConnectionDialog = conn;
+                    this.$store.commit("loading", false);
+                })
+                .catch(error => {
+                    console.log(error);
                 });
         },
         show(item) {
@@ -190,16 +211,18 @@ export default {
                     .then(confirmResponse => {
                         if (confirmResponse) {
                             this.$store.commit("unsaved", false);
-                            this.connectionItem = this.content.find(
+                            this.itemConnectionDialog = this.content.find(
                                 e => e.id == item
                             );
-                            this.connectionDialog = true;
+                            this.showConnectionDialog = true;
                         }
                     });
             }
             if (!this.$store.state.unsaved) {
-                this.connectionItem = this.content.find(e => e.id == item);
-                this.connectionDialog = true;
+                this.itemConnectionDialog = this.content.find(
+                    e => e.id == item
+                );
+                this.showConnectionDialog = true;
             }
         },
         saveOrder() {

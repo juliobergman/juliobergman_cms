@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
+
 class ConnectionController extends Controller
 {
     public function connections(Request $request)
@@ -81,6 +84,31 @@ class ConnectionController extends Controller
 
     public function update(Request $request)
     {
+
+        $data = $request->all();
+        $rules = [
+            'section_id' => [
+                'required',
+                Rule::unique('connections')->ignore($request->id)->where(function ($query) use ($request) {
+                    return $query->where('section_id', $request->section_id)->where('content_id', $request->content_id);
+                })
+            ],
+            'content_id' => [
+                'required',
+            ],
+            'public' => [
+                'required',
+            ]
+        ];
+        $messages = [
+            'section_id.unique' => 'This Section already has an instance of this content',
+        ];
+
+        $validator = Validator::make($data,$rules,$messages);
+        if ($validator->fails()) {
+            return new JsonResponse(['errors' => $validator->errors()], 422);
+        }
+
         $update = [
             'section_id' => $request->section_id,
             'public' => $request->public
@@ -89,7 +117,7 @@ class ConnectionController extends Controller
         if($connection){
             return new JsonResponse(['message' => 'connection/update'], 200);
         }
-        return new JsonResponse(['error' => ['Something Happened!']], 419);
+        return new JsonResponse(['error' => ['Something Happened!']], 422);
     }
 
     public function bulkUpsert(Request $request)

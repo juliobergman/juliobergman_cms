@@ -2,7 +2,7 @@
     <v-dialog
         :fullscreen="$isMobile()"
         v-model="dialog"
-        max-width="500"
+        max-width="450"
         @input="close()"
     >
         <v-card :tile="$isMobile()" v-if="conn">
@@ -28,6 +28,7 @@
                     outlined
                     hide-details
                     prepend-inner-icon="mdi-link"
+                    @change="$store.commit('unsaved', true)"
                 />
             </v-card-text>
 
@@ -41,9 +42,24 @@
                             inset
                             class="mx-3"
                             color="primary"
+                            @change="$store.commit('unsaved', true)"
                         /> </v-card-text
                 ></v-card>
             </v-card-text>
+
+            <v-slide-y-transition>
+                <v-card-text v-show="errors">
+                    <v-alert
+                        dense
+                        text
+                        type="error"
+                        v-for="(error, key) in errors"
+                        :key="key"
+                    >
+                        {{ error[0] }}
+                    </v-alert>
+                </v-card-text>
+            </v-slide-y-transition>
 
             <v-divider></v-divider>
 
@@ -52,7 +68,7 @@
                     Cancel
                 </v-btn>
                 <v-spacer></v-spacer>
-                <v-btn v-if="false" text @click="edit()">
+                <v-btn :disabled="$store.state.unsaved" text @click="edit()">
                     Edit
                 </v-btn>
                 <v-btn text @click="save()">
@@ -74,6 +90,7 @@ export default {
         sections: {}
     },
     data: () => ({
+        errors: null,
         conn: null
     }),
     computed: {
@@ -106,24 +123,29 @@ export default {
             let postData = {
                 id: this.conn.id,
                 section_id: this.conn.section_id,
+                content_id: this.conn.content_id,
                 public: this.conn.public
             };
 
             axios
                 .post("/api/connection/update", postData)
-                .then(() => {
+                .then(response => {
+                    this.close();
                     this.$emit("saved");
-                    this.dialog = false;
                     this.$store.commit("loading", false);
+                    this.$store.commit("unsaved", false);
                 })
                 .catch(error => {
-                    console.error(error);
-                    console.error(error.message);
-                    console.error(error.response);
+                    this.errors = error.response.data.errors;
+                    this.$store.commit("loading", false);
                 });
         },
-        edit() {},
+        edit() {
+            this.$emit("edit", this.conn.content_id);
+        },
         close() {
+            this.$store.commit("unsaved", false);
+            this.errors = null;
             this.$emit("close");
             this.dialog = false;
         }

@@ -92,6 +92,7 @@ import MediaDialogImage from "../../media/components/mediaDialogImage.vue";
 import MediaSelect from "../../media/components/mediaSelect.vue";
 import confirm from "../../ui/alert/confirm.vue";
 import alert from "../../ui/alert/alert.vue";
+import { bus } from "../../../../app";
 export default {
     components: {
         MediaDialogImage,
@@ -167,7 +168,8 @@ export default {
                 .then(response => {
                     setTimeout(() => {
                         this.close();
-                        this.$emit("saved");
+                        this.$emit("saved", this.cid);
+                        bus.$emit("content:update", this.cid);
                         this.$store.commit("loading", false);
                     }, 200);
                 })
