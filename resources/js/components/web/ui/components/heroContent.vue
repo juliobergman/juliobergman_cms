@@ -78,7 +78,7 @@
 </template>
 
 <script>
-import { bus } from "../../../../app";
+import { bus } from "../../../../app.js";
 export default {
     data: () => ({
         tl: null,
@@ -127,9 +127,6 @@ export default {
     }),
     methods: {
         scroll() {
-            console.log("scroll");
-            // this.gsap.to(window, { duration: 2, scrollTo: 200 });
-            // this.gsap.to(window, { duration: 0.8, scrollTo: ".v-main" });
             this.gsap.to(window, {
                 duration: 0.7,
                 scrollTo: { y: ".v-main", offsetY: 64 }
@@ -137,7 +134,9 @@ export default {
         }
     },
     created() {
-        bus.$emit("scroll:disable");
+        setTimeout(() => {
+            bus.$emit("scroll:disable");
+        }, 100);
         this.csection = this.$route.name;
     },
     mounted() {

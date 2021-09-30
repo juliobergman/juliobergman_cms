@@ -35,6 +35,7 @@ export default {
             document.body.classList.remove("stop-scrolling");
         },
         disableScroll() {
+            console.log("Disable Scroll");
             document.body.classList.add("stop-scrolling");
         }
     },
@@ -58,6 +59,14 @@ export default {
                 scrollTo: 0
             });
         });
+    },
+    beforeUpdate() {
+        this.$store.dispatch("setContent", {
+            path: this.$route.path
+        });
+    },
+    beforeDestroy() {
+        console.log("Before Destroy");
     }
 };
 </script>

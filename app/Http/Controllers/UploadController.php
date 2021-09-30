@@ -31,7 +31,7 @@ class UploadController extends Controller
     {
         $this->validate($request, [
             'image' => 'required',
-            'image.*' => 'mimes:png,jpg,jpeg'
+            'image.*' => 'mimes:png,jpg,jpeg,svg'
         ]);
 
         $category = $request->category;
@@ -39,46 +39,67 @@ class UploadController extends Controller
         if($request->hasfile('image')){
             foreach ($request->file('image') as $key => $file) {
                 $original_filename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-                $random_number = rand(1,5000);
+                $random_number = rand(1, 5000);
                 $hash = hash('md5', $original_filename.time().$random_number);
+
 
                 $insert[$key]['category_id'] = $category;
                 $insert[$key]['public_path'] = '/public/media/'.$hash;
                 $insert[$key]['storage_path'] = '/storage/media/'.$hash;
 
+
+
                 $fullsize = Storage::putFileAs('public/media/'.$hash, new File($file), $hash.'.'.$file->extension());
                 $insert[$key]['fullsize'] = Storage::url($fullsize);
 
-                //  Max Image Size
-                $img = Image::make(storage_path('app/'.$fullsize));
-                $img->resize($this->maxSize['width'], $this->maxSize['height'], function ($constraint) {
-                    $constraint->aspectRatio();
-                    $constraint->upsize();
-                });
-                $img->save(storage_path('app/'.$fullsize));
-
-
-                if ($fullsize) {
-                    foreach ($this->formats as $size => $atr) {
-                        $ext = 'jpg';
-                        $img = Image::make(storage_path('app/'.$fullsize));
-                        $name = $hash.'-'.$size.'.'.$ext;
-                        $path = storage_path('app/public/media/'.$hash.'/'.$name);
-                        if(!$atr[2]){
-                            $img->fit($atr[0], $atr[1], function ($constraint) {
-                                $constraint->upsize();
-                            });
+                // SVG IMAGE
+                if ($file->extension() == 'svg') {
+                    if ($fullsize) {
+                        foreach ($this->formats as $size => $atr) {
+                            $name = $hash;
+                            $path = storage_path('app/public/media/'.$hash.'/'.$name);
+                            $insert[$key][$size] = Storage::url($fullsize);
                         }
-                        if($atr[2]){
-                            $img->resize(null, $atr[0], function ($constraint) {
-                                $constraint->aspectRatio();
-                                $constraint->upsize();
-                            });
-                        }
-                        $img->save($path, 90, $ext);
-                        $insert[$key][$size] = '/storage/media/'.$hash.'/'.$name;
                     }
                 }
+
+
+                // Image Intervention
+                if ($file->extension() != 'svg') {
+
+
+                    //  Resize Max
+                    $img = Image::make(storage_path('app/'.$fullsize));
+                    $img->resize($this->maxSize['width'], $this->maxSize['height'], function ($constraint) {
+                        $constraint->aspectRatio();
+                        $constraint->upsize();
+                    });
+                    $img->save(storage_path('app/'.$fullsize));
+
+
+                    if ($fullsize) {
+                        foreach ($this->formats as $size => $atr) {
+                            $ext = $file->extension();
+                            $img = Image::make(storage_path('app/'.$fullsize));
+                            $name = $hash.'-'.$size.'.'.$ext;
+                            $path = storage_path('app/public/media/'.$hash.'/'.$name);
+                            if (!$atr[2]) {
+                                $img->fit($atr[0], $atr[1], function ($constraint) {
+                                    $constraint->upsize();
+                                });
+                            }
+                            if ($atr[2]) {
+                                $img->resize(null, $atr[0], function ($constraint) {
+                                    $constraint->aspectRatio();
+                                    $constraint->upsize();
+                                });
+                            }
+                            $img->save($path, 90, $ext);
+                            $insert[$key][$size] = '/storage/media/'.$hash.'/'.$name;
+                        }
+                    }
+                }
+
             }
 
             Media::insert($insert);
@@ -123,33 +144,48 @@ class UploadController extends Controller
         $fullsize = Storage::putFileAs('public/media/'.$hash, new File($file), $hash.'.'.$file->extension());
         $update['fullsize'] = Storage::url($fullsize);
 
-        //  Resize Max
-        $img = Image::make(storage_path('app/'.$fullsize));
-        $img->resize($this->maxSize['width'], $this->maxSize['height'], function ($constraint) {
-            $constraint->aspectRatio();
-            $constraint->upsize();
-        });
-        $img->save(storage_path('app/'.$fullsize));
+        // SVG IMAGE
+        if ($file->extension() == 'svg') {
+            if ($fullsize) {
+                foreach ($this->formats as $size => $atr) {
+                    $name = $hash;
+                    $path = storage_path('app/public/media/'.$hash.'/'.$name);
+                    $update[$size] = Storage::url($fullsize);
+                }
+            }
+        }
 
-        if ($fullsize) {
-            foreach ($this->formats as $size => $atr) {
-                $ext = 'jpg';
-                $img = Image::make(storage_path('app/'.$fullsize));
-                $name = $hash.'-'.$size.'.'.$ext;
-                $path = storage_path('app/public/media/'.$hash.'/'.$name);
-                if(!$atr[2]){
-                    $img->fit($atr[0], $atr[1], function ($constraint) {
-                        $constraint->upsize();
-                    });
+        // Image Intervention
+        if ($file->extension() != 'svg') {
+
+            //  Resize Max
+            $img = Image::make(storage_path('app/'.$fullsize));
+            $img->resize($this->maxSize['width'], $this->maxSize['height'], function ($constraint) {
+                $constraint->aspectRatio();
+                $constraint->upsize();
+            });
+            $img->save(storage_path('app/'.$fullsize));
+
+            if ($fullsize) {
+                foreach ($this->formats as $size => $atr) {
+                    $ext = $file->extension();
+                    $img = Image::make(storage_path('app/'.$fullsize));
+                    $name = $hash.'-'.$size.'.'.$ext;
+                    $path = storage_path('app/public/media/'.$hash.'/'.$name);
+                    if (!$atr[2]) {
+                        $img->fit($atr[0], $atr[1], function ($constraint) {
+                            $constraint->upsize();
+                        });
+                    }
+                    if ($atr[2]) {
+                        $img->resize(null, $atr[0], function ($constraint) {
+                            $constraint->aspectRatio();
+                            $constraint->upsize();
+                        });
+                    }
+                    $img->save($path, 90, $ext);
+                    $update[$size] = '/storage/media/'.$hash.'/'.$name;
                 }
-                if($atr[2]){
-                    $img->resize(null, $atr[0], function ($constraint) {
-                        $constraint->aspectRatio();
-                        $constraint->upsize();
-                    });
-                }
-                $img->save($path, 90, $ext);
-                $update[$size] = '/storage/media/'.$hash.'/'.$name;
             }
         }
 

@@ -36,8 +36,8 @@
                     v-for="(item, idx) in media"
                     :key="item.id"
                 >
-                    <!-- :aspectRatio="1 / 1" -->
                     <media-thumbnail
+                        sortable
                         :media="item"
                         :src="item.medium"
                         @click="show"

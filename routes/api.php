@@ -47,7 +47,7 @@ Route::prefix('media')->group(function () {
 });
 
 // Upload
-Route::middleware('auth:sanctum')->post('/upload', [UploadController::class, 'upload']);
+Route::post('/upload', [UploadController::class, 'upload']);
 Route::post('/upload/avatar', [UploadController::class, 'avatar']);
 Route::post('/upload/replace', [UploadController::class, 'replace']);
 Route::delete('/upload/destroy', [UploadController::class, 'destroy']);

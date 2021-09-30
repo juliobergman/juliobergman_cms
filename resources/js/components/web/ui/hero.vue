@@ -40,9 +40,6 @@ export default {
         },
         animateCover() {
             if (!this.cover) return;
-        },
-        imageLoad(src) {
-            console.log("image loaded");
         }
     },
     computed: {
@@ -92,7 +89,6 @@ export default {
         },
         cover() {
             let contentCover = this.content.cover;
-
             if (!contentCover) {
                 return "";
             }
@@ -102,7 +98,6 @@ export default {
         },
         lazycover() {
             let contentCover = this.content.cover;
-
             if (!contentCover) {
                 return "";
             }
@@ -124,13 +119,18 @@ export default {
             height: "100vh"
         });
     },
+    beforeUpdate() {
+        console.log("beforeUpdate");
+        this.setup();
+        this.animateCover();
+    },
     watch: {
-        hero() {
-            this.setup();
-        },
-        cover() {
-            this.animateCover();
-        }
+        // hero() {
+        //     this.setup();
+        // },
+        // cover() {
+        //     this.animateCover();
+        // }
     }
 };
 </script>
