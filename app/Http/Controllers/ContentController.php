@@ -176,7 +176,7 @@ class ContentController extends Controller
         if ($newContent && $newContentData) {
             return new JsonResponse(['message' => 'New Content has been created.'], 201);
         } else {
-            return new JsonResponse(['message' => 'Error'], 400);
+            return new JsonResponse(['message' => 'Error'], 418);
         }
 
 
@@ -197,6 +197,7 @@ class ContentController extends Controller
         $update['content'] = [
             'folio' => $request->folio,
             'name' => $request->name,
+            'subtitle' => $request->subtitle,
             'path' => '/'.$path,
         ];
 

@@ -95,7 +95,7 @@ class UploadController extends Controller
         // Delete Previous
         $path = $media->public_path;
         if(!Storage::deleteDirectory($path)){
-            return new JsonResponse(['message' => 'Error'], 400);
+            return new JsonResponse(['message' => 'Error'], 405);
         }
 
         // Upload New

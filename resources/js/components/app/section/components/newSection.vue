@@ -1,5 +1,5 @@
 <template>
-    <v-dialog v-model="dialog" width="500" @input="reset()">
+    <v-dialog v-model="dialog" width="500" @click:outside="close()">
         <template v-slot:activator="{ on, attrs }">
             <v-btn icon v-bind="attrs" v-on="on">
                 <v-icon>
@@ -32,7 +32,7 @@
             <v-divider></v-divider>
 
             <v-card-actions>
-                <v-btn text @click="dialog = false">
+                <v-btn text @click="close()">
                     Cancel
                 </v-btn>
                 <v-spacer></v-spacer>
@@ -61,7 +61,7 @@ export default {
                 .post("/api/section/store", this.section)
                 .then(() => {
                     this.$emit("saved");
-                    this.dialog = false;
+                    this.close();
                     this.$store.commit("loading", false);
                 })
                 .catch(error => {
@@ -69,7 +69,8 @@ export default {
                     this.$store.commit("loading", false);
                 });
         },
-        reset() {
+        close() {
+            this.dialog = false;
             this.section.name = "";
             this.errors = false;
         }

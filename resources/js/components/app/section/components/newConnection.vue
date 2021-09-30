@@ -1,5 +1,5 @@
 <template>
-    <v-dialog v-model="dialog" width="500" @input="reset()">
+    <v-dialog v-model="dialog" width="500" @click:outside="close()">
         <template v-slot:activator="{ on, attrs }">
             <v-btn icon v-bind="attrs" v-on="on">
                 <v-icon>
@@ -88,7 +88,7 @@
             <v-divider></v-divider>
 
             <v-card-actions>
-                <v-btn text @click="dialog = false">
+                <v-btn text @click="close()">
                     Cancel
                 </v-btn>
                 <v-spacer></v-spacer>
@@ -162,7 +162,9 @@ export default {
                     this.$store.commit("loading", false);
                 });
         },
-        reset() {
+        close() {
+            this.dialog = false;
+            this.content = undefined;
             this.errors = false;
         }
     },

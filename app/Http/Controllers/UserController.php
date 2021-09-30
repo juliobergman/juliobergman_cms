@@ -65,6 +65,6 @@ class UserController extends Controller
                 return new JsonResponse(['message' => 'User Successfully Updated'], 200);
             }
         }
-        return new JsonResponse(['message' => 'Something went wrong'], 400);
+        return new JsonResponse(['message' => 'Something went wrong'], 418);
     }
 }

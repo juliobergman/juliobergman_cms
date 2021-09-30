@@ -20,17 +20,16 @@
                 >
                     <v-fade-transition v-if="sortable">
                         <v-icon
-                            v-show="hover || $isMobile()"
+                            v-show="hover || $isMobile() || forceHover"
                             class="cursor-grab handle mt-2 ml-2"
                         >
                             mdi-dots-grid
                         </v-icon>
                     </v-fade-transition>
                     <v-spacer></v-spacer>
-                    <!-- v-show="hover || $isMobile()" -->
                     <v-fade-transition v-if="media.public">
                         <v-icon
-                            v-if="hover || media.public == 'yes'"
+                            v-if="hover || media.public == 'yes' || forceHover"
                             small
                             :color="pubColor"
                             class="mt-2 mr-2"
@@ -41,7 +40,7 @@
                     </v-fade-transition>
                     <v-slide-y-reverse-transition v-if="media.name">
                         <v-card
-                            v-if="hover || $isMobile()"
+                            v-if="hover || $isMobile() || forceHover"
                             color="rgba(0,0,0,0.6)"
                             tile
                             class="mt-auto"
@@ -69,6 +68,10 @@
 export default {
     props: {
         sortable: {
+            type: Boolean,
+            default: false
+        },
+        forceHover: {
             type: Boolean,
             default: false
         },

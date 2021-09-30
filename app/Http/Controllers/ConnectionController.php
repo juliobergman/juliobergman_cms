@@ -56,19 +56,26 @@ class ConnectionController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'section_id' => 'required',
-            'content_id' => 'required',
-        ]);
+        $data = $request->all();
+        $rules = [
+            'section_id' => [
+                'required',
+                Rule::unique('connections')->ignore($request->id)->where(function ($query) use ($request) {
+                    return $query->where('section_id', $request->section_id)->where('content_id', $request->content_id);
+                })
+            ],
+            'content_id' => [
+                'required',
+            ]
+        ];
+        $messages = [
+            'section_id.unique' => 'This Section already has an instance of this content',
+        ];
 
-        $connExists = Connection::where('section_id', $request->section_id)
-            ->where('content_id', $request->content_id)
-            ->first();
-        if ($connExists) {
-            return new JsonResponse(['errors' => ['content_id' => ['Duplicate Entry: Content already exists on this section']]], 422);
+        $validator = Validator::make($data,$rules,$messages);
+        if ($validator->fails()) {
+            return new JsonResponse(['errors' => $validator->errors()], 405);
         }
-
-
 
         $newContent = Connection::create([
             'section_id' => $request->section_id,
@@ -78,13 +85,14 @@ class ConnectionController extends Controller
         if ($newContent) {
             return new JsonResponse(['message' => 'New Connection has been created.'], 201);
         } else {
-            return new JsonResponse(['errors' => 'Error'], 422);
+            return new JsonResponse(['errors' => 'Error'], 418);
         }
     }
 
     public function update(Request $request)
     {
 
+        // Validation
         $data = $request->all();
         $rules = [
             'section_id' => [
@@ -106,9 +114,10 @@ class ConnectionController extends Controller
 
         $validator = Validator::make($data,$rules,$messages);
         if ($validator->fails()) {
-            return new JsonResponse(['errors' => $validator->errors()], 422);
+            return new JsonResponse(['errors' => $validator->errors()], 405);
         }
 
+        // Update
         $update = [
             'section_id' => $request->section_id,
             'public' => $request->public
@@ -117,7 +126,7 @@ class ConnectionController extends Controller
         if($connection){
             return new JsonResponse(['message' => 'connection/update'], 200);
         }
-        return new JsonResponse(['error' => ['Something Happened!']], 422);
+        return new JsonResponse(['error' => ['Something Happened!']], 405);
     }
 
     public function bulkUpsert(Request $request)

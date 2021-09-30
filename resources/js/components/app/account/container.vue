@@ -77,7 +77,7 @@
                 </v-card>
                 <v-card flat class="mt-3">
                     <v-card-text class="d-flex">
-                        <span class="subtitles">
+                        <span class="subs">
                             Contact Information
                         </span>
 
@@ -293,7 +293,7 @@ export default {
         min-height: 45px !important;
     }
 }
-.subtitles {
+.subs {
     font-size: 0.8rem;
     font-weight: 500;
     text-transform: uppercase;

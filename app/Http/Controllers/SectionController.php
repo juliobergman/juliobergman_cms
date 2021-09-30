@@ -25,7 +25,7 @@ class SectionController extends Controller
         if ($new) {
             return new JsonResponse(['message' => 'New Section has been created.'], 201);
         } else {
-            return new JsonResponse(['message' => 'Error'], 400);
+            return new JsonResponse(['message' => 'Error'], 418);
         }
 
 
