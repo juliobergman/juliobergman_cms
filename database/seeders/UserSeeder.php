@@ -19,6 +19,7 @@ class UserSeeder extends Seeder
         User::factory(1)
         ->has(UserData::factory())
         ->state([
+            'name' => env('OWNER_NAME'),
             'email' => env('OWNER_EMAIL'),
             'password' => Hash::make(env('OWNER_PASSWORD'))
         ])
