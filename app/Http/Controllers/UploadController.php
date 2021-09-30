@@ -14,6 +14,11 @@ use Illuminate\Support\Facades\Storage;
 class UploadController extends Controller
 {
 
+    protected $maxSize = [
+        'width' => '2880',
+        'height' => '2880',
+    ];
+
     protected $formats = [
         // 'Name' => ['width','height','Mantain Aspect Ratio'],
         'xlarge' => ['2048','1536', true],
@@ -43,6 +48,15 @@ class UploadController extends Controller
 
                 $fullsize = Storage::putFileAs('public/media/'.$hash, new File($file), $hash.'.'.$file->extension());
                 $insert[$key]['fullsize'] = Storage::url($fullsize);
+
+                //  Max Image Size
+                $img = Image::make(storage_path('app/'.$fullsize));
+                $img->resize($this->maxSize['width'], $this->maxSize['height'], function ($constraint) {
+                    $constraint->aspectRatio();
+                    $constraint->upsize();
+                });
+                $img->save(storage_path('app/'.$fullsize));
+
 
                 if ($fullsize) {
                     foreach ($this->formats as $size => $atr) {
@@ -108,6 +122,14 @@ class UploadController extends Controller
 
         $fullsize = Storage::putFileAs('public/media/'.$hash, new File($file), $hash.'.'.$file->extension());
         $update['fullsize'] = Storage::url($fullsize);
+
+        //  Resize Max
+        $img = Image::make(storage_path('app/'.$fullsize));
+        $img->resize($this->maxSize['width'], $this->maxSize['height'], function ($constraint) {
+            $constraint->aspectRatio();
+            $constraint->upsize();
+        });
+        $img->save(storage_path('app/'.$fullsize));
 
         if ($fullsize) {
             foreach ($this->formats as $size => $atr) {

@@ -26,6 +26,7 @@
                     label="Media"
                     multiple
                     prepend-icon="mdi-paperclip"
+                    @click:clear="errors = null"
                 >
                     <template v-slot:selection="{ text }">
                         <v-chip small label color="primary">
@@ -34,6 +35,20 @@
                     </template>
                 </v-file-input>
             </v-card-text>
+
+            <v-slide-y-transition>
+                <v-card-text v-show="errors">
+                    <v-alert
+                        dense
+                        text
+                        type="error"
+                        v-for="(error, key) in errors"
+                        :key="key"
+                    >
+                        {{ error[0] }}
+                    </v-alert>
+                </v-card-text>
+            </v-slide-y-transition>
 
             <v-card-actions>
                 <v-btn
@@ -65,6 +80,7 @@ export default {
         value: {}
     },
     data: () => ({
+        errors: null,
         dialog: false,
         files: []
     }),
@@ -113,8 +129,16 @@ export default {
                     }
                 })
                 .catch(error => {
-                    console.error(error);
-                    console.error(error.response);
+                    if ((error.response.status = 413)) {
+                        this.errors = {
+                            payload: [
+                                "This payload is too large, try uploading your files in smaller batchs."
+                            ]
+                        };
+                    } else {
+                        this.errors = error.response.data.errors;
+                    }
+                    this.$store.commit("loading", false);
                 });
         }
     },

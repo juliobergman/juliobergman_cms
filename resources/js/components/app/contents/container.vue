@@ -93,7 +93,7 @@
                     padless
                     v-if="pageCount > 1"
                 >
-                    <v-card tile flat width="100%" color="red">
+                    <v-card tile flat width="100%">
                         <v-pagination
                             color="primary"
                             v-model="page"
