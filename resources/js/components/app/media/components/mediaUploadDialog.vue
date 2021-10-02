@@ -1,5 +1,5 @@
 <template>
-    <v-dialog v-model="dialog" width="500">
+    <v-dialog v-model="dialog" :persistent="$store.state.loading" width="500">
         <template v-slot:activator="{ on, attrs }">
             <v-btn icon @click="dialog = true">
                 <v-icon>mdi-upload</v-icon>
@@ -13,6 +13,7 @@
 
             <v-card-text>
                 <v-select
+                    :disabled="$store.state.loading"
                     :items="mncat"
                     item-text="name"
                     item-value="id"
@@ -21,6 +22,7 @@
                     prepend-icon="mdi-folder-open-outline"
                 />
                 <v-file-input
+                    :disabled="$store.state.loading"
                     v-model="files"
                     placeholder="Upload your documents"
                     label="Media"

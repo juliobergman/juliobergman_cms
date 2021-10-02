@@ -15,8 +15,14 @@
             <v-card-text
                 v-show="!!message"
                 :class="'pa-4 text-' + options.messageAlign"
-                v-text="message"
-            />
+            >
+                <div
+                    :class="'my-1 font-weight-' + options.fontWeight"
+                    v-for="msg in message"
+                >
+                    {{ msg }}
+                </div>
+            </v-card-text>
             <v-card-actions class="pt-0">
                 <v-spacer></v-spacer>
                 <v-btn :color="options.color" text @click.native="accept"
@@ -33,10 +39,11 @@ export default {
         dialog: false,
         resolve: null,
         reject: null,
-        message: null,
+        message: [],
         title: null,
         options: {
             messageAlign: "center",
+            fontWeight: "medium",
             btnAgree: "Yes",
             btnCancel: "No",
             color: "primary",

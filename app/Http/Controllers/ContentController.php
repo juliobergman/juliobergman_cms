@@ -23,13 +23,12 @@ class ContentController extends Controller
             // Content Data
             'content_data.page_title',
             'content_data.seo_info',
-            'content_data.og_img',
             'content_data.cover',
         ];
 
         $contents = Content::query();
         // With
-        $contents->with('og_image');
+
         $contents->with('cover_image');
         // Join
         $contents->join('content_data', 'contents.id', '=', 'content_data.content_id');
@@ -48,7 +47,6 @@ class ContentController extends Controller
             // Content Data
             'content_data.page_title',
             'content_data.seo_info',
-            'content_data.og_img',
             'content_data.cover',
         ];
 
@@ -56,7 +54,7 @@ class ContentController extends Controller
         // where
         $content->where('contents.id', $request->id);
         // With
-        $content->with('og_image');
+
         $content->with('cover_image');
         // Join
         $content->join('content_data', 'contents.id', '=', 'content_data.content_id');
@@ -85,7 +83,6 @@ class ContentController extends Controller
             // Content Data
             'content_data.page_title',
             'content_data.seo_info',
-            'content_data.og_img',
             'content_data.cover',
         ];
 
@@ -96,7 +93,7 @@ class ContentController extends Controller
         // Selects
         $connections->select($data_select);
         // With
-        $connections->with('og_image');
+
         $connections->with('cover_image');
         // Join
         $connections->join('contents', 'connections.content_id', '=', 'contents.id');
@@ -124,7 +121,6 @@ class ContentController extends Controller
             // Content Data
             'content_data.page_title',
             'content_data.seo_info',
-            'content_data.og_img',
             'content_data.cover',
         ];
 
@@ -134,7 +130,7 @@ class ContentController extends Controller
         // Selects
         $content->select($data_select);
         // With
-        $content->with('og_image');
+
         $content->with('cover_image');
         // Join
         $content->join('content_data', 'contents.id', '=', 'content_data.content_id');
@@ -204,7 +200,6 @@ class ContentController extends Controller
         $update['content_data'] = $request->only(
             'page_title',
             'seo_info',
-            'og_img',
             'cover',
         );
 

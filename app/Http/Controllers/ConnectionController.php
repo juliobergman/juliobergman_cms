@@ -34,7 +34,6 @@ class ConnectionController extends Controller
             // Content Data
             'content_data.page_title',
             'content_data.seo_info',
-            'content_data.og_img',
             'content_data.cover',
         ];
 
@@ -44,7 +43,6 @@ class ConnectionController extends Controller
         // Selects
         $connections->select($data_select);
         // With
-        $connections->with('og_image');
         $connections->with('cover_image');
         // Join
         $connections->join('contents', 'connections.content_id', '=', 'contents.id');

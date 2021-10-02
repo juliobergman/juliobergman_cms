@@ -13,7 +13,6 @@ class ContentData extends Model
         'path',
         'page_title',
         'seo_info',
-        'og_img',
         'cover',
         'updated_at',
     ];

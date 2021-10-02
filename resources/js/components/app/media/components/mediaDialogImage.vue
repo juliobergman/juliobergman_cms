@@ -7,6 +7,8 @@
                 :aspect-ratio="aspectRatio"
                 :src="src"
                 :lazy-src="lazySrc"
+                @loadstart="$store.commit('loading', true)"
+                @load="$store.commit('loading', false)"
             >
                 <template v-slot:placeholder>
                     <v-row

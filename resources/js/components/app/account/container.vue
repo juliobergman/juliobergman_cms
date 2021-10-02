@@ -194,7 +194,6 @@
 </template>
 
 <script>
-import axios from "axios";
 export default {
     components: {},
     data: () => ({
@@ -217,6 +216,7 @@ export default {
                     this.countries = response.data;
                 })
                 .catch(error => {
+                    // TODO
                     console.error(error);
                     console.error(error.response);
                 });
@@ -228,7 +228,8 @@ export default {
                     this.user = response.data;
                     this.getCountries();
                 })
-                .catch(response => {
+                .catch(error => {
+                    // TODO
                     console.error(response);
                     console.error(response.message);
                 });
@@ -244,6 +245,7 @@ export default {
                     this.$store.commit("loading", false);
                 })
                 .catch(error => {
+                    // TODO
                     console.error(error);
                     console.error(error.response);
                 });
@@ -272,6 +274,7 @@ export default {
                     this.$store.commit("loading", false);
                 })
                 .catch(error => {
+                    // TODO
                     console.error(error);
                     console.error(error.response);
                 });

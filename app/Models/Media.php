@@ -26,4 +26,9 @@ class Media extends Model
         'created_at',
         'updated_at',
     ];
+
+    public function cover()
+    {
+        return $this->belongsToMany(Content::class, 'content_data', 'cover','id');
+    }
 }

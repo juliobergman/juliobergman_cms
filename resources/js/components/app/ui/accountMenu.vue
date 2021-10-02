@@ -72,6 +72,7 @@ export default {
                     }
                 })
                 .catch(error => {
+                    // TODO
                     console.error(error);
                 });
         }

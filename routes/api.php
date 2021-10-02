@@ -51,6 +51,7 @@ Route::post('/upload', [UploadController::class, 'upload']);
 Route::post('/upload/avatar', [UploadController::class, 'avatar']);
 Route::post('/upload/replace', [UploadController::class, 'replace']);
 Route::delete('/upload/destroy', [UploadController::class, 'destroy']);
+Route::delete('/upload/destroy/bulk', [UploadController::class, 'destroy_bulk']);
 
 // Content
 Route::post('/content', [ContentController::class, 'content']);

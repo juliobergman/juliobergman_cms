@@ -5,6 +5,7 @@
         <v-main>
             <router-view :key="$route.path"></router-view>
         </v-main>
+        <confirm ref="confirm" />
     </v-app>
 </template>
 

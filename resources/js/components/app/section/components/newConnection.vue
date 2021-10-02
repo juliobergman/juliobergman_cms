@@ -136,6 +136,7 @@ export default {
                     this.$store.commit("loading", false);
                 })
                 .catch(error => {
+                    // TODO
                     console.error(error);
                     console.error(error.message);
                     this.$store.commit("loading", false);
@@ -158,6 +159,7 @@ export default {
                     this.$store.commit("loading", false);
                 })
                 .catch(error => {
+                    // TODO
                     this.errors = error.response.data.errors;
                     this.$store.commit("loading", false);
                 });

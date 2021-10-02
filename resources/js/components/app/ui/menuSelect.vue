@@ -2,7 +2,7 @@
     <v-menu offset-y min-width="375" transition="slide-y-transition">
         <template v-slot:activator="{ on, attrs }">
             <div class="text-button" v-bind="attrs" v-on="on" v-if="btnText">
-                {{ btnText }}
+                {{ text }}
             </div>
         </template>
 
@@ -31,6 +31,10 @@ export default {
     props: {
         value: {},
         items: {},
+        label: {
+            type: String,
+            default: "Label"
+        },
         itemText: {
             type: String,
             default: "name"
@@ -57,6 +61,17 @@ export default {
                 this.$emit("change");
                 this.$emit("input", val);
             }
+        },
+        text() {
+            let text;
+            let data;
+            if (this.items.some(e => e.id == this.value)) {
+                data = this.items.find(e => e.id == this.value);
+                if (data.name) text = data.name;
+            } else {
+                text = this.btnText;
+            }
+            return text;
         }
     }
 };

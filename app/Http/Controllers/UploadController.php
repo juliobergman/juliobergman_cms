@@ -194,21 +194,6 @@ class UploadController extends Controller
 
     }
 
-    public function destroy(Request $request)
-    {
-        $id = $request->id;
-        $media = Media::where('id', $id)->first();
-        if(!$media){
-            return new JsonResponse(['message' => 'Item not Found'], 404);
-        }
-        $path = $media->public_path;
-        if($media->delete()){
-            if(Storage::deleteDirectory($path)){
-                return new JsonResponse(['message' => 'Media Successfully Deleted'], 200);
-            }
-        }
-    }
-
     public function avatar(Request $request)
     {
         // Validation
@@ -255,4 +240,84 @@ class UploadController extends Controller
         return new JsonResponse(['message' => 'Success', 'path' => $newpath], 200);
 
     }
+
+    public function destroy(Request $request)
+    {
+        $id = $request->id;
+
+        $mediaQuery = Media::query();
+        $mediaQuery->where('id', $id);
+        $mediaQuery->with('cover');
+        $media = $mediaQuery->first();
+
+        if(!$media){
+            return new JsonResponse(['errors' => ['Item not Found']], 404);
+        }
+
+        $cover = count($media->cover);
+        if($cover){
+            return new JsonResponse(['errors' => ['Delete Fail','This Image is used as cover']], 405);
+        }
+
+        $path = $media->public_path;
+        if($media->delete()){
+            if(Storage::deleteDirectory($path)){
+                return new JsonResponse(['messages' => ['Media Successfully Deleted']], 200);
+            }
+        }
+    }
+
+    public function destroy_bulk(Request $request)
+    {
+        $mediaQuery = Media::query();
+        $mediaQuery->whereIn('id', $request);
+        $mediaQuery->with('cover');
+        $media = $mediaQuery->get();
+        if(!$media){
+            return new JsonResponse(['errors' => ['Item not Found']], 404);
+        }
+
+        $hasCover = false;
+
+        foreach ($media as $key => $item) {
+            $path = $item->public_path;
+            $del = $item->id;
+            $name = $item->name;
+
+            $cover = count($item->cover);
+
+            if($cover){
+                $return[$key] = [
+                    'id' => $del,
+                    'status' => 'fail',
+                    'name' => $name,
+                    'message' => 'This Image is used as cover'
+                ];
+                $hasCover = true;
+            }
+
+            if(!$cover){
+                if($item->delete()){
+                    if(Storage::deleteDirectory($path)){
+                        $return[$key] = [
+                            'id' => $del,
+                            'status' => 'success',
+                            'name' => $name,
+                            'message' => 'Image Successfully Deleted.'
+                        ];
+                    }
+                }
+            }
+        }
+
+        if($hasCover){
+            return new JsonResponse(['messages' => ['Some files could not be deleted'], 'deleted' => $return], 202);
+        }
+        if(!$hasCover){
+            return new JsonResponse(['messages' => ['Media Successfully Deleted'], 'deleted' => $return], 200);
+        }
+
+
+    }
+
 }

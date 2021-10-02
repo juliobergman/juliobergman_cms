@@ -4,15 +4,22 @@
             <menu-select
                 v-model="category"
                 :items="categories"
-                :btnText="currentCategory.name"
                 @input="menuChange"
             />
             <v-spacer></v-spacer>
             <v-slide-x-reverse-transition>
                 <v-btn v-show="btnSave" icon @click="saveOrder()">
-                    <v-icon>mdi-content-save</v-icon>
+                    <v-icon color="accent">mdi-content-save</v-icon>
                 </v-btn>
             </v-slide-x-reverse-transition>
+            <v-btn icon @click="bulkBtn()">
+                <v-icon color="accent" v-show="bulkActions">
+                    mdi-checkbox-multiple-marked-outline
+                </v-icon>
+                <v-icon v-show="!bulkActions">
+                    mdi-checkbox-multiple-blank-outline
+                </v-icon>
+            </v-btn>
             <upload-dialog
                 v-model="category"
                 :categories="categories"
@@ -38,6 +45,7 @@
                 >
                     <media-thumbnail
                         sortable
+                        :selected="selectedItems.some(e => e == item.id)"
                         :media="item"
                         :src="item.medium"
                         @click="show"
@@ -58,6 +66,87 @@
                 ></v-pagination>
             </v-card>
         </v-footer>
+
+        <v-bottom-sheet
+            v-model="bulkActions"
+            hide-overlay
+            persistent
+            no-click-animation
+            :retain-focus="false"
+        >
+            <v-card tile>
+                <v-card-title class="text-subtitle-2">
+                    Actions
+                </v-card-title>
+                <v-divider></v-divider>
+                <v-card-actions class="align-center">
+                    <v-btn
+                        depressed
+                        color="danger"
+                        :dark="!selectedItems.length < 1"
+                        :disabled="selectedItems.length < 1"
+                        @click="bulkDelete()"
+                    >
+                        <v-icon class="mr-2">
+                            mdi-delete
+                        </v-icon>
+                        Delete
+                    </v-btn>
+                    <v-spacer></v-spacer>
+                    <!-- <menu-select
+                        v-model="bulkData.category"
+                        :items="categories"
+                    /> -->
+                    <div>
+                        <v-select
+                            v-model="bulkData.category"
+                            :items="categories"
+                            label="Move to Album"
+                            item-text="name"
+                            item-value="id"
+                            hide-details
+                            outlined
+                            dense
+                        >
+                            <template v-slot:selection="{ item }">
+                                <span>
+                                    {{ item.name }}
+                                </span>
+                            </template>
+                        </v-select>
+                    </div>
+                    <v-btn
+                        text
+                        class="mr-2"
+                        @click="bulkData.public = !bulkData.public"
+                    >
+                        Public
+                        <v-icon v-show="bulkData.public" class="ml-2">
+                            mdi-checkbox-marked-outline
+                        </v-icon>
+                        <v-icon v-show="!bulkData.public" class="ml-2">
+                            mdi-checkbox-blank-outline
+                        </v-icon>
+                    </v-btn>
+                </v-card-actions>
+                <v-divider></v-divider>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn text @click="bulkBtn()">
+                        Cancel
+                    </v-btn>
+                    <v-btn
+                        text
+                        :disabled="selectedItems.length < 1"
+                        @click="bulkUpdate"
+                    >
+                        Save
+                    </v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-bottom-sheet>
+        <confirm ref="confirm"></confirm>
+        <alert ref="alert"></alert>
 
         <media-dialog
             v-model="showMediaDialog"
@@ -85,6 +174,12 @@ export default {
     },
     data: () => ({
         btnSave: false,
+        bulkActions: false,
+        bulkData: {
+            public: false,
+            category: null
+        },
+        selectedItems: [],
         drag: false,
         showMediaDialog: false,
         itemMediaDialog: {},
@@ -111,6 +206,14 @@ export default {
         }
     },
     methods: {
+        bulkBtn() {
+            this.bulkActions = !this.bulkActions;
+            this.selectedItems = [];
+            this.bulkData = {
+                public: false,
+                category: parseInt(this.category, 10)
+            };
+        },
         getMediaCategories() {
             this.$store.commit("loading", true);
             let postData = {
@@ -124,9 +227,10 @@ export default {
                         this.$store.commit("loading", false);
                     }
                 })
-                .catch(response => {
-                    console.error(response.name);
-                    console.error(response.message);
+                .catch(error => {
+                    // TODO
+                    console.error(error.name);
+                    console.error(error.message);
                 });
         },
         menuChange($event) {
@@ -147,28 +251,106 @@ export default {
                     this.pageLength = response.data.last_page;
                     this.$store.commit("loading", false);
                 })
-                .catch(response => {
-                    console.error(response.name);
-                    console.error(response.message);
+                .catch(error => {
+                    // TODO
+                    console.error(error.name);
+                    console.error(error.message);
                 });
         },
         show(item) {
-            this.itemMediaDialog = this.media.find(e => e.id == item);
-            this.showMediaDialog = true;
+            if (this.bulkActions) {
+                let exists = this.selectedItems.some(e => e == item);
+                if (!exists) {
+                    this.selectedItems.push(item);
+                }
+                if (exists) {
+                    this.selectedItems.splice(
+                        this.selectedItems.indexOf(item),
+                        1
+                    );
+                }
+            }
+            if (!this.bulkActions) {
+                this.showMediaDialog = true;
+                this.itemMediaDialog = this.media.find(e => e.id == item);
+            }
         },
         saveOrder() {
             this.$store.commit("loading", true);
             axios
                 .post("/api/media/update/bulk", this.media)
                 .then(response => {
-                    if (response.status == 200) {
-                        this.btnSave = false;
-                        this.$store.commit("loading", false);
-                    }
+                    this.btnSave = false;
+                    this.$store.commit("loading", false);
                 })
-                .catch(response => {
-                    console.error(response.name);
-                    console.error(response.message);
+                .catch(error => {
+                    // TODO
+                    console.error(error.name);
+                    console.error(error.message);
+                });
+        },
+        bulkUpdate() {
+            let postData = {
+                items: this.selectedItems,
+                public: this.bulkData.public,
+                category: this.bulkData.category
+            };
+            console.log(postData);
+        },
+        bulkDelete() {
+            console.clear();
+            this.$refs.confirm
+                .open(
+                    null,
+                    [
+                        "Are you sure you want to delete this images?",
+                        " - This action cannot be undone"
+                    ],
+                    {
+                        color: "danger"
+                    }
+                )
+                .then(confirmResponse => {
+                    if (confirmResponse) {
+                        this.$store.commit("loading", true);
+                        axios
+                            .delete("/api/upload/destroy/bulk", {
+                                data: this.selectedItems
+                            })
+                            .then(response => {
+                                this.getMedia();
+                                let color = "success";
+                                let title = null;
+                                if (response.status == 202) {
+                                    color = "warning";
+                                    title = "Warning";
+                                }
+                                this.$refs.alert.open(
+                                    title,
+                                    response.data.messages,
+                                    {
+                                        color: color,
+                                        messageAlign: "left"
+                                    }
+                                );
+                                this.selectedItems = [];
+                                this.$store.commit("loading", false);
+                            })
+                            .catch(error => {
+                                console.error(error.response);
+                                if (error.response.status == "404") {
+                                    this.$refs.alert.open(
+                                        "Error",
+                                        error.response.data.errors,
+                                        {
+                                            color: "danger",
+                                            messageAlign: "left"
+                                        }
+                                    );
+                                }
+                                this.$store.commit("loading", false);
+                            });
+                    }
                 });
         }
     },
@@ -176,6 +358,8 @@ export default {
         if (sessionStorage.getItem("media_category")) {
             this.category = sessionStorage.getItem("media_category");
         }
+        this.bulkData.category = parseInt(this.category, 10);
+
         this.getMediaCategories();
         this.getMedia();
     },
@@ -184,6 +368,9 @@ export default {
 </script>
 
 <style>
+.select-container {
+    background: olivedrab;
+}
 .title-select .v-input__slot {
     padding: 0 0px !important;
     background: none !important;

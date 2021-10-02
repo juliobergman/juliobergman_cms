@@ -20,7 +20,6 @@ class CreateContentDataTable extends Migration
 
             $table->string('page_title')->nullable();
             $table->string('seo_info')->nullable();
-            $table->foreignId('og_img')->nullable()->references('id')->on('media');
             $table->foreignId('cover')->nullable()->references('id')->on('media');
             $table->timestamps();
         });

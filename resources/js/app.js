@@ -43,12 +43,6 @@ gsap.registerPlugin(
 
 gsap.defaults({ overwrite: "auto", lazy: false });
 
-Vue.mixin({
-    created: function() {
-        this.gsap = gsap;
-    }
-});
-
 Vue.use(VueMobileDetection);
 Vue.use(Particles);
 // Event BUS
@@ -60,6 +54,19 @@ import GuestContainer from "./components/web/container";
 import ViewLogin from "./components/auth/login";
 // App
 import AppContainer from "./components/app/container";
+
+// Dialogs
+import confirm from "./components/dialog/confirm.vue";
+import alert from "./components/dialog/alert.vue";
+Vue.component("confirm", confirm);
+Vue.component("alert", alert);
+
+// Mixin
+Vue.mixin({
+    created: function() {
+        this.gsap = gsap;
+    }
+});
 
 const app = new Vue({
     store,

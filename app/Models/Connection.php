@@ -34,11 +34,6 @@ class Connection extends Model
 
     public function cover_image()
     {
-        // return $this->hasOneThrough(Media::class, ContentData::class, 'cover', 'id','cover','cover')->withDefault($this->image_defaults);
         return $this->hasOneThrough(Media::class, ContentData::class, 'cover', 'id','cover','cover')->withDefault($this->image_defaults);
-    }
-    public function og_image()
-    {
-        return $this->hasOneThrough(Media::class, ContentData::class, 'og_img', 'id','og_img','og_img')->withDefault($this->image_defaults);
     }
 }

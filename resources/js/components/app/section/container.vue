@@ -97,7 +97,6 @@ import draggable from "vuedraggable";
 import mediaThumbnail from "../../app/media/components/mediaThumbnail.vue";
 import contentDialog from "../contents/components/contentDialog.vue";
 import menuSelect from "../ui/menuSelect.vue";
-import confirm from "../ui/alert/confirm.vue";
 export default {
     components: {
         menuSelect,
@@ -106,8 +105,7 @@ export default {
         editConnection,
         draggable,
         mediaThumbnail,
-        contentDialog,
-        confirm
+        contentDialog
     },
     data: () => ({
         drag: false,
@@ -153,6 +151,7 @@ export default {
                     this.$store.commit("loading", false);
                 })
                 .catch(error => {
+                    // TODO
                     console.error(error);
                     console.error(error.response);
                 });
@@ -173,6 +172,7 @@ export default {
                     return Promise.resolve(response.data.data);
                 })
                 .catch(error => {
+                    // TODO
                     console.error(error);
                     console.error(error.response);
                 });
@@ -189,6 +189,7 @@ export default {
                     this.$store.commit("loading", false);
                 })
                 .catch(error => {
+                    // TODO
                     console.log(error);
                 });
         },
@@ -233,9 +234,10 @@ export default {
                     this.$store.commit("unsaved", false);
                     this.$store.commit("loading", false);
                 })
-                .catch(response => {
-                    console.error(response.name);
-                    console.error(response.message);
+                .catch(error => {
+                    // TODO
+                    console.error(error.name);
+                    console.error(error.message);
                 });
         }
     },

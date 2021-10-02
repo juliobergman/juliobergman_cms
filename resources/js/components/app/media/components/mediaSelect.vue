@@ -123,7 +123,8 @@ export default {
         pageLength: 1,
         categories: [],
         media: [],
-        sel: null
+        sel: null,
+        del: false
     }),
     computed: {
         selected: {
@@ -164,9 +165,10 @@ export default {
                         this.$store.commit("loading", false);
                     }
                 })
-                .catch(response => {
-                    console.error(response.name);
-                    console.error(response.message);
+                .catch(error => {
+                    // TODO
+                    console.error(error.name);
+                    console.error(error.message);
                 });
         },
         getMedia() {
@@ -184,9 +186,10 @@ export default {
                         this.$store.commit("loading", false);
                     }
                 })
-                .catch(response => {
-                    console.error(response.name);
-                    console.error(response.message);
+                .catch(error => {
+                    // TODO
+                    console.error(error.name);
+                    console.error(error.message);
                 });
         }
     },
@@ -201,7 +204,6 @@ export default {
     }
 };
 </script>
-
 <style>
 .title-select .v-input__slot {
     padding: 0 0px !important;

@@ -1,4 +1,5 @@
 const mix = require("laravel-mix");
+const path = require("path");
 
 const VuetifyLoaderPlugin = require("vuetify-loader/lib/plugin");
 const CaseSensitivePathsPlugin = require("case-sensitive-paths-webpack-plugin");
@@ -8,6 +9,11 @@ var webpackConfig = {
 };
 
 mix.webpackConfig(webpackConfig);
+
+mix.alias({
+    "@": path.join(__dirname, "resources/js"),
+    "~": path.join(__dirname, "resources/sass")
+});
 
 /*
  |--------------------------------------------------------------------------
@@ -19,10 +25,10 @@ mix.webpackConfig(webpackConfig);
  | file for the application as well as bundling up all the JS files.
  |
  */
-
-mix.js("resources/js/app.js", "public/js")
-    .js("resources/js/error.js", "public/js")
+mix.js("resources/js/app.js", "js")
+    .js("resources/js/error.js", "js")
     .vue()
-    .css("resources/css/app.css", "public/css")
-    .css("resources/css/error.css", "public/css")
-    .sass("resources/sass/app.scss", "public/css");
+    .css("resources/css/app.css", "css")
+    .css("resources/css/error.css", "css")
+    .sass("resources/sass/app.scss", "css")
+    .setPublicPath("public");

@@ -90,15 +90,11 @@
 <script>
 import MediaDialogImage from "../../media/components/mediaDialogImage.vue";
 import MediaSelect from "../../media/components/mediaSelect.vue";
-import confirm from "../../ui/alert/confirm.vue";
-import alert from "../../ui/alert/alert.vue";
 import { bus } from "../../../../app";
 export default {
     components: {
         MediaDialogImage,
-        MediaSelect,
-        confirm,
-        alert
+        MediaSelect
     },
     props: {
         value: Boolean,
@@ -136,6 +132,7 @@ export default {
                     this.$store.commit("loading", false);
                 })
                 .catch(error => {
+                    // TODO
                     console.error(error);
                     console.error(error.response);
                 });
@@ -155,8 +152,9 @@ export default {
                     }
                     this.$store.commit("loading", false);
                 })
-                .catch(response => {
-                    console.error(response);
+                .catch(error => {
+                    // TODO
+                    console.error(error);
                 });
         },
         save() {
@@ -174,6 +172,7 @@ export default {
                     }, 200);
                 })
                 .catch(error => {
+                    // TODO
                     console.error(error);
                 });
         },
@@ -203,6 +202,7 @@ export default {
                                 }
                             })
                             .catch(error => {
+                                // TODO
                                 console.error(error);
                                 console.error(error.response);
                             });

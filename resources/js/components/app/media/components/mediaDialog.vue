@@ -21,7 +21,6 @@
                         <media-dialog-image
                             :contain="imgContain"
                             :src="media.fullsize"
-                            :lazySrc="media.thumbnail"
                             btn-text="Replace"
                             btn-icon="mdi-image-multiple-outline"
                             @action="replace"
@@ -87,7 +86,7 @@
                 </v-row>
             </v-container>
         </v-card>
-        <confirm ref="confirm"></confirm>
+        <!-- <confirm ref="confirm"></confirm> -->
         <alert ref="alert"></alert>
         <v-file-input
             v-show="false"
@@ -96,18 +95,15 @@
             ref="image"
             @change="replaceImage"
         ></v-file-input>
+        <confirm ref="confirm" />
     </v-dialog>
 </template>
 
 <script>
 import MediaDialogImage from "./mediaDialogImage.vue";
-import confirm from "../../ui/alert/confirm.vue";
-import alert from "../../ui/alert/alert.vue";
 export default {
     components: {
-        MediaDialogImage,
-        confirm,
-        alert
+        MediaDialogImage
     },
     props: {
         value: Boolean,
@@ -162,8 +158,9 @@ export default {
                     this.$emit("saved");
                     this.$store.commit("loading", false);
                 })
-                .catch(response => {
-                    console.error(response);
+                .catch(error => {
+                    // TODO
+                    console.error(error);
                 });
         },
         replace() {
@@ -191,6 +188,7 @@ export default {
                     this.$store.commit("loading", false);
                 })
                 .catch(error => {
+                    // TODO
                     console.error(error);
                     console.error(error.response);
                 });
@@ -206,22 +204,29 @@ export default {
                         axios
                             .delete("/api/upload/destroy", { data: this.media })
                             .then(response => {
-                                if (response.status == 200) {
-                                    this.$refs.alert
-                                        .open(null, response.data.message)
-                                        .then(() => {
-                                            this.$emit("saved");
-                                            this.close();
-                                            this.$store.commit(
-                                                "loading",
-                                                false
-                                            );
-                                        });
-                                }
+                                this.$refs.alert
+                                    .open(null, response.data.messages, {
+                                        color: "success"
+                                    })
+                                    .then(() => {
+                                        this.$emit("saved");
+                                        this.close();
+                                        this.$store.commit("loading", false);
+                                    });
                             })
                             .catch(error => {
-                                console.error(error);
                                 console.error(error.response);
+                                if (error.response.status == "405") {
+                                    this.$refs.alert.open(
+                                        "Error",
+                                        error.response.data.errors,
+                                        {
+                                            color: "danger",
+                                            messageAlign: "left"
+                                        }
+                                    );
+                                }
+                                this.$store.commit("loading", false);
                             });
                     }
                 });

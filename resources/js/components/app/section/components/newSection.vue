@@ -65,6 +65,7 @@ export default {
                     this.$store.commit("loading", false);
                 })
                 .catch(error => {
+                    // TODO
                     this.errors = error.response.data.errors;
                     this.$store.commit("loading", false);
                 });

@@ -35,27 +35,25 @@
                             solo
                             hide-details
                         ></v-select>
-
                         <v-btn-toggle
                             v-model="sortDesc"
                             mandatory
                             borderless
-                            color="primary"
+                            color="transparent"
+                            active-class="btn-active"
                             background-color="transparent"
                             class="mr-2"
                         >
                             <v-btn
-                                icon
                                 color="transparent"
-                                active-class="primary--text"
+                                active-class="btn-active"
                                 :value="true"
                             >
                                 <v-icon>mdi-sort-descending</v-icon>
                             </v-btn>
                             <v-btn
-                                icon
                                 color="transparent"
-                                active-class="primary--text"
+                                active-class="btn-active"
                                 :value="false"
                             >
                                 <v-icon>mdi-sort-ascending</v-icon>
@@ -119,13 +117,11 @@
 import newContent from "./components/contentNew.vue";
 import mediaThumbnail from "../../app/media/components/mediaThumbnail.vue";
 import contentDialog from "./components/contentDialog.vue";
-import confirm from "../ui/alert/confirm.vue";
 export default {
     components: {
         newContent,
         mediaThumbnail,
-        contentDialog,
-        confirm
+        contentDialog
     },
     data: () => ({
         content: [],
@@ -167,6 +163,7 @@ export default {
                     this.$store.commit("loading", false);
                 })
                 .catch(error => {
+                    // TODO
                     console.error(error);
                     console.error(error.response);
                 });
@@ -183,23 +180,17 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="css" scoped>
 .paddless >>> .v-toolbar__content {
     padding-left: 0px !important;
     padding-right: 0px !important;
 }
-.button {
-    margin-top: 35px;
+.theme--light .v-btn--active >>> .v-btn__content .v-icon {
+    color: cornflowerblue !important;
 }
-
-/* Toggles */
-/* .toggle::before {
-    color: violet;
+.theme--dark .v-btn--active >>> .v-btn__content .v-icon {
+    color: red !important;
 }
-
-.toggle-selected::before {
-    color: tomato;
-} */
 
 /* Pagination */
 .pagination .v-pagination__navigation,
