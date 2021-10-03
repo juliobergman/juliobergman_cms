@@ -9,6 +9,16 @@ use Illuminate\Support\Facades\DB;
 
 class MediaController extends Controller
 {
+
+    protected $image_defaults = [
+        'name' => null,
+        'fullsize' => '/storage/factory/stock/cover-placeholder/fullsize.jpg',
+        'xlarge' => '/storage/factory/stock/cover-placeholder/xlarge.jpg',
+        'large' => '/storage/factory/stock/cover-placeholder/large.jpg',
+        'medium' => '/storage/factory/stock/cover-placeholder/medium.jpg',
+        'thumbnail' => '/storage/factory/stock/cover-placeholder/thumbnail.jpg',
+    ];
+
     public function index()
     {
         return 'index';
@@ -31,6 +41,9 @@ class MediaController extends Controller
 
     public function show(Request $request)
     {
+        if(!$request->id){
+            return $this->image_defaults;
+        }
         return Media::where('id', $request->id)->first();
     }
 

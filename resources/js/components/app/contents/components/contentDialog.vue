@@ -22,9 +22,11 @@
                         <media-dialog-image
                             v-if="item.cover_image"
                             :src="item.cover_image.large"
+                            :remove-btn="item.cover ? true : false"
                             btn-text="Cover Image"
                             btn-icon="mdi-image-multiple-outline"
                             @action="replaceCover"
+                            @remove="removeCover"
                         />
                     </v-col>
                     <!-- Information Column -->
@@ -139,6 +141,10 @@ export default {
         },
         replaceCover() {
             this.mediaCover = true;
+        },
+        removeCover() {
+            this.item.cover = null;
+            this.selectCover(false);
         },
         selectCover(payload) {
             this.$store.commit("loading", true);

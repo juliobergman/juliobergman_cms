@@ -39,6 +39,24 @@
                     align="end"
                     justify="center"
                 >
+                    <v-slide-x-reverse-transition v-if="removeBtn">
+                        <v-btn
+                            v-show="hover || $isMobile()"
+                            :small="$isMobile()"
+                            icon
+                            absolute
+                            top
+                            right
+                            dark
+                            @click="$emit('remove')"
+                            class="remove-btn"
+                            elevation="3"
+                        >
+                            <v-icon>
+                                mdi-delete
+                            </v-icon>
+                        </v-btn>
+                    </v-slide-x-reverse-transition>
                     <v-slide-y-reverse-transition v-if="btnText">
                         <v-btn
                             v-show="hover || $isMobile()"
@@ -64,6 +82,10 @@
 export default {
     props: {
         payload: { default: 0 },
+        removeBtn: {
+            type: Boolean,
+            default: false
+        },
         aspectRatio: { default: 4 / 3 },
         btnText: {
             type: String,
@@ -89,4 +111,8 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped>
+.remove-btn {
+    background: #272727;
+}
+</style>
