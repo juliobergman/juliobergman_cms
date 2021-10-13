@@ -10,6 +10,7 @@ class Content extends Model
     use HasFactory;
     protected $fillable = [
         'folio',
+        'media_category_id',
         'name',
         'subtitle',
         'path',

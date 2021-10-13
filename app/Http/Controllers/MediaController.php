@@ -25,7 +25,6 @@ class MediaController extends Controller
     }
     public function all(Request $request)
     {
-
         $records = $request->records;
         if(!$records){ $records = 18; }
 

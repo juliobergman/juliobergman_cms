@@ -42,6 +42,8 @@ Route::prefix('media')->group(function () {
     Route::post('/', [MediaController::class, 'all']);
     Route::post('/show', [MediaController::class, 'show']);
     Route::post('/categories', [MediaCategoryController::class, 'categories']);
+    Route::post('/category/store', [MediaCategoryController::class, 'store']);
+    Route::delete('/category/destroy', [MediaCategoryController::class, 'destroy']);
     Route::middleware('auth:sanctum')->post('/store', [MediaController::class, 'store']);
     Route::post('/update/bulk', [MediaController::class, 'bulkUpsert']);
 });

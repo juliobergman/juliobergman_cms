@@ -1,29 +1,49 @@
 <template>
     <v-container fluid>
-        <v-toolbar dense flat v-if="currentSection">
-            <menu-select
-                v-model="section"
-                :items="sections"
-                :btnText="currentSection.name"
-                @input="getContents()"
-            />
+        <v-slide-y-transition leave-absolute mode="out-in">
+            <v-toolbar dense flat v-show="currentSection">
+                <menu-select
+                    v-model="section"
+                    :items="sections"
+                    :btnText="currentSection.name"
+                    @input="getContents()"
+                />
 
-            <v-spacer></v-spacer>
+                <v-spacer></v-spacer>
 
-            <v-slide-x-reverse-transition>
-                <v-btn v-show="$store.state.unsaved" icon @click="saveOrder()">
-                    <v-icon>mdi-content-save</v-icon>
-                </v-btn>
-            </v-slide-x-reverse-transition>
+                <v-slide-x-reverse-transition>
+                    <v-btn
+                        v-show="$store.state.unsaved"
+                        icon
+                        @click="saveOrder()"
+                    >
+                        <v-icon>mdi-content-save</v-icon>
+                    </v-btn>
+                </v-slide-x-reverse-transition>
 
-            <new-section @saved="getSections()" />
-            <new-connection
-                :sections="sections"
-                :section="section"
-                @saved="getContents()"
-                @section="section = $event"
-            />
-        </v-toolbar>
+                <new-section
+                    v-model="newSectionDialog"
+                    @saved="getSections()"
+                />
+                <new-connection
+                    :sections="sections"
+                    :section="section"
+                    @saved="getContents()"
+                    @section="section = $event"
+                />
+            </v-toolbar>
+        </v-slide-y-transition>
+
+        <show-alert
+            v-model="currentSectionAlert"
+            btn-text="Create"
+            btn-icon="mdi-playlist-plus"
+            @trigger="newSectionDialog = true"
+        >
+            <strong>There is no Sections yet.</strong>,
+            <br />
+            Create a new one!
+        </show-alert>
 
         <draggable
             v-model="content"
@@ -92,6 +112,7 @@
 import newSection from "./components/newSection.vue";
 import newConnection from "./components/newConnection.vue";
 import editConnection from "./components/editConnection.vue";
+import showAlert from "../ui/alert/mod1.vue";
 
 import draggable from "vuedraggable";
 import mediaThumbnail from "../../app/media/components/mediaThumbnail.vue";
@@ -105,7 +126,8 @@ export default {
         editConnection,
         draggable,
         mediaThumbnail,
-        contentDialog
+        contentDialog,
+        showAlert
     },
     data: () => ({
         drag: false,
@@ -113,6 +135,7 @@ export default {
         pageLength: 1,
         sections: [],
         section: 1,
+        newSectionDialog: false,
         showContentDialog: false,
         showConnectionDialog: false,
         itemConnectionDialog: null,
@@ -128,7 +151,11 @@ export default {
             };
         },
         currentSection() {
-            return this.sections.find(e => e.id == this.section);
+            let section = this.sections.find(e => e.id == this.section);
+            if (!section) {
+                return 0;
+            }
+            return section;
         },
         pageRecords() {
             return this.$isMobile() ? 6 : 12;
@@ -139,6 +166,9 @@ export default {
         itemContentDialog() {
             if (!this.itemConnectionDialog) return null;
             return this.itemConnectionDialog.content_id;
+        },
+        currentSectionAlert() {
+            return !this.currentSection;
         }
     },
     methods: {

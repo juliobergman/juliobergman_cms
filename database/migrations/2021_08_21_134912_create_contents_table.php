@@ -15,6 +15,7 @@ class CreateContentsTable extends Migration
     {
         Schema::create('contents', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('media_category_id')->nullable()->constrained()->onDelete('cascade');
             $table->string('folio')->unique();
             $table->string('name');
             $table->string('subtitle')->nullable();

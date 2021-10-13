@@ -15,8 +15,8 @@ class CreateConnectionsTable extends Migration
     {
         Schema::create('connections', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('section_id')->nullable()->constrained()->references('id')->on('sections');
-            $table->foreignId('content_id')->nullable()->constrained()->references('id')->on('contents');
+            $table->foreignId('section_id')->nullable()->constrained()->onDelete('cascade');
+            $table->foreignId('content_id')->nullable()->constrained()->onDelete('cascade');
 
             $table->unique(['section_id','content_id'], 'unicus');
 

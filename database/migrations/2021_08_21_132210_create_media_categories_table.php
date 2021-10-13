@@ -16,7 +16,7 @@ class CreateMediaCategoriesTable extends Migration
         Schema::create('media_categories', function (Blueprint $table) {
             $table->id();
 
-            $table->string('name');
+            $table->string('name')->unique();
             $table->string('info')->nullable();
 
             $table->timestamps();

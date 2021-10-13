@@ -1,7 +1,7 @@
 <template>
     <v-dialog v-model="dialog" :persistent="$store.state.loading" width="500">
         <template v-slot:activator="{ on, attrs }">
-            <v-btn icon @click="dialog = true">
+            <v-btn :disabled="disabled" icon @click="dialog = true">
                 <v-icon>mdi-upload</v-icon>
             </v-btn>
         </template>
@@ -18,7 +18,7 @@
                     item-text="name"
                     item-value="id"
                     v-model="currentCategory"
-                    label="Category"
+                    label="Album"
                     prepend-icon="mdi-folder-open-outline"
                 />
                 <v-file-input
@@ -79,23 +79,38 @@ export default {
     name: "uploadDialog",
     props: {
         categories: Array,
-        value: {}
+        category: {},
+        value: {
+            type: Boolean,
+            default: false
+        },
+        disabled: {
+            type: Boolean,
+            default: false
+        }
     },
     data: () => ({
         errors: null,
-        dialog: false,
         files: []
     }),
     computed: {
         mncat() {
             return this.categories;
         },
-        currentCategory: {
+        dialog: {
             get() {
-                return this.categories.find(e => e.id == this.value);
+                return this.value;
             },
             set(val) {
                 this.$emit("input", val);
+            }
+        },
+        currentCategory: {
+            get() {
+                return this.categories.find(e => e.id == this.category);
+            },
+            set(val) {
+                this.$emit("category", val);
             }
         },
         uploadDisabled() {

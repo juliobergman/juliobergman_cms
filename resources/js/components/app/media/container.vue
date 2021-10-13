@@ -1,32 +1,74 @@
 <template>
     <v-container fluid>
-        <v-toolbar dense flat v-if="currentCategory">
-            <menu-select
-                v-model="category"
-                :items="categories"
-                @input="menuChange"
-            />
-            <v-spacer></v-spacer>
-            <v-slide-x-reverse-transition>
-                <v-btn v-show="btnSave" icon @click="saveOrder()">
-                    <v-icon color="accent">mdi-content-save</v-icon>
+        <v-slide-y-transition leave-absolute mode="out-in">
+            <v-toolbar dense flat v-show="!noCategory">
+                <menu-select
+                    v-if="!noCategory && !$store.state.loading"
+                    v-model="category"
+                    :items="categories"
+                    @input="getMedia()"
+                />
+                <v-spacer></v-spacer>
+                <v-slide-x-reverse-transition>
+                    <v-btn v-show="btnSave" icon @click="saveOrder()">
+                        <v-icon color="accent">mdi-content-save</v-icon>
+                    </v-btn>
+                </v-slide-x-reverse-transition>
+                <new-category
+                    v-model="newCategory"
+                    @saved="getMediaCategories"
+                    hidden
+                />
+                <categories-dialog
+                    v-model="categoriesDialog"
+                    @saved="getMediaCategories"
+                    :items="categories"
+                    @dialog:newcategory="newCategory = true"
+                />
+                <v-btn
+                    :disabled="noCategory || noMedia"
+                    icon
+                    @click="bulkBtn()"
+                >
+                    <v-icon color="accent" v-show="bulkActions">
+                        mdi-checkbox-multiple-marked-outline
+                    </v-icon>
+                    <v-icon v-show="!bulkActions">
+                        mdi-checkbox-multiple-blank-outline
+                    </v-icon>
                 </v-btn>
-            </v-slide-x-reverse-transition>
-            <v-btn icon @click="bulkBtn()">
-                <v-icon color="accent" v-show="bulkActions">
-                    mdi-checkbox-multiple-marked-outline
-                </v-icon>
-                <v-icon v-show="!bulkActions">
-                    mdi-checkbox-multiple-blank-outline
-                </v-icon>
-            </v-btn>
-            <upload-dialog
-                v-model="category"
-                :categories="categories"
-                @update:done="getMedia()"
-                @input="menuChange"
-            />
-        </v-toolbar>
+                <upload-dialog
+                    :disabled="noCategory"
+                    :categories="categories"
+                    :category="category"
+                    @category="category = $event"
+                    v-model="uploadDialog"
+                    @update:done="getMedia()"
+                />
+            </v-toolbar>
+        </v-slide-y-transition>
+
+        <show-alert
+            v-model="noCategoryAlert"
+            btn-text="Create Album"
+            btn-icon="mdi-image-multiple-outline"
+            @trigger="newCategory = true"
+        >
+            <strong>There is no Albums in your Media Gallery</strong>,
+            <br />
+            Create One to start uploading your images.
+        </show-alert>
+
+        <show-alert
+            v-model="noMediaAlert"
+            btn-text="Upload"
+            btn-icon="mdi-upload"
+            @trigger="uploadDialog = true"
+        >
+            <strong>There is no Media in this Album</strong>,
+            <br />
+            Upload Something!
+        </show-alert>
 
         <draggable
             v-model="media"
@@ -163,16 +205,25 @@ import mediaThumbnail from "./components/mediaThumbnail.vue";
 import draggable from "vuedraggable";
 import mediaDialog from "./components/mediaDialog.vue";
 import uploadDialog from "./components/mediaUploadDialog.vue";
+import categoriesDialog from "./components/mediaCategories.vue";
+import newCategory from "./components/mediaNewCategory.vue";
 import menuSelect from "../ui/menuSelect.vue";
+import showAlert from "../ui/alert/mod1.vue";
 export default {
     components: {
         menuSelect,
         draggable,
         mediaThumbnail,
         uploadDialog,
-        mediaDialog
+        categoriesDialog,
+        mediaDialog,
+        newCategory,
+        showAlert
     },
     data: () => ({
+        uploadDialog: false,
+        categoriesDialog: false,
+        newCategory: false,
         btnSave: false,
         bulkActions: false,
         bulkData: {
@@ -183,11 +234,13 @@ export default {
         drag: false,
         showMediaDialog: false,
         itemMediaDialog: {},
-        category: 1,
+        category: null,
         page: 1,
         pageLength: 1,
         categories: [],
-        media: []
+        media: [],
+        noCategory: false,
+        noMedia: false
     }),
     computed: {
         dragOptions() {
@@ -201,8 +254,11 @@ export default {
         pageRecords() {
             return this.$isMobile() ? 6 : 12;
         },
-        currentCategory() {
-            return this.categories.find(e => e.id == this.category);
+        noCategoryAlert() {
+            return this.noCategory;
+        },
+        noMediaAlert() {
+            return this.noMedia && !this.noCategory;
         }
     },
     methods: {
@@ -214,31 +270,31 @@ export default {
                 category: parseInt(this.category, 10)
             };
         },
-        getMediaCategories() {
+        getMediaCategories($cat) {
             this.$store.commit("loading", true);
-            let postData = {
-                public: null
-            };
             axios
-                .post("/api/media/categories", postData)
+                .post("/api/media/categories")
                 .then(response => {
-                    if (response.status == 200) {
-                        this.categories = response.data;
-                        this.$store.commit("loading", false);
+                    this.categories = response.data;
+                    this.noCategory = this.categories.length < 1 ? true : false;
+                    if (!this.noCategory && !$cat) {
+                        this.category = this.categories.find(e => true).id;
+                        this.bulkData.category = parseInt(this.category, 10);
                     }
+                    if (!this.noCategory && $cat) {
+                        this.category = $cat;
+                        this.bulkData.category = parseInt(this.category, 10);
+                    }
+                    this.$store.commit("loading", false);
+                    this.getMedia();
                 })
                 .catch(error => {
-                    // TODO
                     console.error(error.name);
                     console.error(error.message);
                 });
         },
-        menuChange($event) {
-            this.page = 1;
-            sessionStorage.setItem("media_category", $event);
-            this.getMedia();
-        },
         getMedia() {
+            if (!this.category) return;
             this.$store.commit("loading", true);
             let postData = {
                 category: this.category,
@@ -248,6 +304,8 @@ export default {
                 .post("/api/media?page=" + this.page, postData)
                 .then(response => {
                     this.media = response.data.data;
+                    this.noMedia = this.media.length < 1 ? true : false;
+                    this.page = 1;
                     this.pageLength = response.data.last_page;
                     this.$store.commit("loading", false);
                 })
@@ -355,13 +413,7 @@ export default {
         }
     },
     created() {
-        if (sessionStorage.getItem("media_category")) {
-            this.category = sessionStorage.getItem("media_category");
-        }
-        this.bulkData.category = parseInt(this.category, 10);
-
         this.getMediaCategories();
-        this.getMedia();
     },
     mounted() {}
 };

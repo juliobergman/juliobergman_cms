@@ -15,9 +15,7 @@ class CreateContentDataTable extends Migration
     {
         Schema::create('content_data', function (Blueprint $table) {
             $table->id();
-
             $table->foreignId('content_id')->constrained()->references('id')->on('contents')->onDelete('cascade');
-
             $table->string('page_title')->nullable();
             $table->string('seo_info')->nullable();
             $table->foreignId('cover')->nullable()->references('id')->on('media');

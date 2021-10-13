@@ -1,24 +1,24 @@
 <template>
-    <v-dialog v-model="dialog" width="500" @input="reset()">
+    <v-dialog v-model="dialog" max-width="375" @input="reset()">
         <template v-slot:activator="{ on, attrs }">
-            <v-btn icon v-bind="attrs" v-on="on">
+            <v-btn v-if="!hidden" icon v-bind="attrs" v-on="on">
                 <v-icon>
-                    mdi-view-grid-plus
+                    mdi-image-multiple-outline
                 </v-icon>
             </v-btn>
         </template>
 
         <v-card :loading="$store.state.loading">
             <v-card-title>
-                New Content
+                New Album
             </v-card-title>
 
             <v-card-text>
-                <v-text-field label="Name" v-model="content.name" />
-                <v-text-field label="Page Title" v-model="content.page_title" />
-                <v-text-field label="Path" v-model="content.path" />
-                <v-text-field label="Folio" v-model="folio" readonly />
-                <v-text-field label="SEO Info" v-model="content.seo_info" />
+                <v-text-field
+                    label="Name"
+                    v-model="name"
+                    @keyup="errors = null"
+                />
             </v-card-text>
             <v-slide-y-transition>
                 <v-card-text v-show="errors">
@@ -37,11 +37,15 @@
             <v-divider></v-divider>
 
             <v-card-actions>
-                <v-btn text @click="dialog = false">
+                <v-btn
+                    text
+                    :disabled="$store.state.loading"
+                    @click="dialog = false"
+                >
                     Cancel
                 </v-btn>
                 <v-spacer></v-spacer>
-                <v-btn text @click="save()">
+                <v-btn text :loading="$store.state.loading" @click="save()">
                     Create
                 </v-btn>
             </v-card-actions>
@@ -52,13 +56,18 @@
 <script>
 export default {
     props: {
-        value: Boolean
+        hidden: {
+            type: Boolean,
+            default: false
+        },
+        value: {
+            type: Boolean,
+            default: false
+        }
     },
     data: () => ({
         errors: null,
-        content: {
-            name: ""
-        }
+        name: ""
     }),
     computed: {
         dialog: {
@@ -69,26 +78,8 @@ export default {
                 this.$emit("input", value);
             }
         },
-        folio: {
-            get() {
-                if (this.content.path) {
-                    const splited = this.content.path.split("/");
-                    let pos = splited.length - 1;
-                    return splited[pos];
-                } else {
-                    return "";
-                }
-            },
-            set(val) {}
-        },
-        sendContent() {
-            return {
-                folio: this.folio,
-                name: this.content.name,
-                page_title: this.content.page_title,
-                path: this.content.path,
-                seo_info: this.content.seo_info
-            };
+        folio() {
+            return _.trim(_.kebabCase(this.name));
         }
     },
     methods: {
@@ -96,20 +87,23 @@ export default {
             this.$store.commit("loading", true);
             this.errors = null;
             axios
-                .post("/api/content/store", this.sendContent)
-                .then(() => {
-                    this.$emit("saved");
+                .post("/api/media/category/store", {
+                    name: this.name,
+                    folio: this.folio
+                })
+                .then(response => {
+                    this.$emit("saved", response.data.created);
                     this.dialog = false;
+                    this.name = "";
                     this.$store.commit("loading", false);
                 })
                 .catch(error => {
-                    // TODO
                     this.errors = error.response.data.errors;
                     this.$store.commit("loading", false);
                 });
         },
         reset() {
-            this.content.name = "";
+            this.name = "";
             this.errors = false;
         }
     }

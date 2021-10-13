@@ -1,7 +1,12 @@
 <template>
-    <v-menu offset-y min-width="375" transition="slide-y-transition">
+    <v-menu
+        :disabled="items.length <= 1 ? true : false"
+        offset-y
+        min-width="375"
+        transition="slide-y-transition"
+    >
         <template v-slot:activator="{ on, attrs }">
-            <div class="text-button" v-bind="attrs" v-on="on" v-if="btnText">
+            <div class="text-button" v-bind="attrs" v-on="on">
                 {{ text }}
             </div>
         </template>
@@ -73,6 +78,9 @@ export default {
             }
             return text;
         }
+    },
+    beforeUpdate() {
+        console.log(this.items.length);
     }
 };
 </script>

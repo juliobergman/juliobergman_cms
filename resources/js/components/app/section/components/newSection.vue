@@ -46,13 +46,28 @@
 
 <script>
 export default {
+    props: {
+        value: {
+            type: Boolean,
+            default: false
+        }
+    },
     data: () => ({
-        dialog: false,
         errors: null,
         section: {
             name: ""
         }
     }),
+    computed: {
+        dialog: {
+            get() {
+                return this.value;
+            },
+            set(value) {
+                this.$emit("input", value);
+            }
+        }
+    },
     methods: {
         save() {
             this.$store.commit("loading", true);
