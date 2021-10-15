@@ -170,6 +170,14 @@ class ContentSeeder extends Seeder
             'path' => '/project/moebel',
             'media_category_id' => null,
             ],
+            [
+            'id' => 20,
+            'folio' => 'bettys-haus',
+            'name' => 'Bettys Haus',
+            'subtitle' => null,
+            'path' => '/project/bettys-haus',
+            'media_category_id' => null,
+            ],
         ];
 
         DB::table('contents')->insert($data);

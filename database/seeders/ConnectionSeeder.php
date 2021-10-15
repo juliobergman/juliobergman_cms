@@ -18,7 +18,7 @@ class ConnectionSeeder extends Seeder
         $data = [
             [
                 'section_id' => 1,
-                'content_id' => '9',
+                'content_id' => '10',
                 'public' => 'no',
                 'oby' => 1,
             ],
@@ -51,6 +51,43 @@ class ConnectionSeeder extends Seeder
                 'content_id' => 19,
                 'public' => 'no',
                 'oby' => 6,
+            ],
+            // Media
+            [
+                'section_id' => 3,
+                'content_id' => 10,
+                'public' => 'no',
+                'oby' => 1,
+            ],
+            [
+                'section_id' => 3,
+                'content_id' => 11,
+                'public' => 'no',
+                'oby' => 2,
+            ],
+            [
+                'section_id' => 3,
+                'content_id' => 12,
+                'public' => 'no',
+                'oby' => 3,
+            ],
+            [
+                'section_id' => 3,
+                'content_id' => 13,
+                'public' => 'no',
+                'oby' => 4,
+            ],
+            [
+                'section_id' => 3,
+                'content_id' => 14,
+                'public' => 'no',
+                'oby' => 5,
+            ],
+            [
+                'section_id' => 1,
+                'content_id' => 20,
+                'public' => 'no',
+                'oby' => 7,
             ],
         ];
 

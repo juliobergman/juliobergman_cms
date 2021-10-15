@@ -19,7 +19,7 @@ class ContentDataSeeder extends Seeder
             [
                 'id' => 1,
                 'content_id' => 1,
-                'page_title' => '',
+                'page_title' => null,
                 'seo_info' => 'Freelancer, Graphic & Web Design',
                 'cover' => null,
             ],
@@ -149,6 +149,13 @@ class ContentDataSeeder extends Seeder
                 'content_id' => 19,
                 'page_title' => 'Moebel Furniture',
                 'seo_info' => 'Moebel Furniture',
+                'cover' => null,
+            ],
+            [
+                'id' => 20,
+                'content_id' => 20,
+                'page_title' => 'Bettys Haus',
+                'seo_info' => 'Bettys Haus',
                 'cover' => null,
             ],
         ];
