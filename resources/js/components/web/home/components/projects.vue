@@ -38,7 +38,8 @@ export default {
     methods: {
         show(item) {
             let content = this.contents.find(e => e.id == item);
-            bus.$emit("goto:name", content.folio);
+            console.log(content);
+            bus.$emit("goto:path", content.path);
         },
         getContents() {
             this.$store.commit("loading", true);

@@ -64,8 +64,13 @@ export default {
         }
     },
     methods: {
-        goto(routeName) {
-            this.$router.push({ name: routeName });
+        goto(route, mode) {
+            if (mode == "name" || !mode) {
+                this.$router.push({ name: route });
+            }
+            if (mode == "path") {
+                this.$router.push({ path: route });
+            }
             this.$store.dispatch("setContent", {
                 path: this.$route.path
             });
@@ -74,7 +79,10 @@ export default {
     },
     created() {
         bus.$on("goto:name", payload => {
-            this.goto(payload);
+            this.goto(payload, "name");
+        });
+        bus.$on("goto:path", payload => {
+            this.goto(payload, "path");
         });
         bus.$on("drawer:set", payload => {
             this.drawer = payload;
