@@ -45,7 +45,8 @@ Route::prefix('media')->group(function () {
     Route::post('/category/store', [MediaCategoryController::class, 'store']);
     Route::delete('/category/destroy', [MediaCategoryController::class, 'destroy']);
     Route::middleware('auth:sanctum')->post('/store', [MediaController::class, 'store']);
-    Route::post('/update/bulk', [MediaController::class, 'bulkUpsert']);
+    Route::post('/update/bulk', [MediaController::class, 'update_bulk']);
+    Route::post('/update/order', [MediaController::class, 'order']);
 });
 
 // Upload
@@ -60,6 +61,7 @@ Route::post('/content', [ContentController::class, 'content']);
 Route::post('/content/data', [ContentController::class, 'content_data']);
 Route::post('/content/store', [ContentController::class, 'store']);
 Route::post('/content/update', [ContentController::class, 'update']);
+Route::delete('/content/destroy', [ContentController::class, 'destroy']);
 
 Route::post('/connections', [ConnectionController::class, 'connections']);
 Route::post('/connection/store', [ConnectionController::class, 'store']);

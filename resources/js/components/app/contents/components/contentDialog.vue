@@ -64,6 +64,9 @@
                                 <v-btn text @click="close()">
                                     close
                                 </v-btn>
+                                <v-btn color="danger" text @click="destroy()">
+                                    delete
+                                </v-btn>
                                 <v-spacer></v-spacer>
                                 <v-btn
                                     :loading="$store.state.loading"
@@ -183,34 +186,53 @@ export default {
                 });
         },
         destroy() {
-            return;
+            if (this.item.album) {
+                this.$refs.alert.open(
+                    "Error",
+                    [
+                        "This Content is part of an Album",
+                        "Please delete the album in the Media Section"
+                    ],
+                    {
+                        color: "danger"
+                    }
+                );
+                return;
+            }
+
             this.$refs.confirm
-                .open(null, ["Are you sure you want to delete this image?"], {
+                .open(null, ["Are you sure you want to delete this Content?"], {
                     color: "danger"
                 })
                 .then(confirmResponse => {
                     if (confirmResponse) {
                         this.$store.commit("loading", true);
                         axios
-                            .delete("/api/upload/destroy", { data: this.media })
+                            .delete("/api/content/destroy", { data: this.item })
                             .then(response => {
-                                if (response.status == 200) {
-                                    this.$refs.alert
-                                        .open(null, response.data.message)
-                                        .then(() => {
-                                            this.$emit("reload");
-                                            this.close();
-                                            this.$store.commit(
-                                                "loading",
-                                                false
-                                            );
-                                        });
-                                }
+                                this.$refs.alert
+                                    .open(null, response.data.messages)
+                                    .then(() => {
+                                        this.$emit("saved");
+                                        this.close();
+                                        this.$store.commit("loading", false);
+                                    });
                             })
                             .catch(error => {
-                                // TODO
                                 console.error(error);
                                 console.error(error.response);
+
+                                if (error.response.status == "405") {
+                                    let errors = error.response.data.errors
+                                        ? error.response.data.errors
+                                        : [error.response.data.message];
+
+                                    this.$refs.alert.open("Error", errors, {
+                                        color: "danger",
+                                        messageAlign: "left"
+                                    });
+                                }
+                                this.$store.commit("loading", false);
                             });
                     }
                 });

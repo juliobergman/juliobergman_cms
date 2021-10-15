@@ -30,6 +30,7 @@ class ContentController extends Controller
         // With
 
         $contents->with('cover_image');
+        $contents->with('album');
         // Join
         $contents->join('content_data', 'contents.id', '=', 'content_data.content_id');
 
@@ -56,6 +57,7 @@ class ContentController extends Controller
         // With
 
         $content->with('cover_image');
+        $content->with('album');
         // Join
         $content->join('content_data', 'contents.id', '=', 'content_data.content_id');
 
@@ -208,6 +210,29 @@ class ContentController extends Controller
 
         return new JsonResponse(['message' => 'content/update'], 200);
 
+    }
+
+    public function destroy(Request $request)
+    {
+        $id = $request->id;
+
+        $contentQuery = Content::query();
+        $contentQuery->where('id', $id);
+        $contentQuery->with('album');
+        $content = $contentQuery->first();
+
+        if(!$content){
+            return new JsonResponse(['errors' => ['Content not Found']], 404);
+        }
+
+        $album = $content->album;
+        if($album){
+            return new JsonResponse(['errors' => ['Delete Fail','This Content is part of an Album.','Please delete the album in the Media Section']], 405);
+        }
+
+        if($content->delete()){
+                return new JsonResponse(['messages' => ['Content Successfully Deleted']], 200);
+        }
     }
 
 }

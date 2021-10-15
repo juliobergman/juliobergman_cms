@@ -135,10 +135,6 @@
                         Delete
                     </v-btn>
                     <v-spacer></v-spacer>
-                    <!-- <menu-select
-                        v-model="bulkData.category"
-                        :items="categories"
-                    /> -->
                     <div>
                         <v-select
                             v-model="bulkData.category"
@@ -336,7 +332,7 @@ export default {
         saveOrder() {
             this.$store.commit("loading", true);
             axios
-                .post("/api/media/update/bulk", this.media)
+                .post("/api/media/update/order", this.media)
                 .then(response => {
                     this.btnSave = false;
                     this.$store.commit("loading", false);
@@ -344,16 +340,33 @@ export default {
                 .catch(error => {
                     // TODO
                     console.error(error.name);
-                    console.error(error.message);
+                    console.error(error.response);
+                    console.error(error.response.message);
                 });
         },
         bulkUpdate() {
             let postData = {
                 items: this.selectedItems,
-                public: this.bulkData.public,
+                public: this.bulkData.public ? "yes" : "no",
                 category: this.bulkData.category
             };
-            console.log(postData);
+
+            axios
+                .post("/api/media/update/bulk", postData)
+                .then(response => {
+                    this.selectedItems = [];
+                    this.bulkData.public = false;
+                    this.category = this.bulkData.category;
+                    this.bulkActions = false;
+                    this.getMedia();
+                    this.$store.commit("loading", false);
+                })
+                .catch(error => {
+                    // TODO
+                    console.error(error.name);
+                    console.error(error.message);
+                    this.$store.commit("loading", false);
+                });
         },
         bulkDelete() {
             console.clear();

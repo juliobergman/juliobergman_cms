@@ -118,7 +118,7 @@ export default {
         event: "input"
     },
     data: () => ({
-        category: 1,
+        category: null,
         page: 1,
         pageLength: 1,
         categories: [],
@@ -160,10 +160,12 @@ export default {
             axios
                 .post("/api/media/categories", postData)
                 .then(response => {
-                    if (response.status == 200) {
-                        this.categories = response.data;
-                        this.$store.commit("loading", false);
-                    }
+                    this.categories = [
+                        ...response.data,
+                        { id: null, name: "All" }
+                    ];
+
+                    this.$store.commit("loading", false);
                 })
                 .catch(error => {
                     // TODO

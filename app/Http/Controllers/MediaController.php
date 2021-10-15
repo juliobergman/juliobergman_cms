@@ -67,7 +67,7 @@ class MediaController extends Controller
     }
 
 
-    public function bulkUpsert(Request $request)
+    public function order(Request $request)
     {
         // Columns to Update
         $columns = [
@@ -100,6 +100,16 @@ class MediaController extends Controller
 
         $records = DB::table('media')->upsert($update, ['id'], $columns);
         return new JsonResponse(['message' => 'Records Updated', 'data' => $update, 'count' => $records], 200);
+    }
+
+    public function update_bulk(Request $request)
+    {
+        $media = Media::whereIn('id', $request->items)->update([
+            'public' => $request->public,
+            'category_id' => $request->category,
+        ]);
+
+        return $media;
     }
 
 }

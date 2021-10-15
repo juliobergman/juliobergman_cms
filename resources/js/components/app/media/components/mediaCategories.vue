@@ -58,11 +58,7 @@
             </v-card-text>
             <v-divider></v-divider>
             <v-card-actions>
-                <v-btn
-                    text
-                    :disabled="$store.state.loading"
-                    @click="dialog = false"
-                >
+                <v-btn text :disabled="$store.state.loading" @click="close()">
                     Close
                 </v-btn>
                 <v-spacer></v-spacer>
@@ -119,6 +115,9 @@ export default {
         }
     },
     methods: {
+        close() {
+            this.dialog = false;
+        },
         destroy($item) {
             this.$refs.confirm
                 .open(
@@ -148,7 +147,9 @@ export default {
                                     })
                                     .then(() => {
                                         this.$emit("saved");
-                                        // this.dialog = false;
+                                        if (this.items.length < 2) {
+                                            this.close();
+                                        }
                                         this.$store.commit("loading", false);
                                     });
                             })

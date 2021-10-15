@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Content extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'folio',
         'media_category_id',
@@ -15,10 +16,12 @@ class Content extends Model
         'subtitle',
         'path',
     ];
+
     protected $hidden = [
         'updated_at',
         'created_at',
     ];
+
     protected $image_defaults = [
         'name' => null,
         'fullsize' => '/storage/factory/stock/cover-placeholder/fullsize.jpg',
@@ -39,4 +42,10 @@ class Content extends Model
             'cover'
         )->withDefault($this->image_defaults);
     }
+
+    public function album()
+    {
+        return $this->belongsTo(MediaCategory::class, 'media_category_id');
+    }
+
 }
