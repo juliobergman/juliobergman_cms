@@ -18,6 +18,8 @@ import AppSection from "../components/app/section/container";
 import AppMedia from "../components/app/media/container";
 import AppSettings from "../components/app/settings/container";
 import AppTest from "../components/app/test/container.vue";
+// Error
+import Error404 from "../components/web/ui/error/404.vue";
 
 Vue.use(VueRouter);
 
@@ -104,6 +106,13 @@ const routes = [
         name: "appTest",
         path: "/app/test",
         meta: { section: "appTest" }
+    },
+    // Error 404
+    {
+        component: Error404,
+        name: "error404",
+        path: "*",
+        meta: { section: "errors" }
     }
 ];
 
