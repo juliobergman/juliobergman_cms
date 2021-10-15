@@ -37,18 +37,14 @@ class MediaCategorySeeder extends Seeder
             ],
             [
             'id' => 6,
-            'name' => 'Product Rendering',
-            ],
-            [
-            'id' => 7,
             'name' => 'Photography',
             ],
             [
-            'id' => 8,
-            'name' => 'Web Design & Development',
+            'id' => 7,
+            'name' => 'Product Rendering',
             ],
             [
-            'id' => 9,
+            'id' => 8,
             'name' => 'Architectural Rendering',
             ]
         ];
