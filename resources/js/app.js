@@ -48,8 +48,6 @@ Vue.use(Particles);
 // Event BUS
 export const bus = new Vue();
 
-// Guest
-import GuestContainer from "./components/web/container";
 // Auth
 import ViewLogin from "./components/auth/login";
 // App
@@ -72,6 +70,6 @@ const app = new Vue({
     store,
     router,
     vuetify,
-    components: { GuestContainer, ViewLogin, AppContainer },
+    components: { ViewLogin, AppContainer },
     el: "#app"
 });

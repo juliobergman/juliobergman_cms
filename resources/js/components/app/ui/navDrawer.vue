@@ -38,32 +38,32 @@ export default {
             {
                 title: "Sections",
                 icon: "mdi-view-dashboard",
-                route: "appSection",
-                section: "appSection"
+                route: "section",
+                section: "Section"
             },
             {
                 title: "Contents",
                 icon: "mdi-folder-text",
-                route: "appContents",
-                section: "appContents"
+                route: "contents",
+                section: "Contents"
             },
             {
                 title: "Media",
                 icon: "mdi-camera-iris",
-                route: "appMedia",
-                section: "appMedia"
+                route: "media",
+                section: "Media"
             },
             {
                 title: "Settings",
                 icon: "mdi-cog",
-                route: "appSettings",
-                section: "appSettings"
+                route: "settings",
+                section: "Settings"
             },
             {
                 title: "Tests",
                 icon: "mdi-test-tube",
-                route: "appTest",
-                section: "appTest"
+                route: "test",
+                section: "Test"
             }
         ]
     }),

@@ -1,8 +1,8 @@
 <template>
     <v-container>
-        <v-card color="transparent" flat max-width="500" class="mx-auto">
+        <v-card max-width="500" class="mx-auto">
             <v-card-text>
-                <pt title="Page Not Found" />
+                404
             </v-card-text>
             <v-card-text>
                 Lorem Ipsum Dolor
@@ -22,13 +22,9 @@
 </template>
 
 <script>
-import pt from "../components/webTitle.vue";
 export default {
-    components: { pt },
     data: () => ({}),
     methods: {},
     created() {}
 };
 </script>
-
-<style></style>

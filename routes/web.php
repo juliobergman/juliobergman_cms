@@ -18,26 +18,13 @@ use App\Http\Controllers\UploadController;
 |
 */
 
-
-// Tests
-Route::get('/tester', [TestsController::class, 'index']);
-
 // Login
 Route::get('/login', function () {
     return view('auth.login');
 })->name('login')->middleware('guest');
 
 // App
-Route::prefix('/app')->group(function(){
-    Route::get('/{any?}', function () {
-        return view('auth.app');
-    })->where('any', '.*')->middleware('auth');
-});
+Route::get('/{any?}', function () {
+    return view('auth.app');
+})->where('any', '.*')->middleware('auth');
 
-// Main Site
-Route::get('/{any}', function () {
-    return view('welcome');
-})->where('any', '.*');
-
-// Route::get('/api/user', [UserController::class, 'user']);
-// Route::get('/api/countries', [CountryController::class, 'countries']);
